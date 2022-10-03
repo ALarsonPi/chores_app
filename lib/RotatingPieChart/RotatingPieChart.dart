@@ -10,12 +10,14 @@ class RotatingPieChart extends StatelessWidget {
   final List<PieChartItem> items;
   final PieChartItemToText toText;
   final double sizeOfChart;
+  final List<double> bounds;
 
   const RotatingPieChart(
       {Key? key,
       this.accellerationFactor = 1.0,
       required this.items,
       required this.toText,
+      required this.bounds,
       this.sizeOfChart = 250})
       : super(key: key);
 
@@ -28,6 +30,7 @@ class RotatingPieChart extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: 1.0,
           child: _RotatingPieChartInternal(
+            bounds: bounds,
             items: items,
             toText: toText,
             accellerationFactor: accellerationFactor,
@@ -42,38 +45,85 @@ class _RotationEndSimulation extends Simulation {
   final double initialVelocity;
   final double initialPosition;
   final double accelleration;
+  final List<double> bounds;
 
   _RotationEndSimulation({
     required this.initialVelocity,
     required double decelleration,
     required this.initialPosition,
+    required this.bounds,
   }) : accelleration = decelleration * -1.0;
 
   @override
   double dx(double time) => initialVelocity + (accelleration * time);
 
   @override
-  bool isDone(double time) =>
-      initialVelocity > 0 ? dx(time) < 0.001 : dx(time) > -0.001;
+  bool isDone(double time) {
+    bool hasFinishedRotation =
+        initialVelocity > 0 ? dx(time) < 0.001 : dx(time) > -0.001;
+    return hasFinishedRotation;
+  }
+
+  List<double> getCurrentBounds(double xPosition) {
+    List<double> currentBounds = List.empty(growable: true);
+    //Go Backwards
+    if (xPosition >= 0.5) {
+      for (int i = bounds.length - 1; i > 0; i--) {
+        if (bounds[i] <= xPosition) {
+          currentBounds.add(bounds[i]);
+          currentBounds.add(bounds[i + 1]);
+        }
+      }
+    }
+    //Go forwards
+    else {
+      for (int i = 0; i < bounds.length; i++) {
+        if (bounds[i] > xPosition) {
+          currentBounds.add(bounds[i]);
+          currentBounds.add(bounds[i - 1]);
+          break;
+        }
+      }
+    }
+    return currentBounds;
+  }
+
+  double getClosestBound(double xPosition) {
+    List<double> lowHighBounds = getCurrentBounds(xPosition);
+    if ((xPosition - lowHighBounds[0]).abs() <
+        (xPosition - lowHighBounds[1]).abs()) {
+      return lowHighBounds[0];
+    } else {
+      return lowHighBounds[1];
+    }
+  }
 
   @override
-  double x(double time) =>
-      (initialPosition +
-          (initialVelocity * time) +
-          (accelleration * time * time / 2)) %
-      1.0;
+  double x(double time) {
+    double xPosition = (initialPosition +
+            (initialVelocity * time) +
+            (accelleration * time * time / 2)) %
+        1.0;
+    if (initialVelocity > 0 ? dx(time) < 0.003 : dx(time) > -0.003) {
+      xPosition = getClosestBound(xPosition);
+      if (xPosition == 1) xPosition = 0;
+    }
+    return xPosition;
+  }
 }
 
 class _RotatingPieChartInternal extends StatefulWidget {
   final double accellerationFactor;
   final List<PieChartItem> items;
   final PieChartItemToText toText;
+  final List<double> bounds;
 
   const _RotatingPieChartInternal(
       {Key? key,
       this.accellerationFactor = 1.0,
       required this.items,
-      required this.toText})
+      required this.toText,
+      required this.bounds})
       : super(key: key);
 
   @override
@@ -90,7 +140,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   void initState() {
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
-    _controller.animateTo(2 * pi, duration: const Duration(seconds: 10));
+    _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     super.initState();
   }
 
@@ -110,19 +160,19 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return offset! - center;
   }
 
-  bool _isSnapping = false;
-  void snapTo(double snapAngle) {
-    var wheelAngle = _controller.value;
-    _controller.stop();
-    _isSnapping = true;
-    var springSimulation = SpringSimulation(
-      SpringDescription(mass: 20.0, stiffness: 10.0, damping: 1.0),
-      wheelAngle,
-      snapAngle,
-      _controller.velocity,
-    );
-    _controller.animateWith(springSimulation);
-  }
+  // bool _isSnapping = false;
+  // void snapTo(double snapAngle) {
+  //   var wheelAngle = _controller.value;
+  //   _controller.stop();
+  //   _isSnapping = true;
+  //   var springSimulation = SpringSimulation(
+  //     SpringDescription(mass: 20.0, stiffness: 10.0, damping: 1.0),
+  //     wheelAngle,
+  //     snapAngle,
+  //     _controller.velocity,
+  //   );
+  //   _controller.animateWith(springSimulation);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +203,17 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         //snapTo(30);
         _controller.animateWith(
           _RotationEndSimulation(
+            bounds: widget.bounds,
             decelleration: decelleration,
             initialPosition: _controller.value,
             initialVelocity: angularRotation,
           ),
         );
+        // _controller.animateWith(SpringSimulation(
+        //     const SpringDescription(damping: 10.0, mass: 10.0, stiffness: 1.0),
+        //     _controller.value,
+        //     _controller.value + 0.5,
+        //     0.3));
       },
       child: AnimatedBuilder(
         animation: _animation,
