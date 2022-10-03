@@ -22,17 +22,20 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
   @override
   void initState() {
-    pieNamesItems.add(PieChartItem(1, "John", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Brad", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Jake", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Mom", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Dad", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Random\nHobo", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Bathroom", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Floors", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Sweep/Mop", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Dishes", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Vacuum", Colors.orange));
 
     pieTwoItems.add(PieChartItem(1, "Raking", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Mopping", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Clean Oven", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
 
     if (widget.numberOfRings == 2) {
       //heightOfPieTwo = 0.9;
@@ -58,10 +61,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
     for (int i = 0; i <= numItems; i++) {
       bounds.add(i / numItems);
     }
-    debugPrint(bounds.toString());
   }
 
-  makePieChart(double height, List<PieChartItem> pieItems) {
+  makePieChart(double height, List<PieChartItem> pieItems, bool isNames) {
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
@@ -72,8 +74,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
           toText: (item, _) => TextPainter(
               textAlign: TextAlign.center,
               text: TextSpan(
+                children: [],
                 style: const TextStyle(color: Colors.black, fontSize: 8.0),
-                text: "${item.name}\n${item.val}",
+                text: (isNames) ? item.name : '',
               ),
               textDirection: TextDirection.ltr),
           sizeOfChart: height,
@@ -90,11 +93,11 @@ class _ConcentricChartState extends State<ConcentricChart> {
           children: [
             if (widget.numberOfRings == 3)
               makePieChart(MediaQuery.of(context).size.height * heightOfPieTwo,
-                  pieTwoItems),
+                  pieTwoItems, false),
             makePieChart(MediaQuery.of(context).size.height * heightOfPieOne,
-                pieOneItems),
+                pieOneItems, false),
             makePieChart(MediaQuery.of(context).size.height * heightOfNameItems,
-                pieNamesItems),
+                pieNamesItems, true),
           ],
         );
       },

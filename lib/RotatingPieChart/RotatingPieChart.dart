@@ -118,13 +118,13 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final PieChartItemToText toText;
   final List<double> bounds;
 
-  const _RotatingPieChartInternal(
-      {Key? key,
-      this.accellerationFactor = 1.0,
-      required this.items,
-      required this.toText,
-      required this.bounds})
-      : super(key: key);
+  const _RotatingPieChartInternal({
+    Key? key,
+    this.accellerationFactor = 1.0,
+    required this.items,
+    required this.toText,
+    required this.bounds,
+  }) : super(key: key);
 
   @override
   _RotatingPieChartInternalState createState() =>
@@ -159,20 +159,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         Offset(context.size!.width / 2.0, context.size!.height / 2.0);
     return offset! - center;
   }
-
-  // bool _isSnapping = false;
-  // void snapTo(double snapAngle) {
-  //   var wheelAngle = _controller.value;
-  //   _controller.stop();
-  //   _isSnapping = true;
-  //   var springSimulation = SpringSimulation(
-  //     SpringDescription(mass: 20.0, stiffness: 10.0, damping: 1.0),
-  //     wheelAngle,
-  //     snapAngle,
-  //     _controller.velocity,
-  //   );
-  //   _controller.animateWith(springSimulation);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -209,11 +195,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
-        // _controller.animateWith(SpringSimulation(
-        //     const SpringDescription(damping: 10.0, mass: 10.0, stiffness: 1.0),
-        //     _controller.value,
-        //     _controller.value + 0.5,
-        //     0.3));
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -227,9 +208,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
               ),
               CustomPaint(
                 painter: PieTextPainter(
-                    items: this.widget.items,
-                    rotation: _animation.value,
-                    toText: this.widget.toText),
+                  items: this.widget.items,
+                  rotation: _animation.value,
+                  toText: this.widget.toText,
+                ),
               )
             ],
           );

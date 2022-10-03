@@ -45,12 +45,18 @@ class PieTextPainter extends AlignedCustomPainterInterface {
   static const double textDisplayCenter = 0.7;
 
   PieTextPainter._(
-      this.items, this.total, this.rotation, this.middles, this.toText);
+    this.items,
+    this.total,
+    this.rotation,
+    this.middles,
+    this.toText,
+  );
 
-  factory PieTextPainter(
-      {double rotation = 0.0,
-      required List<PieChartItem> items,
-      required PieChartItemToText toText}) {
+  factory PieTextPainter({
+    double rotation = 0.0,
+    required List<PieChartItem> items,
+    required PieChartItemToText toText,
+  }) {
     double total = items.fold(0.0, (prev, el) => prev + el.val);
     var middles = (() {
       double soFar = rotation;
@@ -61,7 +67,13 @@ class PieTextPainter extends AlignedCustomPainterInterface {
         return middleRad;
       }).toList(growable: false);
     })();
-    return PieTextPainter._(items, total, rotation, middles, toText);
+    return PieTextPainter._(
+      items,
+      total,
+      rotation,
+      middles,
+      toText,
+    );
   }
 
   @override
