@@ -1,4 +1,4 @@
-import 'package:chore_app/RotatingPieChart/TextPainters/ArcText.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 

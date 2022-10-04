@@ -1,7 +1,7 @@
 import 'dart:math';
-import 'package:chore_app/RotatingPieChart/TextPainters/ArcText.dart';
-import 'package:chore_app/RotatingPieChart/Objects/PieChartItem.dart';
-import 'package:chore_app/RotatingPieChart/PiePainter.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:flutter/material.dart';
 
 import 'TextPainters/NameTextPainter.dart';

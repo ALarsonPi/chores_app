@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:chore_app/RotatingPieChart/Objects/AlignedCustomPainter.dart';
-import 'package:chore_app/RotatingPieChart/Objects/PieChartItem.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/Objects/AlignedCustomPainter.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:flutter/material.dart';
 
 class PieChartPainter extends AlignedCustomPainterInterface {

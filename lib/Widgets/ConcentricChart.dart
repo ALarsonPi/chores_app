@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../RotatingPieChart/Objects/PieChartItem.dart';
-import '../RotatingPieChart/RotatingPieChart.dart';
+import 'RotatingPieChart/Objects/PieChartItem.dart';
+import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
