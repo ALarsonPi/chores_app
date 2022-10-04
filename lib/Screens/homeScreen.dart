@@ -1,4 +1,4 @@
-import 'package:chore_app/ArcText/ArcText.dart';
+import 'package:chore_app/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 
@@ -20,56 +20,8 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ConcentricChart(numberOfRings: 2),
-          Center(
-            child: ArcText(
-              radius: currentRadius,
-              text: 'Dishes',
-              startAngle: 30,
-              textStyle: const TextStyle(
-                fontSize: 26,
-                color: Colors.red,
-              ),
-            ),
-          ),
-          Center(
-            child: ArcText(
-              radius: currentRadius,
-              text: 'Sweep/Mop',
-              startAngle: 100,
-              textStyle: const TextStyle(
-                fontSize: 26,
-                color: Colors.red,
-              ),
-            ),
-          ),
-          Center(
-            child: ArcText(
-              radius: currentRadius,
-              text: 'Vaccuum',
-              startAngle: 200,
-              textStyle: const TextStyle(
-                fontSize: 26,
-                color: Colors.red,
-              ),
-            ),
-          ),
-          Center(
-            child: ArcText(
-              radius: currentRadius,
-              text: 'Yardwork',
-              startAngle: 285,
-              textStyle: const TextStyle(
-                fontSize: 26,
-                color: Colors.red,
-              ),
-            ),
-          ),
         ],
       ),
-
-      //     ConcentricChart(
-      //   numberOfRings: 2,
-      // ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../RotatingPieChart/PieChartItem.dart';
+import '../RotatingPieChart/Objects/PieChartItem.dart';
 import '../RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
@@ -22,20 +22,20 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
   @override
   void initState() {
-    pieNamesItems.add(PieChartItem(1, "Mom", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Dad", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Random\nHobo", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Jacob", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Jonathan", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "James", Colors.yellow));
+    //pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Bathroom", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Sweep/Mop", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Dishes", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Vacuum", Colors.orange));
+    //pieOneItems.add(PieChartItem(1, "Vacuum", Colors.orange));
 
     pieTwoItems.add(PieChartItem(1, "Raking", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Mopping", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Clean Oven", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
+    //pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
 
     if (widget.numberOfRings == 2) {
       //heightOfPieTwo = 0.9;
@@ -67,7 +67,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
+          isNames: isNames,
           bounds: bounds,
+          userChosenRadiusForText: 125,
           items: [
             ...pieItems,
           ],
