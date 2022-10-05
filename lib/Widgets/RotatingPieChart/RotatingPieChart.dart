@@ -148,6 +148,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool isNames;
   List<String> finalStrings = List.empty(growable: true);
   late double userChosenRadius;
+  late int numChunks;
 
   @override
   void initState() {
@@ -156,14 +157,19 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     isNames = widget.isNames;
     userChosenRadius = widget.userChosenRadiusForText;
+    numChunks = widget.items.length;
     setUpFinalStrings();
     super.initState();
+  }
+
+  double radiansToDegrees(double radians) {
+    return radians * 180 / pi;
   }
 
   final _testPainter = TextPainter(textDirection: TextDirection.ltr);
   double getAlphaForSpecificLetter(String letter) {
     _testPainter.text = TextSpan(
-        text: letter, style: const TextStyle(fontSize: 26, color: Colors.red));
+        text: letter, style: const TextStyle(fontSize: 14, color: Colors.red));
     _testPainter.layout(
       minWidth: 0,
       maxWidth: double.maxFinite,
@@ -187,22 +193,27 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       chunkAlpha.add(sum);
     }
 
-    //debugPrint("chunkWordSums: " + chunkAlpha.toString());
+    for (int i = 0; i < chunkAlpha.length; i++) {
+      // debugPrint("For word " + widget.items[i].name);
+      // debugPrint(
+      //     "chunkWordSums: " + radiansToDegrees(chunkAlpha[i]).toString());
+    }
 
     //When using 'l' or 'i' as the smallest letter
     const double WIDTH_OF_SMALLEST_LETTER = 0.1145861761;
     const double WIDTH_OF_SPACE = 0.16017116006731802;
 
     //Step 3. Find the amount of padding allowed by this word
-    //cut in half representing what can be done on each side
+    //Separated for debugging
     for (int i = 0; i < chunkAlpha.length; i++) {
-      //chunk sum becomes the new padding value
-      //used same array to save space and increase speed
-      chunkAlpha[i] =
-          ((chunkSizeInRads - chunkAlpha[i]) / WIDTH_OF_SPACE).floorToDouble();
+      chunkAlpha[i] = (chunkSizeInRads - chunkAlpha[i]);
     }
-
-    //debugPrint("total padding: " + chunkAlpha.toString());
+    for (int i = 0; i < chunkAlpha.length; i++) {
+      chunkAlpha[i] = (chunkAlpha[i] / WIDTH_OF_SPACE);
+    }
+    for (int i = 0; i < chunkAlpha.length; i++) {
+      chunkAlpha[i] = chunkAlpha[i].ceilToDouble();
+    }
 
     //Step 4. Break the total padding into left and right, favoring the right side
     // if there is a remainder
@@ -212,35 +223,42 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       double remainder = chunkAlpha[i] % 2;
       chunkAlpha[i] -= remainder;
       double splitNum = chunkAlpha[i] / 2;
+
+      //If the word is so large that it would overflow
+      //this will flush it with left edge so
+      //we can take action on overflow
+      if (splitNum == 1) splitNum = 0;
       leftPaddingNums.add(splitNum);
       rightPaddingNums.add(splitNum + remainder);
     }
 
-    // debugPrint("Left Padding : " + leftPaddingNums.toString());
-    // debugPrint("Right Padding : " + rightPaddingNums.toString());
+    // debugPrint(widget.items.toString());
+    debugPrint("Left Padding : " + leftPaddingNums.toString());
+    debugPrint("Right Padding : " + rightPaddingNums.toString());
 
     //Step 5. Form the final string, using spaces as the padding
-    // this will be the easiest to code / follow as code, though maybe a little
-    // less exact than using the smallest letter 'l'. Could still implement that in
-    // the future if needed
-
     for (int i = 0; i < chunkAlpha.length; i++) {
       String leftPadding = "";
       String rightPadding = "";
-      for (int j = 0; j < leftPaddingNums[i] * 2.5; j++) {
-        leftPadding += " ";
+
+      for (int j = 0; j < leftPaddingNums[i]; j++) {
+        leftPadding += "  ";
       }
-      for (int k = 0; k < rightPaddingNums[i] * 2.5; k++) {
-        rightPadding += " ";
+      for (int k = 0; k < rightPaddingNums[i]; k++) {
+        rightPadding += "  ";
       }
-      String finalString = leftPadding + widget.items[i].name + rightPadding;
+      String finalString =
+          leftPadding + widget.items[i].name + rightPadding + "  ";
       finalStrings.add(finalString);
     }
 
-    for (int i = 0; i < widget.items.length; i++) {
-      //debugPrint(items[i].name);
-    }
-    //debugPrint("Final Strings = " + finalStrings.toString());
+    //Things to DO
+    //1. Check if overflow as a concept would work (would it paint correctly)
+    //2. Decide on when I want a phrase to overflow
+    //3. Implement a phrase overflow method
+    //4. Send in final strings and finalStringsOverflow (empty if none)
+    //5. Decide on what length of strings should be allowed for the user to type in
+    // we would then cap that amount when the user is inputting the amount
   }
 
   @override
@@ -261,8 +279,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(userChosenRadius.toString());
-    debugPrint(finalStrings.toString());
+    // debugPrint(userChosenRadius.toString());
+    // debugPrint(finalStrings.toString());
     return GestureDetector(
       onPanDown: (details) {
         lastDirection = getDirection(details.globalPosition);
@@ -311,10 +329,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                 painter: (!isNames)
                     ? ArcTextPainter(
                         userChosenRadius,
-                        "false",
-                        const TextStyle(fontSize: 26, color: Colors.red),
+                        const TextStyle(fontSize: 22, color: Colors.red),
                         _animation.value + 1.57079632679,
                         finalStrings,
+                        numChunks,
                       )
                     : PieTextPainter(
                         items: this.widget.items,

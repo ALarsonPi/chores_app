@@ -22,7 +22,7 @@ class PieTextPainter extends AlignedCustomPainterInterface {
   );
 
   factory PieTextPainter({
-    double rotation = 90.0,
+    double rotation = 0.0,
     required List<PieChartItem> items,
     required PieChartItemToText toText,
   }) {
