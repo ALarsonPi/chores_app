@@ -227,14 +227,11 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     for (int i = 0; i < chunkAlpha.length; i++) {
       String leftPadding = "";
       String rightPadding = "";
-      for (int j = 0; j < leftPaddingNums[i]; j++) {
+      for (int j = 0; j < leftPaddingNums[i] * 2.5; j++) {
         leftPadding += " ";
       }
-      for (int k = 0; k < rightPaddingNums[i]; k++) {
+      for (int k = 0; k < rightPaddingNums[i] * 2.5; k++) {
         rightPadding += " ";
-      }
-      if (i == 0) {
-        leftPadding = "";
       }
       String finalString = leftPadding + widget.items[i].name + rightPadding;
       finalStrings.add(finalString);
@@ -316,7 +313,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         userChosenRadius,
                         "false",
                         const TextStyle(fontSize: 26, color: Colors.red),
-                        _animation.value,
+                        _animation.value + 1.57079632679,
                         finalStrings,
                       )
                     : PieTextPainter(

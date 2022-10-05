@@ -8,7 +8,7 @@ class PieChartPainter extends AlignedCustomPainterInterface {
   final double total;
   final double rotation;
 
-  PieChartPainter({this.rotation = 0.0, required this.items})
+  PieChartPainter({this.rotation = 0, required this.items})
       : total = items.fold(0.0, (total, el) => total + el.val);
 
   @override
