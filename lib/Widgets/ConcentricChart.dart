@@ -20,6 +20,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
   double heightOfPieOne = 0.9;
   double heightOfPieTwo = 0.3;
 
+  late double radiusOfRing2Text;
+  late double radiusOfRing3Text;
+
   @override
   void initState() {
     pieNamesItems.add(PieChartItem(1, "Jacob", Colors.yellow));
@@ -41,22 +44,21 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieTwoItems.add(PieChartItem(1, "Raking", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Mopping", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Clean Oven", Colors.red));
-    // pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
-    // pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
-    // pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
 
     if (widget.numberOfRings == 2) {
-      //heightOfPieTwo = 0.9;
       heightOfPieOne = 0.75;
       heightOfNameItems = 0.35;
+      radiusOfRing2Text = 150;
     } else if (widget.numberOfRings == 3) {
-      heightOfNameItems = 0.15;
+      heightOfNameItems = 0.25;
       heightOfPieTwo = 0.9;
-      heightOfPieOne = 0.30;
-    } else {
-      heightOfPieTwo = 0.9;
-      heightOfPieOne = 0.85;
-      heightOfNameItems = 0.65;
+      heightOfPieOne = 0.4;
+
+      radiusOfRing2Text = 110;
+      radiusOfRing3Text = 165;
     }
 
     populateBounds(pieNamesItems.length);
@@ -71,13 +73,20 @@ class _ConcentricChartState extends State<ConcentricChart> {
     }
   }
 
-  makePieChart(double height, List<PieChartItem> pieItems, bool isNames) {
+  makePieChart(double height, List<PieChartItem> pieItems, int ringNum) {
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
-          isNames: isNames,
+          isNames: ringNum == 1,
+          numRings: widget.numberOfRings,
           bounds: bounds,
-          userChosenRadiusForText: 150,
+          //This should be customized by number of rings
+          // and also, which ring it is, and also screen size
+          userChosenRadiusForText: (widget.numberOfRings == 2)
+              ? radiusOfRing2Text
+              : (ringNum == 2)
+                  ? radiusOfRing2Text
+                  : radiusOfRing3Text,
           items: [
             ...pieItems,
           ],
@@ -86,7 +95,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
               text: TextSpan(
                 children: [],
                 style: const TextStyle(color: Colors.black, fontSize: 8.0),
-                text: (isNames) ? item.name : '',
+                text: (ringNum == 1) ? item.name : '',
               ),
               textDirection: TextDirection.ltr),
           sizeOfChart: height,
@@ -103,11 +112,11 @@ class _ConcentricChartState extends State<ConcentricChart> {
           children: [
             if (widget.numberOfRings == 3)
               makePieChart(MediaQuery.of(context).size.height * heightOfPieTwo,
-                  pieTwoItems, false),
+                  pieTwoItems, 3),
             makePieChart(MediaQuery.of(context).size.height * heightOfPieOne,
-                pieOneItems, false),
+                pieOneItems, 2),
             makePieChart(MediaQuery.of(context).size.height * heightOfNameItems,
-                pieNamesItems, true),
+                pieNamesItems, 1),
           ],
         );
       },

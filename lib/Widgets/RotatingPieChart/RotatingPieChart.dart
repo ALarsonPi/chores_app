@@ -15,6 +15,7 @@ class RotatingPieChart extends StatelessWidget {
   final double sizeOfChart;
   final List<double> bounds;
   final bool isNames;
+  final int numRings;
   final double userChosenRadiusForText;
 
   const RotatingPieChart(
@@ -25,6 +26,7 @@ class RotatingPieChart extends StatelessWidget {
       required this.bounds,
       required this.isNames,
       required this.userChosenRadiusForText,
+      required this.numRings,
       this.sizeOfChart = 250})
       : super(key: key);
 
@@ -39,6 +41,7 @@ class RotatingPieChart extends StatelessWidget {
             bounds: bounds,
             items: items,
             toText: toText,
+            numRings: numRings,
             accellerationFactor: accellerationFactor,
             isNames: isNames,
             userChosenRadiusForText: userChosenRadiusForText,
@@ -127,6 +130,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final List<double> bounds;
   final bool isNames;
   final double userChosenRadiusForText;
+  final int numRings;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -136,6 +140,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.bounds,
     required this.isNames,
     required this.userChosenRadiusForText,
+    required this.numRings,
   }) : super(key: key);
 
   @override
@@ -150,6 +155,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool isNames;
   List<String> finalStrings = List.empty(growable: true);
   List<String> finalStringsOverflow = List.empty(growable: true);
+  late int numRings;
 
   late double userChosenRadius;
   late int numChunks;
@@ -167,6 +173,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     isNames = widget.isNames;
     userChosenRadius = widget.userChosenRadiusForText;
     numChunks = widget.items.length;
+    numRings = widget.numRings;
     CHUNK_SIZE = (2 * pi / numChunks);
     setUpFinalStrings();
     super.initState();
@@ -179,7 +186,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   final _testPainter = TextPainter(textDirection: TextDirection.ltr);
   double getAlphaForSpecificLetter(String letter) {
     _testPainter.text = TextSpan(
-        text: letter, style: const TextStyle(fontSize: 14, color: Colors.red));
+        //Font size should be customizable?
+        text: letter,
+        style: TextStyle(
+            fontSize: widget.numRings == 3 ? 14 : 22, color: Colors.black));
     _testPainter.layout(
       minWidth: 0,
       maxWidth: double.maxFinite,
@@ -264,29 +274,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       }
     }
 
-    //Things to DO
-    //DONE 1. Check if overflow as a concept would work (would it paint correctly)
-    //DONE 2. Decide on when I want a phrase to overflow
-    /*
-         Should overflow maybe if the padding on the left runs out 
-         that's when it slams against the wall of it's chunk
-         So let's try that first
-         and if needed I can add a bit more leeway saying if the left padding 
-         is one or two then overflow
-        */
-    //DONE 3. Implement a phrase overflow method
-    /*
-        Go to the middle character and find the next white space 
-        If there is no white space to the left and find the one before
-
-        Split the phrase at that white space
-        The left part will have white space added on left and right 
-             replacing the number of characters lost
-        Then take the right part. We will use it as the inner phrase
-        Then somehow figure out how to add the correct spacing for 
-             this inner phrase portion
-      */
-    //DONE 4. Send in final strings and finalStringsOverflow (empty if none)
     //5. Decide on what length of strings should be allowed for the user to type in
     // we would then cap that amount when the user is inputting the amount
   }
@@ -412,7 +399,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                 painter: (!isNames)
                     ? ArcTextPainter(
                         userChosenRadius,
-                        const TextStyle(fontSize: 22, color: Colors.red),
+                        TextStyle(
+                            fontSize: numRings == 3 ? 14 : 22,
+                            color: Colors.black),
                         _animation.value + 1.57079632679,
                         finalStrings,
                         finalStringsOverflow,

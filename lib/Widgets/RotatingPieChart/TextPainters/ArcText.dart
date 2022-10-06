@@ -30,6 +30,7 @@ class ArcTextPainter extends CustomPainter {
     _paintPhrases(finalStrings, canvas, size);
     userChosenRadius -= 25;
     _paintPhrases(finalStringsOverflow, canvas, size);
+    userChosenRadius += 25;
   }
 
   void _paintPhrases(List<String> phrases, Canvas canvas, Size size) {
