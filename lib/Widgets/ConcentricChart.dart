@@ -30,15 +30,11 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieNamesItems.add(PieChartItem(1, "Jamison III", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-
-    //20 is the limit of chars on a circle of size 3
-    //12 is the limit of chars on a circle of size 4
-    //8  is the limit of chars on a circle of size 5
+    pieOneItems.add(PieChartItem(1, "Clean the blinds", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Run around good sir", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Don't die", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
 
     // pieOneItems.add(PieChartItem(1, "Make a smoothie", Colors.orange));
 
