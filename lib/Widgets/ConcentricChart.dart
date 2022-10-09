@@ -46,12 +46,36 @@ class _ConcentricChartState extends State<ConcentricChart> {
     OUTER_RINGS_FONT_SIZE = widget.outerRingsFontSize;
     TEXT_COLOR = widget.fontColor;
 
-    double nameProportion = (widget.numberOfRings == 2) ? 0.35 : 0.25;
-    double pie1Proportion = (widget.numberOfRings == 2) ? 0.75 : 0.4;
-    double pie2Proportion = (widget.numberOfRings == 2) ? 0.00 : 0.9;
+    double nameProportion = 0.0;
+    double pie1Proportion = 0.0;
+    double pie2Proportion = 0.0;
 
-    double ring2TextRadius = (widget.numberOfRings == 2) ? 150.0 : 110.0;
-    double ring3TextRadius = (widget.numberOfRings == 2) ? 0.0 : 165.0;
+    double ring2TextRadius = 0.0;
+    double ring3TextRadius = 0.0;
+
+    if (widget.numberOfRings == 2) {
+      nameProportion = 0.35;
+      if (!Global.isPhone) nameProportion += 0.1;
+      if (MediaQuery.of(context).devicePixelRatio > 2) nameProportion -= 0.08;
+
+      pie1Proportion = 0.75;
+      pie2Proportion = 0.00;
+      ring2TextRadius = 150.0;
+      ring3TextRadius = 0.0;
+    } else if (widget.numberOfRings == 3) {
+      nameProportion = 0.25;
+
+      if (!Global.isPhone) nameProportion += 0.06;
+      if (MediaQuery.of(context).devicePixelRatio > 2) nameProportion -= 0.02;
+
+      pie1Proportion = 0.4;
+      if (!Global.isPhone) pie1Proportion += 0.14;
+      if (MediaQuery.of(context).devicePixelRatio > 2) pie1Proportion -= 0.06;
+
+      pie2Proportion = 0.9;
+      ring2TextRadius = 110.0;
+      ring3TextRadius = 165.0;
+    }
 
     //Here's my idea for how to get the sizing to work on multiple / all platforms
     // 1. Have a variable size based on screenwidth? or height and the pixel ratio
@@ -60,9 +84,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
     debugPrint(MediaQuery.of(context).devicePixelRatio.toString());
     namesPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion
-      // * MediaQuery.of(context).devicePixelRatio,
-      ,
+      pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion,
       //In names circle - is a coefficient
       textRadius: 0.6,
       items: pieNamesItems,
