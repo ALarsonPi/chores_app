@@ -12,7 +12,6 @@ import 'TextPainters/NameTextPainter.dart';
 class RotatingPieChart extends StatelessWidget {
   final double accellerationFactor;
   late List<PieChartItem> items;
-  late PieChartItemToText toText;
   late double sizeOfChart;
   final List<double> bounds;
   late bool isNames;
@@ -29,15 +28,6 @@ class RotatingPieChart extends StatelessWidget {
     sizeOfChart = pie.heightCoefficient;
     isNames = pie.ringNum == 1;
     userChosenRadiusForText = pie.startingRadiusOfText;
-
-    toText = (item, _) => TextPainter(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: pie.textStyle,
-            text: item.name,
-          ),
-          textDirection: TextDirection.ltr,
-        );
   }
 
   @override
@@ -50,7 +40,6 @@ class RotatingPieChart extends StatelessWidget {
           child: _RotatingPieChartInternal(
             bounds: bounds,
             items: items,
-            toText: toText,
             textStyle: pie.textStyle,
             textHeightCoefficient: userChosenRadiusForText,
             accellerationFactor: accellerationFactor,
@@ -66,7 +55,6 @@ class RotatingPieChart extends StatelessWidget {
 class _RotatingPieChartInternal extends StatefulWidget {
   final double accellerationFactor;
   final List<PieChartItem> items;
-  final PieChartItemToText toText;
   final double textHeightCoefficient;
   final List<double> bounds;
   final bool isNames;
@@ -77,7 +65,6 @@ class _RotatingPieChartInternal extends StatefulWidget {
     Key? key,
     this.accellerationFactor = 1.0,
     required this.items,
-    required this.toText,
     required this.textHeightCoefficient,
     required this.bounds,
     required this.isNames,
@@ -98,6 +85,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late TextStyle textStyle;
   late double textHeightCoefficient;
   late double userChosenRadius;
+  late PieChartItemToText toText;
 
   List<String> finalStrings = List.empty(growable: true);
   List<String> finalStringsOverflow = List.empty(growable: true);
@@ -120,6 +108,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     CHUNK_SIZE = (2 * pi / numChunks);
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
+    toText = (item, _) => TextPainter(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: textStyle,
+            text: item.name,
+          ),
+          textDirection: TextDirection.ltr,
+        );
     setUpFinalStrings();
     super.initState();
   }
@@ -352,7 +348,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                     : PieTextPainter(
                         items: this.widget.items,
                         rotation: _animation.value,
-                        toText: this.widget.toText,
+                        toText: toText = (item, _) => TextPainter(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: textStyle,
+                                text: item.name,
+                              ),
+                              textDirection: TextDirection.ltr,
+                            ),
                         textRadiusCoefficient: textHeightCoefficient,
                       ),
               )

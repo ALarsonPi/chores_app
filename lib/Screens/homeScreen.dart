@@ -11,7 +11,6 @@ class HomeScreen extends StatelessWidget {
     //have one chart but in the future I'm thinking of giving the
     //user up to 3, maybe
     //Also use title of first chart as title here in the Scaffold
-    double currentRadius = 125;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

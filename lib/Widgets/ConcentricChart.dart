@@ -1,13 +1,21 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 import 'package:flutter/material.dart';
+import '../Global.dart';
 import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
-  ConcentricChart({super.key, required this.numberOfRings});
+  late final double namesFontSize;
+  late final double outerRingsFontSize;
+  late final Color fontColor;
+  ConcentricChart({super.key, required this.numberOfRings}) {
+    namesFontSize = 8.0;
+    outerRingsFontSize = (numberOfRings == 3) ? 14.0 : 22.0;
+    fontColor = Colors.black;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -19,29 +27,42 @@ class _ConcentricChartState extends State<ConcentricChart> {
   List<PieChartItem> pieNamesItems = List.empty(growable: true);
   List<PieChartItem> pieOneItems = List.empty(growable: true);
   List<PieChartItem> pieTwoItems = List.empty(growable: true);
-  double heightOfNameItems = 0.15;
-  double heightOfPieOne = 0.9;
-  double heightOfPieTwo = 0.3;
 
   List<Center> rotatablePies = List.empty(growable: true);
   late PieInfo namesPie;
   late PieInfo firstPie;
   late PieInfo secondPie;
 
-  late double radiusOfRing2Text;
-  late double radiusOfRing3Text;
-
-  final double NAMES_FONT_SIZE = 8.0;
-  late double OUTER_RINGS_FONT_SIZE = widget.numberOfRings == 3 ? 14 : 22;
-  //We may change this color for each pie later,
-  //based on theme, but for now just black
-  final Color TEXT_COLOR = Colors.black;
+  // ignore: non_constant_identifier_names
+  late double NAMES_FONT_SIZE;
+  // ignore: non_constant_identifier_names
+  late double OUTER_RINGS_FONT_SIZE;
+  // ignore: non_constant_identifier_names
+  late Color TEXT_COLOR;
 
   @override
   void didChangeDependencies() {
+    NAMES_FONT_SIZE = widget.namesFontSize;
+    OUTER_RINGS_FONT_SIZE = widget.outerRingsFontSize;
+    TEXT_COLOR = widget.fontColor;
+
+    double nameProportion = (widget.numberOfRings == 2) ? 0.35 : 0.25;
+    double pie1Proportion = (widget.numberOfRings == 2) ? 0.75 : 0.4;
+    double pie2Proportion = (widget.numberOfRings == 2) ? 0.00 : 0.9;
+
+    double ring2TextRadius = (widget.numberOfRings == 2) ? 150.0 : 110.0;
+    double ring3TextRadius = (widget.numberOfRings == 2) ? 0.0 : 165.0;
+
+    //Here's my idea for how to get the sizing to work on multiple / all platforms
+    // 1. Have a variable size based on screenwidth? or height and the pixel ratio
+    // 2. Have a max (cap) size for phones and for tablets/computers that it will
+    //       use if the adaptive size gets too big
+
+    debugPrint(MediaQuery.of(context).devicePixelRatio.toString());
     namesPie = PieInfo(
-      pieHeightCoefficient:
-          MediaQuery.of(context).size.height * heightOfNameItems,
+      pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion
+      // * MediaQuery.of(context).devicePixelRatio,
+      ,
       //In names circle - is a coefficient
       textRadius: 0.6,
       items: pieNamesItems,
@@ -51,18 +72,18 @@ class _ConcentricChartState extends State<ConcentricChart> {
     );
 
     firstPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * heightOfPieOne,
+      pieHeightCoefficient: MediaQuery.of(context).size.height * pie1Proportion,
       items: pieOneItems,
-      textRadius: radiusOfRing2Text,
+      textRadius: ring2TextRadius,
       currRingNum: 2,
       textSize: OUTER_RINGS_FONT_SIZE,
       textColor: TEXT_COLOR,
     );
 
     secondPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * heightOfPieTwo,
+      pieHeightCoefficient: MediaQuery.of(context).size.height * pie2Proportion,
       items: pieTwoItems,
-      textRadius: radiusOfRing3Text,
+      textRadius: ring3TextRadius,
       currRingNum: 3,
       textSize: OUTER_RINGS_FONT_SIZE,
       textColor: TEXT_COLOR,
@@ -102,20 +123,6 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
-
-    if (widget.numberOfRings == 2) {
-      heightOfPieOne = 0.75;
-      heightOfNameItems = 0.35;
-      radiusOfRing2Text = 150;
-      radiusOfRing3Text = 0;
-    } else if (widget.numberOfRings == 3) {
-      heightOfNameItems = 0.25;
-      heightOfPieTwo = 0.9;
-      heightOfPieOne = 0.4;
-
-      radiusOfRing2Text = 110;
-      radiusOfRing3Text = 165;
-    }
 
     populateBounds(pieNamesItems.length);
 
