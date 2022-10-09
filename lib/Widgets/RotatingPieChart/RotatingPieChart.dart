@@ -1,34 +1,44 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import 'RotationEndSimulation.dart';
 import 'TextPainters/NameTextPainter.dart';
 
 class RotatingPieChart extends StatelessWidget {
   final double accellerationFactor;
-  final List<PieChartItem> items;
-  final PieChartItemToText toText;
-  final double sizeOfChart;
+  late List<PieChartItem> items;
+  late PieChartItemToText toText;
+  late double sizeOfChart;
   final List<double> bounds;
-  final bool isNames;
-  final int numRings;
-  final double userChosenRadiusForText;
+  late bool isNames;
+  late double userChosenRadiusForText;
+  final PieInfo pie;
 
-  const RotatingPieChart(
-      {Key? key,
-      this.accellerationFactor = 1.0,
-      required this.items,
-      required this.toText,
-      required this.bounds,
-      required this.isNames,
-      required this.userChosenRadiusForText,
-      required this.numRings,
-      this.sizeOfChart = 250})
-      : super(key: key);
+  RotatingPieChart({
+    super.key,
+    this.accellerationFactor = 1.0,
+    required this.bounds,
+    required this.pie,
+  }) {
+    items = pie.textAndAngleItems;
+    sizeOfChart = pie.heightCoefficient;
+    isNames = pie.ringNum == 1;
+    userChosenRadiusForText = pie.startingRadiusOfText;
+
+    toText = (item, _) => TextPainter(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: pie.textStyle,
+            text: item.name,
+          ),
+          textDirection: TextDirection.ltr,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +51,8 @@ class RotatingPieChart extends StatelessWidget {
             bounds: bounds,
             items: items,
             toText: toText,
-            numRings: numRings,
+            textStyle: pie.textStyle,
+            textHeightCoefficient: userChosenRadiusForText,
             accellerationFactor: accellerationFactor,
             isNames: isNames,
             userChosenRadiusForText: userChosenRadiusForText,
@@ -52,95 +63,26 @@ class RotatingPieChart extends StatelessWidget {
   }
 }
 
-class _RotationEndSimulation extends Simulation {
-  final double initialVelocity;
-  final double initialPosition;
-  final double accelleration;
-  final List<double> bounds;
-
-  _RotationEndSimulation({
-    required this.initialVelocity,
-    required double decelleration,
-    required this.initialPosition,
-    required this.bounds,
-  }) : accelleration = decelleration * -1.0;
-
-  @override
-  double dx(double time) => initialVelocity + (accelleration * time);
-
-  @override
-  bool isDone(double time) {
-    bool hasFinishedRotation =
-        initialVelocity > 0 ? dx(time) < 0.001 : dx(time) > -0.001;
-    return hasFinishedRotation;
-  }
-
-  List<double> getCurrentBounds(double xPosition) {
-    List<double> currentBounds = List.empty(growable: true);
-    //Go Backwards
-    if (xPosition >= 0.5) {
-      for (int i = bounds.length - 1; i > 0; i--) {
-        if (bounds[i] <= xPosition) {
-          currentBounds.add(bounds[i]);
-          currentBounds.add(bounds[i + 1]);
-        }
-      }
-    }
-    //Go forwards
-    else {
-      for (int i = 0; i < bounds.length; i++) {
-        if (bounds[i] > xPosition) {
-          currentBounds.add(bounds[i]);
-          currentBounds.add(bounds[i - 1]);
-          break;
-        }
-      }
-    }
-    return currentBounds;
-  }
-
-  double getClosestBound(double xPosition) {
-    List<double> lowHighBounds = getCurrentBounds(xPosition);
-    if ((xPosition - lowHighBounds[0]).abs() <
-        (xPosition - lowHighBounds[1]).abs()) {
-      return lowHighBounds[0];
-    } else {
-      return lowHighBounds[1];
-    }
-  }
-
-  @override
-  double x(double time) {
-    double xPosition = (initialPosition +
-            (initialVelocity * time) +
-            (accelleration * time * time / 2)) %
-        1.0;
-    if (initialVelocity > 0 ? dx(time) < 0.003 : dx(time) > -0.003) {
-      xPosition = getClosestBound(xPosition);
-      if (xPosition == 1) xPosition = 0;
-    }
-    return xPosition;
-  }
-}
-
 class _RotatingPieChartInternal extends StatefulWidget {
   final double accellerationFactor;
   final List<PieChartItem> items;
   final PieChartItemToText toText;
+  final double textHeightCoefficient;
   final List<double> bounds;
   final bool isNames;
   final double userChosenRadiusForText;
-  final int numRings;
+  final TextStyle textStyle;
 
   const _RotatingPieChartInternal({
     Key? key,
     this.accellerationFactor = 1.0,
     required this.items,
     required this.toText,
+    required this.textHeightCoefficient,
     required this.bounds,
     required this.isNames,
     required this.userChosenRadiusForText,
-    required this.numRings,
+    required this.textStyle,
   }) : super(key: key);
 
   @override
@@ -153,11 +95,13 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late AnimationController _controller;
   late Animation<double> _animation;
   late bool isNames;
+  late TextStyle textStyle;
+  late double textHeightCoefficient;
+  late double userChosenRadius;
+
   List<String> finalStrings = List.empty(growable: true);
   List<String> finalStringsOverflow = List.empty(growable: true);
-  late int numRings;
 
-  late double userChosenRadius;
   late int numChunks;
   late double CHUNK_SIZE;
 
@@ -173,8 +117,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     isNames = widget.isNames;
     userChosenRadius = widget.userChosenRadiusForText;
     numChunks = widget.items.length;
-    numRings = widget.numRings;
     CHUNK_SIZE = (2 * pi / numChunks);
+    textStyle = widget.textStyle;
+    textHeightCoefficient = widget.textHeightCoefficient;
     setUpFinalStrings();
     super.initState();
   }
@@ -186,10 +131,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   final _testPainter = TextPainter(textDirection: TextDirection.ltr);
   double getAlphaForSpecificLetter(String letter) {
     _testPainter.text = TextSpan(
-        //Font size should be customizable?
-        text: letter,
-        style: TextStyle(
-            fontSize: widget.numRings == 3 ? 14 : 22, color: Colors.black));
+      text: letter,
+      style: widget.textStyle,
+    );
     _testPainter.layout(
       minWidth: 0,
       maxWidth: double.maxFinite,
@@ -377,7 +321,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         var angularRotation = angularVelocity / pi / 2;
         var decelleration = angularRotation * widget.accellerationFactor;
         _controller.animateWith(
-          _RotationEndSimulation(
+          RotationEndSimulation(
             bounds: widget.bounds,
             decelleration: decelleration,
             initialPosition: _controller.value,
@@ -399,9 +343,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                 painter: (!isNames)
                     ? ArcTextPainter(
                         userChosenRadius,
-                        TextStyle(
-                            fontSize: numRings == 3 ? 14 : 22,
-                            color: Colors.black),
+                        textStyle,
                         _animation.value + 1.57079632679,
                         finalStrings,
                         finalStringsOverflow,
@@ -411,6 +353,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         items: this.widget.items,
                         rotation: _animation.value,
                         toText: this.widget.toText,
+                        textRadiusCoefficient: textHeightCoefficient,
                       ),
               )
             ],
