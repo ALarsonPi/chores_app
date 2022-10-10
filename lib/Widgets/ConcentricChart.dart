@@ -137,6 +137,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "John\nCina", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "Jamison\nIII", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Santa\nClaus", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Floorsssssssss", Colors.orange));
@@ -144,6 +145,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Don't die", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
+    pieOneItems
+        .add(PieChartItem(1, "Clean up after the reindeer", Colors.orange));
 
     pieTwoItems.add(
         PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", Colors.red));
@@ -152,8 +155,19 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", Colors.red));
 
     populateBounds(pieNamesItems.length);
+
+    //In terms of getting a formula for how many letters can be input for a
+    // certain chart - it will require 3 things
+    // 1. Num Items (primarily)
+    // 2. Type of device (tablet/phone)
+    // 3. Pixel/Aspect Ratio
+    // 4. And will probably need a safe zone (and I'll err on the safe side)
+    // Might end up making it something that I calculate ahead of time for a
+    // base value and then using the device type and aspect ratio to
+    // tweak it slightly
 
     super.initState();
   }

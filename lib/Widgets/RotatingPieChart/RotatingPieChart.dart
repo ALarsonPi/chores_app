@@ -6,6 +6,7 @@ import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:flutter/material.dart';
 
+import '../../Global.dart';
 import 'RotationEndSimulation.dart';
 import 'TextPainters/NameTextPainter.dart';
 
@@ -161,28 +162,32 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   String addPaddingToInitialPhrase(
       String initialPhrase, double leftPaddingNum, double rightPaddingNum) {
-    //Shouldn't the length of all of these be the SAME?
-    //How do I get it to be the same?
-
     String leftPadding = "";
     String rightPadding = "";
     for (int j = 0; j < leftPaddingNum; j++) {
       leftPadding += "~~";
-      //${(pie.ringNum == 3) ? "~~" : ""}";
     }
-    for (int k = 0; k < rightPaddingNum; k++) {
-      rightPadding += "~~";
-      //${(pie.ringNum == 3) ? "~~" : ""}";
-    }
-    String finalString = "~~$leftPadding$initialPhrase$rightPadding~~";
+    String finalString = "$leftPadding$initialPhrase$rightPadding";
     if (pie.ringNum == 3) {
-      finalString = "~~$finalString~~";
-      // if (leftPadding.length == rightPadding.length) {
-      //   finalString = "~~$finalString";
-      //   debugPrint("HERE");
-      //   debugPrint(finalString);
-      // }
+      finalString = "~~~$finalString";
+      if (rightPaddingNum >= 3) {
+        for (int i = 0;
+            i < rightPaddingNum + (7 - widget.items.length);
+            i += 2) {
+          finalString = "~~$finalString";
+        }
+      }
+    } else if (pie.ringNum == 2) {
+      finalString = "~$finalString";
+      if (rightPaddingNum >= 2 && leftPaddingNum <= 2) {
+        for (int i = 0; i < rightPaddingNum; i += 3) {
+          finalString = "~$finalString";
+        }
+      }
     }
+    if (!Global.isPhone) finalString = "~$finalString";
+    if (Global.isHighPixelRatio) finalString = "~$finalString";
+
     return finalString;
   }
 
@@ -231,17 +236,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       if (finalStringsOverflow[i].isEmpty) {
         finalStrings[i] = finalString;
       }
-    }
-
-    debugPrint("All padding numbers");
-    debugPrint(chunkAlpha.toString());
-    for (var finalString in finalStrings) {
-      debugPrint("Final String: " + finalString);
-      debugPrint("Final Length: " + finalString.length.toString());
-    }
-    for (var item in widget.items) {
-      debugPrint("Item: " + item.name);
-      debugPrint("Item Length: " + item.name.length.toString());
     }
 
     //5. Decide on what length of strings should be allowed for the user to type in
