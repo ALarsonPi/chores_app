@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../Global.dart';
+
 class ArcTextPainter extends CustomPainter {
   ArcTextPainter(
     this.userChosenRadius,
@@ -27,10 +29,13 @@ class ArcTextPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    double spaceBetweenLines = 20;
+    if (!Global.isPhone) spaceBetweenLines += 25;
+    if (Global.isHighPixelRatio) spaceBetweenLines += 5;
     _paintPhrases(finalStrings, canvas, size);
-    userChosenRadius -= 25;
+    userChosenRadius -= spaceBetweenLines;
     _paintPhrases(finalStringsOverflow, canvas, size);
-    userChosenRadius += 25;
+    userChosenRadius += spaceBetweenLines;
   }
 
   void _paintPhrases(List<String> phrases, Canvas canvas, Size size) {

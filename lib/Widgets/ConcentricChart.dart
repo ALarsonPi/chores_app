@@ -13,7 +13,11 @@ class ConcentricChart extends StatefulWidget {
   late final Color fontColor;
   ConcentricChart({super.key, required this.numberOfRings}) {
     namesFontSize = 8.0;
-    outerRingsFontSize = (numberOfRings == 3) ? 14.0 : 22.0;
+    double pixelRatioCoefficient = (Global.isHighPixelRatio) ? 0.0 : 0.05;
+    double textFontCoefficient =
+        ((Global.isPhone) ? 1.0 : 2.0) + pixelRatioCoefficient;
+    outerRingsFontSize =
+        ((numberOfRings == 3) ? 14.0 : 18.0) * textFontCoefficient;
     fontColor = Colors.black;
   }
 
@@ -56,33 +60,38 @@ class _ConcentricChartState extends State<ConcentricChart> {
     if (widget.numberOfRings == 2) {
       nameProportion = 0.35;
       if (!Global.isPhone) nameProportion += 0.1;
-      if (MediaQuery.of(context).devicePixelRatio > 2) nameProportion -= 0.08;
+      if (Global.isHighPixelRatio) nameProportion -= 0.08;
 
       pie1Proportion = 0.75;
       pie2Proportion = 0.00;
-      ring2TextRadius = 150.0;
+
+      ring2TextRadius = (MediaQuery.of(context).size.height * 0.45) / 2.0;
+      if (Global.isHighPixelRatio) ring2TextRadius -= 45;
+      if (!Global.isPhone) ring2TextRadius += 75;
       ring3TextRadius = 0.0;
     } else if (widget.numberOfRings == 3) {
       nameProportion = 0.25;
 
       if (!Global.isPhone) nameProportion += 0.06;
-      if (MediaQuery.of(context).devicePixelRatio > 2) nameProportion -= 0.02;
+      if (Global.isHighPixelRatio) nameProportion -= 0.06;
 
       pie1Proportion = 0.4;
       if (!Global.isPhone) pie1Proportion += 0.14;
-      if (MediaQuery.of(context).devicePixelRatio > 2) pie1Proportion -= 0.06;
+      if (Global.isHighPixelRatio) pie1Proportion -= 0.08;
 
       pie2Proportion = 0.9;
-      ring2TextRadius = 110.0;
-      ring3TextRadius = 165.0;
+
+      ring2TextRadius =
+          (MediaQuery.of(context).size.height * pie1Proportion) / 2.4;
+      if (!Global.isPhone) ring2TextRadius += 5;
+
+      ring3TextRadius =
+          (MediaQuery.of(context).size.height * pie1Proportion) / 1.65;
+
+      if (!Global.isPhone) ring3TextRadius += 5;
+      if (MediaQuery.of(context).devicePixelRatio > 2) ring3TextRadius += 5.0;
     }
 
-    //Here's my idea for how to get the sizing to work on multiple / all platforms
-    // 1. Have a variable size based on screenwidth? or height and the pixel ratio
-    // 2. Have a max (cap) size for phones and for tablets/computers that it will
-    //       use if the adaptive size gets too big
-
-    debugPrint(MediaQuery.of(context).devicePixelRatio.toString());
     namesPie = PieInfo(
       pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion,
       //In names circle - is a coefficient

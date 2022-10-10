@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          ConcentricChart(numberOfRings: 3),
+          ConcentricChart(numberOfRings: 2),
         ],
       ),
     );

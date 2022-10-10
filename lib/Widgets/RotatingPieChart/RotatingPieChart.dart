@@ -103,7 +103,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     isNames = widget.isNames;
-    userChosenRadius = widget.userChosenRadiusForText;
+    userChosenRadius = widget.textHeightCoefficient;
     numChunks = widget.items.length;
     CHUNK_SIZE = (2 * pi / numChunks);
     textStyle = widget.textStyle;
@@ -135,6 +135,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       maxWidth: double.maxFinite,
     );
     final double d = _testPainter.width;
+    //userChosenRadius = 110;
+    // debugPrint(MediaQuery.of(context).size.toString());
+    //debugPrint("HI" + userChosenRadius.toString());
     final double alpha = 2 * asin(d / (2 * userChosenRadius));
     return alpha;
   }
