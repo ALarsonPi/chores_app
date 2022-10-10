@@ -1,8 +1,9 @@
-import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     //In the future we'll grab any/all charts from system memory
@@ -18,7 +19,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          ConcentricChart(numberOfRings: 2),
+          ConcentricChart(numberOfRings: 3),
         ],
       ),
     );

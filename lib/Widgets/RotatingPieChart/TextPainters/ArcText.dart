@@ -32,22 +32,32 @@ class ArcTextPainter extends CustomPainter {
     double spaceBetweenLines = 20;
     if (!Global.isPhone) spaceBetweenLines += 25;
     if (Global.isHighPixelRatio) spaceBetweenLines += 5;
-    _paintPhrases(finalStrings, canvas, size);
+
+    _paintPhrases(
+        finalStrings, finalStringsOverflow, canvas, size, spaceBetweenLines);
     userChosenRadius -= spaceBetweenLines;
-    _paintPhrases(finalStringsOverflow, canvas, size);
+    _paintPhrases(finalStringsOverflow, null, canvas, size, spaceBetweenLines);
     userChosenRadius += spaceBetweenLines;
   }
 
-  void _paintPhrases(List<String> phrases, Canvas canvas, Size size) {
-    canvas.save();
-    canvas.translate(size.width / 2, size.height / 2 - userChosenRadius);
+  void _paintPhrases(List<String> phrases, List<String>? overflowPhrases,
+      Canvas canvas, Size size, double spaceBetweenLines) {
     for (int i = 0; i < phrases.length; i++) {
+      canvas.save();
+      bool shouldCenter = overflowPhrases != null && overflowPhrases[i].isEmpty;
+      if (shouldCenter) {
+        userChosenRadius -= spaceBetweenLines / 2;
+      }
+      canvas.translate(size.width / 2, size.height / 2 - userChosenRadius);
       canvas.save();
       _paintPhrase(canvas, size, initialAngle, userChosenRadius, phrases[i]);
       canvas.restore();
       initialAngle += (2 * pi / numChunks);
+      canvas.restore();
+      if (shouldCenter) {
+        userChosenRadius += spaceBetweenLines / 2;
+      }
     }
-    canvas.restore();
   }
 
   void _paintPhrase(
@@ -71,7 +81,9 @@ class ArcTextPainter extends CustomPainter {
   }
 
   double _drawLetter(Canvas canvas, String letter, double prevAngle) {
-    _textPainter.text = TextSpan(text: letter, style: textStyle);
+    bool shouldSkip = letter == "~";
+    _textPainter.text =
+        TextSpan(text: shouldSkip ? 'i' : letter, style: textStyle);
     _textPainter.layout(
       minWidth: 0,
       maxWidth: double.maxFinite,
@@ -80,7 +92,9 @@ class ArcTextPainter extends CustomPainter {
     final double alpha = 2 * asin(d / (2 * userChosenRadius));
     final newAngle = _calculateRotationAngle(prevAngle, alpha);
     canvas.rotate(newAngle);
-    _textPainter.paint(canvas, Offset(0, -_textPainter.height));
+    if (!shouldSkip) {
+      _textPainter.paint(canvas, Offset(0, -_textPainter.height));
+    }
     canvas.translate(d, 0);
     return alpha;
   }

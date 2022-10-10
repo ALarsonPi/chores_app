@@ -136,16 +136,14 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieNamesItems.add(PieChartItem(1, "James", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "John\nCina", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Jamison III", Colors.yellow));
+    pieNamesItems.add(PieChartItem(1, "Jamison\nIII", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Clean the blinds", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Floorsssssssss", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Run around good sir", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Don't die", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
-
-    // pieOneItems.add(PieChartItem(1, "Make a smoothie", Colors.orange));
 
     pieTwoItems.add(
         PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", Colors.red));
