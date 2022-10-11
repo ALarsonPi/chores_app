@@ -67,7 +67,12 @@ class _ConcentricChartState extends State<ConcentricChart> {
       pie2Proportion = 0.00;
 
       ring2TextRadius = (MediaQuery.of(context).size.height * 0.45) / 2.0;
-      if (Global.isHighPixelRatio) ring2TextRadius -= 45;
+      if (Global.isHighPixelRatio) {
+        ring2TextRadius -= 45;
+        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
+          ring2TextRadius += 35.0;
+        }
+      }
       if (!Global.isPhone) ring2TextRadius += 75;
       ring3TextRadius = 0.0;
     } else if (widget.numberOfRings == 3) {
@@ -76,16 +81,16 @@ class _ConcentricChartState extends State<ConcentricChart> {
       if (!Global.isPhone) nameProportion += 0.06;
       if (Global.isHighPixelRatio) {
         nameProportion -= 0.06;
-        if (Device.width > 1000 && Device.get().isIos) {
+        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
           nameProportion += 0.03;
         }
       }
 
       pie1Proportion = 0.4;
-      if (!Global.isPhone) pie1Proportion += 0.14;
+      if (!Global.isPhone) pie1Proportion += 0.12;
       if (Global.isHighPixelRatio) {
         pie1Proportion -= 0.08;
-        if (Device.width > 1000 && Device.get().isIos) {
+        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
           pie1Proportion += 0.05;
         }
       }
@@ -93,7 +98,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       pie2Proportion = 0.9;
 
       ring2TextRadius =
-          (MediaQuery.of(context).size.height * pie1Proportion) / 2.4;
+          (MediaQuery.of(context).size.height * pie1Proportion) / 2.45;
       if (!Global.isPhone) ring2TextRadius += 5;
 
       ring3TextRadius =
@@ -102,7 +107,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       if (!Global.isPhone) ring3TextRadius += 5;
       if (Global.isHighPixelRatio) {
         ring3TextRadius += 5.0;
-        if (Device.width > 1000 && Device.get().isIos) {
+        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
           ring3TextRadius += 5.0;
         }
       }
