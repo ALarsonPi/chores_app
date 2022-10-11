@@ -34,7 +34,12 @@ class RotatingPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.transparent,
+          border: Border.all(color: Colors.transparent),
+        ),
         height: sizeOfChart,
         child: AspectRatio(
           aspectRatio: 1.0,
@@ -293,9 +298,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
 
     phraseParts[0] = addPaddingToInitialPhrase(
-        phraseParts[0], leftPaddingNums[0], rightPaddingNums[0]);
+        phraseParts[0].trim(), leftPaddingNums[0], rightPaddingNums[0]);
     phraseParts[1] = addPaddingToInitialPhrase(
-        phraseParts[1], leftPaddingNums[1], rightPaddingNums[1]);
+        phraseParts[1].trim(), leftPaddingNums[1] - 1, rightPaddingNums[1]);
     return phraseParts;
   }
 

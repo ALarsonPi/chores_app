@@ -131,13 +131,17 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
   @override
   void initState() {
+    //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
+    //AND A MINIMUM OF 3 ITEMS
+
     pieNamesItems.add(PieChartItem(1, "Jacob", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "Jonathan", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "James", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "John\nCina", Colors.yellow));
     pieNamesItems.add(PieChartItem(1, "Jamison\nIII", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Santa\nClaus", Colors.yellow));
+    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", Colors.yellow));
+    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", Colors.yellow));
 
     pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Floorsssssssss", Colors.orange));
@@ -145,8 +149,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Don't die", Colors.orange));
     pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
-    pieOneItems
-        .add(PieChartItem(1, "Clean up after the reindeer", Colors.orange));
+    // pieOneItems
+    //     .add(PieChartItem(1, "Clean up after the reindeer", Colors.orange));
+    // pieOneItems.add(PieChartItem(1, "Give a speech", Colors.orange));
 
     pieTwoItems.add(
         PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", Colors.red));
@@ -155,7 +160,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
     pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", Colors.red));
+    // pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", Colors.red));
+    // pieTwoItems.add(PieChartItem(1, "Beat the South", Colors.red));
 
     populateBounds(pieNamesItems.length);
 
