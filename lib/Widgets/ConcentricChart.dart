@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 import 'package:flutter/material.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import '../Global.dart';
 import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
@@ -73,11 +74,21 @@ class _ConcentricChartState extends State<ConcentricChart> {
       nameProportion = 0.25;
 
       if (!Global.isPhone) nameProportion += 0.06;
-      if (Global.isHighPixelRatio) nameProportion -= 0.06;
+      if (Global.isHighPixelRatio) {
+        nameProportion -= 0.06;
+        if (Device.width > 1000 && Device.get().isIos) {
+          nameProportion += 0.03;
+        }
+      }
 
       pie1Proportion = 0.4;
       if (!Global.isPhone) pie1Proportion += 0.14;
-      if (Global.isHighPixelRatio) pie1Proportion -= 0.08;
+      if (Global.isHighPixelRatio) {
+        pie1Proportion -= 0.08;
+        if (Device.width > 1000 && Device.get().isIos) {
+          pie1Proportion += 0.05;
+        }
+      }
 
       pie2Proportion = 0.9;
 
@@ -89,7 +100,12 @@ class _ConcentricChartState extends State<ConcentricChart> {
           (MediaQuery.of(context).size.height * pie1Proportion) / 1.65;
 
       if (!Global.isPhone) ring3TextRadius += 5;
-      if (MediaQuery.of(context).devicePixelRatio > 2) ring3TextRadius += 5.0;
+      if (Global.isHighPixelRatio) {
+        ring3TextRadius += 5.0;
+        if (Device.width > 1000 && Device.get().isIos) {
+          ring3TextRadius += 5.0;
+        }
+      }
     }
 
     namesPie = PieInfo(
@@ -134,32 +150,36 @@ class _ConcentricChartState extends State<ConcentricChart> {
     //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
     //AND A MINIMUM OF 3 ITEMS
 
-    pieNamesItems.add(PieChartItem(1, "Jacob", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Jonathan", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "James", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "John\nCina", Colors.yellow));
-    pieNamesItems.add(PieChartItem(1, "Jamison\nIII", Colors.yellow));
-    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", Colors.yellow));
-    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", Colors.yellow));
+    Color namesColor = Colors.lightBlue;
+    Color pieOneColor = Colors.lightBlue;
+    Color pieTwoColor = Colors.lightBlue;
 
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Floorsssssssss", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Run around good sir", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Don't die", Colors.orange));
-    pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
+    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor));
+    pieNamesItems.add(PieChartItem(1, "Jonathan", namesColor));
+    pieNamesItems.add(PieChartItem(1, "James", namesColor));
+    pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
+
+    pieOneItems.add(PieChartItem(1, "Wash the dogs", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Floorsssssssss", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Run around good sir", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
     // pieOneItems
     //     .add(PieChartItem(1, "Clean up after the reindeer", Colors.orange));
     // pieOneItems.add(PieChartItem(1, "Give a speech", Colors.orange));
 
     pieTwoItems.add(
-        PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Mopping", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Clean Oven", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Shovel Snow", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Grow Potatoes", Colors.red));
-    pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
+        PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Mopping", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Clean Oven", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Shovel Snow", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
     // pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", Colors.red));
     // pieTwoItems.add(PieChartItem(1, "Beat the South", Colors.red));
 
