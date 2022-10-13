@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
-
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import '../Global.dart';
@@ -155,38 +153,89 @@ class _ConcentricChartState extends State<ConcentricChart> {
     //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
     //AND A MINIMUM OF 3 ITEMS
 
-    Color namesColor = Colors.lightBlue;
-    Color pieOneColor = Colors.lightBlue;
-    Color pieTwoColor = Colors.lightBlue;
+    Color? namesColor = Colors.lightBlue[100];
+    Color? pieOneColor = Colors.lightBlue[500];
+    Color? pieTwoColor = Colors.lightBlue[700];
 
-    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor));
+    // Color? namesColor = Colors.red[200];
+    // Color? pieOneColor = Colors.red[400];
+    // Color? pieTwoColor = Colors.red[700];
+
+    // Color? namesColor = Colors.purple[100];
+    // Color? pieOneColor = Colors.purple[300];
+    // Color? pieTwoColor = Colors.purple[500];
+
+    // Color? namesColor = Colors.green[200];
+    // Color? pieOneColor = Colors.green[500];
+    // Color? pieTwoColor = Colors.green[700];
+
+    // Color? namesColor = Colors.orange[200];
+    // Color? pieOneColor = Colors.orange[500];
+    // Color? pieTwoColor = Colors.orange[700];
+
+    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor!));
     pieNamesItems.add(PieChartItem(1, "Jonathan", namesColor));
     pieNamesItems.add(PieChartItem(1, "James", namesColor));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
+    pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
+    //pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
+    //pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
+    //pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
 
-    pieOneItems.add(PieChartItem(1, "Wash the dogs", pieOneColor));
+    String iis = "";
+    iis += "iiiiiiiiii"; //1
+    iis += "iiiiiiiiii"; //2
+    iis += "iiiiiiiiii"; //3
+    iis += "iiiiiiiiii"; //4
+    iis += "iiiiiiiiii"; //5
+    iis += "iiiiiiiiii"; //6
+    iis += "iiiiiiiiii"; //7
+    iis += "iiiiiiiiii"; //8
+    // iis += "iiiiiiiiii"; //9
+    // iis += "iiiiiiiiii"; //10
+    //iis += "iiiiiiiiii";
+    iis += "iiiiiiiiii";
+    iis += "iii";
+
+    String mms = "";
+    //mms += "MMMMMMMMMM";
+    //mms += "MMMMMMMMMM";
+    // mms += "MMMMMMMMMM";
+    //mms += "MMMMMMMMMM";
+    mms += "MMMMMMMMM";
+
+    String aas = "";
+    //aas += "a a a a a a a a a a";
+    //aas += " a a a a a a a a a a";
+    aas += " a a a a a a a a a a";
+    // a a a a";
+    //aas += " a a a a a a a a a";
+    //aas += " a a a a a a a a a a";
+    //aas += " a a";
+
+    String bops = "bop bop bop bop bop";
+    bops += " bop bop";
+    // bops += " bop bop bop bop bop";
+    //bops += " bop bop bop bop bop bop";
+    //bops += " bop bop";
+
+    pieOneItems.add(PieChartItem(1, iis, pieOneColor!));
     pieOneItems.add(PieChartItem(1, "Floorsssssssss", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Run around good sir", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Wash the fat dogs", Colors.orange));
-    // pieOneItems
-    //     .add(PieChartItem(1, "Clean up after the reindeer", Colors.orange));
-    // pieOneItems.add(PieChartItem(1, "Give a speech", Colors.orange));
+    pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
+    //pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
+    //pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
+    //pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
 
-    pieTwoItems.add(
-        PieChartItem(1, "Raking leavvvvvvvvvvvvvvvvvvvvvvvves", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, iis, pieTwoColor!));
     pieTwoItems.add(PieChartItem(1, "Mopping", pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Clean Oven", pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Travel to Russia", Colors.red));
-    // pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", Colors.red));
-    // pieTwoItems.add(PieChartItem(1, "Beat the South", Colors.red));
+    pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
+    //pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
+    //pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
+    //pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
 
     populateBounds(pieNamesItems.length);
 

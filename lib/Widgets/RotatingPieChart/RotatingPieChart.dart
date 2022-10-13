@@ -250,7 +250,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<String> splitPhraseForOverflow(String phraseToSplit) {
     List<String> phraseParts = List.empty(growable: true);
     int i = (phraseToSplit.length / 2).floor();
-    const int numLettersToCheck = 5;
+    int numLettersToCheck = 5;
+    numLettersToCheck = min(i, numLettersToCheck);
     for (int j = 0; j < numLettersToCheck; j++) {
       if (phraseToSplit[i] == " " ||
           phraseToSplit[i] == "\t" ||
