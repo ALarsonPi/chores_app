@@ -9,18 +9,17 @@ class ArcTextPainter extends CustomPainter {
     this.userChosenRadius,
     this.textStyle,
     this.initialAngle,
-    this.finalStrings,
-    this.finalStringsOverflow,
+    this.listOfChunkPhrases,
     this.numChunks,
   );
   double userChosenRadius;
   double initialAngle;
   final TextStyle textStyle;
   final _textPainter = TextPainter(textDirection: TextDirection.ltr);
-  final List<String> finalStrings;
-  final List<String> finalStringsOverflow;
+  final List<List<String>> listOfChunkPhrases;
   final int numChunks;
 
+  late double actualRadius = userChosenRadius;
   late Canvas pieCanvas;
 
   double degreesToRadians(double degrees) {
@@ -33,40 +32,44 @@ class ArcTextPainter extends CustomPainter {
     if (!Global.isPhone) spaceBetweenLines += 25;
     if (Global.isHighPixelRatio) spaceBetweenLines += 5;
 
-    _paintPhrases(
-        finalStrings, finalStringsOverflow, canvas, size, spaceBetweenLines);
-    userChosenRadius -= spaceBetweenLines;
-    _paintPhrases(finalStringsOverflow, null, canvas, size, spaceBetweenLines);
-    userChosenRadius += spaceBetweenLines;
+    _paintChunks(
+        listOfChunkPhrases, numChunks, spaceBetweenLines, canvas, size);
   }
 
-  void _paintPhrases(List<String> phrases, List<String>? overflowPhrases,
-      Canvas canvas, Size size, double spaceBetweenLines) {
-    for (int i = 0; i < phrases.length; i++) {
+  void _paintChunk(List<String> phrases, double spaceBetweenLines,
+      Canvas canvas, Size size) {
+    if (phrases.length == 1) {
+      //We might consider changing this centering amount / allowing it to be customizable
+      // or getting the next inner most circle's height and actually center the text between that
+      // and the far edge of this circle
+      actualRadius -= spaceBetweenLines / 2;
+    }
+    for (String phrase in phrases) {
       canvas.save();
-      bool shouldCenter = overflowPhrases != null && overflowPhrases[i].isEmpty;
-      if (shouldCenter) {
-        userChosenRadius -= spaceBetweenLines / 2;
-      }
-      canvas.translate(size.width / 2, size.height / 2 - userChosenRadius);
+      canvas.translate(size.width / 2, size.height / 2 - actualRadius);
+      _paintPhrase(canvas, size, initialAngle, actualRadius, phrase);
+      actualRadius -= spaceBetweenLines;
+      canvas.restore();
+    }
+    actualRadius = userChosenRadius;
+  }
+
+  void _paintChunks(List<List<String>> listOfChunks, int numChunks,
+      double spaceBetweenLines, Canvas canvas, Size size) {
+    for (int i = 0; i < numChunks; i++) {
       canvas.save();
-      _paintPhrase(canvas, size, initialAngle, userChosenRadius, phrases[i]);
+      _paintChunk(listOfChunks[i], spaceBetweenLines, canvas, size);
       canvas.restore();
-      initialAngle += (2 * pi / numChunks);
-      canvas.restore();
-      if (shouldCenter) {
-        userChosenRadius += spaceBetweenLines / 2;
-      }
+      incrementAngleByChunkSize();
     }
   }
 
-  void _paintPhrase(
-    Canvas canvas,
-    Size size,
-    double initialAngle,
-    double radiusToUse,
-    String phraseToPrint,
-  ) {
+  void incrementAngleByChunkSize() {
+    initialAngle += (2 * pi / numChunks);
+  }
+
+  void _paintPhrase(Canvas canvas, Size size, double initialAngle,
+      double radiusToUse, String phraseToPrint) {
     if (initialAngle != 0) {
       final d = 2 * radiusToUse * sin(initialAngle / 2);
       final rotationAngle = _calculateRotationAngle(0, initialAngle);
@@ -76,11 +79,12 @@ class ArcTextPainter extends CustomPainter {
     double angle = initialAngle;
 
     for (int i = 0; i < phraseToPrint.length; i++) {
-      angle = _drawLetter(canvas, phraseToPrint[i], angle);
+      angle = _drawLetter(canvas, phraseToPrint[i], angle, radiusToUse);
     }
   }
 
-  double _drawLetter(Canvas canvas, String letter, double prevAngle) {
+  double _drawLetter(
+      Canvas canvas, String letter, double prevAngle, double actualRadius) {
     bool shouldSkip = letter == "~";
     _textPainter.text =
         TextSpan(text: shouldSkip ? 'i' : letter, style: textStyle);
@@ -89,7 +93,7 @@ class ArcTextPainter extends CustomPainter {
       maxWidth: double.maxFinite,
     );
     final double d = _textPainter.width;
-    final double alpha = 2 * asin(d / (2 * userChosenRadius));
+    final double alpha = 2 * asin(d / (2 * actualRadius));
     final newAngle = _calculateRotationAngle(prevAngle, alpha);
     canvas.rotate(newAngle);
     if (!shouldSkip) {

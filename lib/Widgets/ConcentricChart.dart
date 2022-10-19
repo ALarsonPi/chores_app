@@ -7,7 +7,7 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
-  late final double namesFontSize;
+  late double namesFontSize;
   late final double outerRingsFontSize;
   late final Color fontColor;
   ConcentricChart({super.key, required this.numberOfRings}) {
@@ -177,10 +177,10 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieNamesItems.add(PieChartItem(1, "Jonathan", namesColor));
     pieNamesItems.add(PieChartItem(1, "James", namesColor));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
-    pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
-    pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
-    pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
-    pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
+    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
 
     String iis = "";
     iis += "iiiiiiiiii"; //1
@@ -240,22 +240,31 @@ class _ConcentricChartState extends State<ConcentricChart> {
     bops += "";
 
     pieOneItems.add(PieChartItem(1, bops, pieOneColor!));
-    pieOneItems.add(PieChartItem(1, "Floorsssssssss", pieOneColor));
+    pieOneItems.add(PieChartItem(
+        1,
+        "Floorsssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        pieOneColor));
     pieOneItems.add(PieChartItem(1, "Run around good sir", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
+    // pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
 
     pieTwoItems.add(PieChartItem(1, bops, pieTwoColor!));
-    pieTwoItems.add(PieChartItem(1, "Mopping", pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Clean Oven", pieTwoColor));
+    pieTwoItems.add(PieChartItem(
+        1,
+        "Clean Oven with all your might; mind; and strength with an eye single to the glory of God",
+        pieTwoColor));
+    pieTwoItems.add(PieChartItem(
+        1,
+        "Clean Oven with all your might, mind, and strength with an eye single to the glory of God",
+        pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
+    // pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
 
     populateBounds(pieNamesItems.length);
 

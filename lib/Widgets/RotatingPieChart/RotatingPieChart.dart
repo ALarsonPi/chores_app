@@ -97,9 +97,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late PieChartItemToText toText;
   late PieInfo pie;
 
-  List<String> finalStrings = List.empty(growable: true);
-  List<String> finalStringsOverflow = List.empty(growable: true);
-
+  List<List<String>> chunkPhraseList = List.empty(growable: true);
   late int numChunks;
   late double CHUNK_SIZE;
 
@@ -127,7 +125,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           textDirection: TextDirection.ltr,
         );
     pie = widget.pie;
-    if (!isNames) setUpFinalStrings();
+    if (!isNames) setUpPhraseChunks();
     super.initState();
   }
 
@@ -196,55 +194,83 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return finalString;
   }
 
-  setUpFinalStrings() async {
-    //Step 1. Get all alphas for each letter in the allotted word
-    List<double> chunkAlpha = List.empty(growable: true);
-    for (var item in widget.items) {
-      chunkAlpha.add(getTotalPhraseAlpha(item.name));
-      finalStrings.add("");
-      finalStringsOverflow.add("");
-    }
+  double getTotalPadding(String phrase) {
+    double chunkAlpha = getTotalPhraseAlpha(phrase);
+    return getTotalPaddingAsIntegerIncrements(chunkAlpha, CHUNK_SIZE);
+  }
 
-    //Step 2. Find the amount of padding allowed by this word
-    for (int i = 0; i < chunkAlpha.length; i++) {
-      chunkAlpha[i] =
-          getTotalPaddingAsIntegerIncrements(chunkAlpha[i], CHUNK_SIZE);
-    }
-    //Step 3. Break the total padding into left and right, favoring the right side
-    // if there is a remainder
-    List<double> leftPaddingNums = List.empty(growable: true);
-    List<double> rightPaddingNums = List.empty(growable: true);
-    for (int i = 0; i < chunkAlpha.length; i++) {
-      double remainder = chunkAlpha[i] % 2;
-      chunkAlpha[i] -= remainder;
-      double splitNum = chunkAlpha[i] / 2;
+  // This method is used while calculating overflow
+  double getHalfOfTotalPaddingFor(String phrase) {
+    double totalPadding = getTotalPadding(phrase);
+    double halfOfTotalPadding = totalPadding / 2;
+    return halfOfTotalPadding;
+  }
 
-      //Take Care of Overflow Behavior
-      if (chunkAlpha[i] <= 2) {
-        splitNum = 0;
-        List<String> splitPhraseParts =
-            splitPhraseForOverflow(widget.items[i].name);
-        List<String> repaddedPhraseParts =
-            reapplyPaddingForOverflow(splitPhraseParts);
-        finalStrings[i] = repaddedPhraseParts[0];
-        finalStringsOverflow[i] = repaddedPhraseParts[1];
+  List<double> getLeftAndRightPadding(String phrase) {
+    double totalPadding = getTotalPadding(phrase);
+
+    // Break padding into left and right, favoring left
+    double remainder = totalPadding % 2;
+    double halfOfTotalPadding = totalPadding / 2;
+
+    double leftPaddingAmount = halfOfTotalPadding + remainder;
+    double rightPaddingAmount = halfOfTotalPadding;
+
+    List<double> paddings = List.empty(growable: true);
+    paddings.add(leftPaddingAmount);
+    paddings.add(rightPaddingAmount);
+
+    return paddings;
+  }
+
+  List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
+    List<String> phrasesToReturn = List.empty(growable: true);
+    String currPhrase = fullPhrase;
+    double halfOfTotalPadding = getHalfOfTotalPaddingFor(currPhrase);
+    const int MIN_PADDING_FOR_OVERFLOW = 2;
+    bool isOverflowing = halfOfTotalPadding <= MIN_PADDING_FOR_OVERFLOW;
+
+    // If it will overflow at least once
+    // overflow as many times as is needed
+    if (isOverflowing) {
+      while (isOverflowing) {
+        halfOfTotalPadding = getHalfOfTotalPaddingFor(currPhrase);
+        List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
+        phrasesToReturn.add(splitPhraseParts.first);
+        if (getHalfOfTotalPaddingFor(splitPhraseParts.last) <=
+            MIN_PADDING_FOR_OVERFLOW) {
+          currPhrase = splitPhraseParts.last;
+        } else {
+          isOverflowing = false;
+          phrasesToReturn.add(splitPhraseParts.last);
+        }
       }
-
-      leftPaddingNums.add(splitNum);
-      rightPaddingNums.add(splitNum + remainder);
+    } else {
+      phrasesToReturn.add(fullPhrase);
     }
 
-    //Step 4. Form the final string, using spaces as the padding
-    for (int i = 0; i < chunkAlpha.length; i++) {
-      String finalString = addPaddingToInitialPhrase(
-          widget.items[i].name, leftPaddingNums[i], rightPaddingNums[i]);
-      if (finalStringsOverflow[i].isEmpty) {
-        finalStrings[i] = finalString;
-      }
-    }
+    return phrasesToReturn;
+  }
 
-    //5. Decide on what length of strings should be allowed for the user to type in
-    // we would then cap that amount when the user is inputting the amount
+  List<String> setUpPhraseChunk(String fullPhrase) {
+    List<String> unpaddedPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
+    List<String> phrasesToReturn = List.empty(growable: true);
+
+    // For every unpaddedPhrase, add padding
+    for (String phrase in unpaddedPhrases) {
+      List<double> paddings = getLeftAndRightPadding(phrase);
+      String paddedString =
+          addPaddingToInitialPhrase(phrase, paddings.first, paddings.last);
+      phrasesToReturn.add(paddedString);
+    }
+    return phrasesToReturn;
+  }
+
+  setUpPhraseChunks() async {
+    for (int i = 0; i < numChunks; i++) {
+      List<String> chunkPhrases = setUpPhraseChunk(widget.items[i].name);
+      chunkPhraseList.add(chunkPhrases);
+    }
   }
 
   List<String> splitPhraseForOverflow(String phraseToSplit) {
@@ -278,30 +304,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       phraseParts.add('${phraseToSplit.substring(0, i).trim()}-');
       phraseParts.add(phraseToSplit.substring(i).trim());
     }
-    return phraseParts;
-  }
-
-  List<String> reapplyPaddingForOverflow(List<String> phraseParts) {
-    List<double> numTotalPaddingElements = List.empty(growable: true);
-    numTotalPaddingElements.add(getTotalPaddingAsIntegerIncrements(
-        getTotalPhraseAlpha(phraseParts[0].trim()), CHUNK_SIZE));
-    numTotalPaddingElements.add(getTotalPaddingAsIntegerIncrements(
-        getTotalPhraseAlpha(phraseParts[1].trim()), CHUNK_SIZE));
-
-    List<double> leftPaddingNums = List.empty(growable: true);
-    List<double> rightPaddingNums = List.empty(growable: true);
-    for (int i = 0; i < 2; i++) {
-      double remainder = numTotalPaddingElements[i] % 2;
-      numTotalPaddingElements[i] -= remainder;
-      double splitNum = numTotalPaddingElements[i] / 2;
-      leftPaddingNums.add(splitNum);
-      rightPaddingNums.add(splitNum + remainder);
-    }
-
-    phraseParts[0] = addPaddingToInitialPhrase(
-        phraseParts[0].trim(), leftPaddingNums[0], rightPaddingNums[0]);
-    phraseParts[1] = addPaddingToInitialPhrase(
-        phraseParts[1].trim(), leftPaddingNums[1] - 1, rightPaddingNums[1]);
     return phraseParts;
   }
 
@@ -372,8 +374,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         userChosenRadius,
                         textStyle,
                         _animation.value + 1.57079632679,
-                        finalStrings,
-                        finalStringsOverflow,
+                        chunkPhraseList,
                         numChunks,
                       )
                     : PieTextPainter(
