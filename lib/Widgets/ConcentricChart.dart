@@ -7,17 +7,32 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
+  Color circleOneColor;
+  Color circleTwoColor;
+  Color circleThreeColor;
+  Color circleOneFontColor;
+  Color circleTwoFontColor;
+  Color circleThreeFontColor;
+
   late double namesFontSize;
   late final double outerRingsFontSize;
-  late final Color fontColor;
-  ConcentricChart({super.key, required this.numberOfRings}) {
+  ConcentricChart({
+    super.key,
+    required this.numberOfRings,
+    required this.circleOneColor,
+    required this.circleTwoColor,
+    required this.circleThreeColor,
+    required this.circleOneFontColor,
+    required this.circleTwoFontColor,
+    required this.circleThreeFontColor,
+  }) {
     namesFontSize = 8.0;
     double pixelRatioCoefficient = (Global.isHighPixelRatio) ? 0.0 : 0.05;
     double textFontCoefficient =
         ((Global.isPhone) ? 1.0 : 2.0) + pixelRatioCoefficient;
     outerRingsFontSize =
         ((numberOfRings == 3) ? 14.0 : 18.0) * textFontCoefficient;
-    fontColor = Colors.black;
+    //fontColor = Colors.black;
   }
 
   @override
@@ -41,13 +56,17 @@ class _ConcentricChartState extends State<ConcentricChart> {
   // ignore: non_constant_identifier_names
   late double OUTER_RINGS_FONT_SIZE;
   // ignore: non_constant_identifier_names
-  late Color TEXT_COLOR;
+  late Color TEXT_COLOR_ONE;
+  late Color TEXT_COLOR_TWO;
+  late Color TEXT_COLOR_THREE;
 
   @override
   void didChangeDependencies() {
     NAMES_FONT_SIZE = widget.namesFontSize;
     OUTER_RINGS_FONT_SIZE = widget.outerRingsFontSize;
-    TEXT_COLOR = widget.fontColor;
+    TEXT_COLOR_ONE = widget.circleOneFontColor;
+    TEXT_COLOR_TWO = widget.circleTwoFontColor;
+    TEXT_COLOR_THREE = widget.circleThreeFontColor;
 
     double nameProportion = 0.0;
     double pie1Proportion = 0.0;
@@ -118,7 +137,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       items: pieNamesItems,
       currRingNum: 1,
       textSize: NAMES_FONT_SIZE,
-      textColor: TEXT_COLOR,
+      textColor: TEXT_COLOR_ONE,
     );
 
     firstPie = PieInfo(
@@ -127,7 +146,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       textRadius: ring2TextRadius,
       currRingNum: 2,
       textSize: OUTER_RINGS_FONT_SIZE,
-      textColor: TEXT_COLOR,
+      textColor: TEXT_COLOR_TWO,
     );
 
     secondPie = PieInfo(
@@ -136,7 +155,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       textRadius: ring3TextRadius,
       currRingNum: 3,
       textSize: OUTER_RINGS_FONT_SIZE,
-      textColor: TEXT_COLOR,
+      textColor: TEXT_COLOR_THREE,
     );
 
     if (widget.numberOfRings == 3) {
@@ -153,9 +172,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
     //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
     //AND A MINIMUM OF 3 ITEMS
 
-    Color? namesColor = Colors.lightBlue[100];
-    Color? pieOneColor = Colors.lightBlue[500];
-    Color? pieTwoColor = Colors.lightBlue[700];
+    Color namesColor = widget.circleOneColor;
+    Color pieOneColor = widget.circleTwoColor;
+    Color pieTwoColor = widget.circleThreeColor;
 
     // Color? namesColor = Colors.red[200];
     // Color? pieOneColor = Colors.red[400];
@@ -173,7 +192,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     // Color? pieOneColor = Colors.orange[500];
     // Color? pieTwoColor = Colors.orange[700];
 
-    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor!));
+    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor));
     pieNamesItems.add(PieChartItem(1, "Jonathan", namesColor));
     pieNamesItems.add(PieChartItem(1, "James", namesColor));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
@@ -239,7 +258,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     // bops += " bop bop bop bop bop";
     bops += "";
 
-    pieOneItems.add(PieChartItem(1, bops, pieOneColor!));
+    pieOneItems.add(PieChartItem(1, bops, pieOneColor));
     pieOneItems.add(PieChartItem(
         1,
         "Floorsssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
@@ -251,7 +270,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     // pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
     // pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
 
-    pieTwoItems.add(PieChartItem(1, bops, pieTwoColor!));
+    pieTwoItems.add(PieChartItem(1, bops, pieTwoColor));
     pieTwoItems.add(PieChartItem(
         1,
         "Clean Oven with all your might; mind; and strength with an eye single to the glory of God",
