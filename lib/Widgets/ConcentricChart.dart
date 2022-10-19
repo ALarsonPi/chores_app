@@ -7,12 +7,19 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
+
   Color circleOneColor;
-  Color circleTwoColor;
-  Color circleThreeColor;
   Color circleOneFontColor;
+  double circleOneFontSize;
+  double circleOneRadiusProportion;
+
+  Color circleTwoColor;
   Color circleTwoFontColor;
+  double circleTwoFontSize;
+
+  Color circleThreeColor;
   Color circleThreeFontColor;
+  double circleThreeFontSize;
 
   late double namesFontSize;
   late final double outerRingsFontSize;
@@ -25,14 +32,16 @@ class ConcentricChart extends StatefulWidget {
     required this.circleOneFontColor,
     required this.circleTwoFontColor,
     required this.circleThreeFontColor,
+    this.circleOneRadiusProportion = 0.6,
+    this.circleOneFontSize = 8.0,
+    this.circleTwoFontSize = 14.0,
+    this.circleThreeFontSize = 14.0,
   }) {
-    namesFontSize = 8.0;
     double pixelRatioCoefficient = (Global.isHighPixelRatio) ? 0.0 : 0.05;
     double textFontCoefficient =
         ((Global.isPhone) ? 1.0 : 2.0) + pixelRatioCoefficient;
-    outerRingsFontSize =
-        ((numberOfRings == 3) ? 14.0 : 18.0) * textFontCoefficient;
-    //fontColor = Colors.black;
+    circleTwoFontSize *= textFontCoefficient;
+    circleThreeFontSize *= textFontCoefficient;
   }
 
   @override
@@ -51,23 +60,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
   late PieInfo firstPie;
   late PieInfo secondPie;
 
-  // ignore: non_constant_identifier_names
-  late double NAMES_FONT_SIZE;
-  // ignore: non_constant_identifier_names
-  late double OUTER_RINGS_FONT_SIZE;
-  // ignore: non_constant_identifier_names
-  late Color TEXT_COLOR_ONE;
-  late Color TEXT_COLOR_TWO;
-  late Color TEXT_COLOR_THREE;
-
   @override
   void didChangeDependencies() {
-    NAMES_FONT_SIZE = widget.namesFontSize;
-    OUTER_RINGS_FONT_SIZE = widget.outerRingsFontSize;
-    TEXT_COLOR_ONE = widget.circleOneFontColor;
-    TEXT_COLOR_TWO = widget.circleTwoFontColor;
-    TEXT_COLOR_THREE = widget.circleThreeFontColor;
-
     double nameProportion = 0.0;
     double pie1Proportion = 0.0;
     double pie2Proportion = 0.0;
@@ -133,11 +127,11 @@ class _ConcentricChartState extends State<ConcentricChart> {
     namesPie = PieInfo(
       pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion,
       //In names circle - is a coefficient
-      textRadius: 0.6,
+      textRadius: widget.circleOneRadiusProportion,
       items: pieNamesItems,
       currRingNum: 1,
-      textSize: NAMES_FONT_SIZE,
-      textColor: TEXT_COLOR_ONE,
+      textSize: widget.circleOneFontSize,
+      textColor: widget.circleOneFontColor,
     );
 
     firstPie = PieInfo(
@@ -145,8 +139,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
       items: pieOneItems,
       textRadius: ring2TextRadius,
       currRingNum: 2,
-      textSize: OUTER_RINGS_FONT_SIZE,
-      textColor: TEXT_COLOR_TWO,
+      textSize: widget.circleTwoFontSize,
+      textColor: widget.circleTwoFontColor,
     );
 
     secondPie = PieInfo(
@@ -154,8 +148,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
       items: pieTwoItems,
       textRadius: ring3TextRadius,
       currRingNum: 3,
-      textSize: OUTER_RINGS_FONT_SIZE,
-      textColor: TEXT_COLOR_THREE,
+      textSize: widget.circleThreeFontSize,
+      textColor: widget.circleThreeFontColor,
     );
 
     if (widget.numberOfRings == 3) {

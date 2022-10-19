@@ -8,11 +8,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Will eventually want to get these from global variable
-    Color pieOneColor = Colors.lightBlue[100] as Color;
-    Color pieTwoColor = Colors.lightBlue[500] as Color;
-    Color pieThreeColor = Colors.lightBlue[700] as Color;
-
     //In the future we'll grab any/all charts from system memory
     //or firebase (depending on updates and all that)
     //For now it's all hard-coded and we currently only
@@ -35,12 +30,16 @@ class HomeScreen extends StatelessWidget {
         children: [
           ConcentricChart(
             numberOfRings: 3,
-            circleOneColor: pieOneColor,
+            circleOneColor: Colors.lightBlue[100] as Color,
             circleOneFontColor: Colors.black,
-            circleTwoColor: pieTwoColor,
+            circleOneFontSize: 8.0,
+            circleOneRadiusProportion: 0.6,
+            circleTwoColor: Colors.lightBlue[500] as Color,
             circleTwoFontColor: Colors.white,
-            circleThreeColor: pieThreeColor,
+            circleTwoFontSize: 14.0,
+            circleThreeColor: Colors.lightBlue[700] as Color,
             circleThreeFontColor: Colors.white,
+            circleThreeFontSize: 14.0,
           ),
         ],
       ),
