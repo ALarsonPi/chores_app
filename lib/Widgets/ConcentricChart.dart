@@ -178,64 +178,84 @@ class _ConcentricChartState extends State<ConcentricChart> {
     pieNamesItems.add(PieChartItem(1, "James", namesColor));
     pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
     pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
-    //pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
-    //pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
-    //pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
+    pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
+    pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
+    pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
 
     String iis = "";
     iis += "iiiiiiiiii"; //1
-    iis += "iiiiiiiiii"; //2
-    iis += "iiiiiiiiii"; //3
-    iis += "iiiiiiiiii"; //4
-    iis += "iiiiiiiiii"; //5
-    iis += "iiiiiiiiii"; //6
+    iis += "i"; //2
+    // iis += "iiiiiiiiii"; //3
+    // iis += "iiiiiiiiii"; //4
+    // iis += "iiiiiiiiii"; //5
+    // iis += "iiiiiiiiii"; //6
     iis += "iiiiiiiiii"; //7
-    iis += "iiiiiiiiii"; //8
-    // iis += "iiiiiiiiii"; //9
-    // iis += "iiiiiiiiii"; //10
+    // iis += "iiiiiiiiii"; //8
+    //iis += "iiiiiiiiii"; //9
+    //iis += "iiiiiiiiii"; //10
+    iis += ""; //11
+    //iis += "iiiiiiiiii"; //12
+    // iis += "iiiiiiiiii"; //13
+    // iis += "iiiiiiiiii"; //14
+    //iis += "iiiiiiiiii"; //15
     //iis += "iiiiiiiiii";
-    iis += "iiiiiiiiii";
-    iis += "iii";
+    iis += "";
+    iis += "";
 
     String mms = "";
+    mms += "MMM";
+    mms += "";
     //mms += "MMMMMMMMMM";
-    //mms += "MMMMMMMMMM";
+    //mms += "MMMMMMM";
     // mms += "MMMMMMMMMM";
+    // mms += "MMMMMMMMMM";
+    //mms += "MMMMMMMM";
     //mms += "MMMMMMMMMM";
-    mms += "MMMMMMMMM";
+    //mms += "MMMMMMMMMM";
+    //mms += "MMMMMMMMMM";
+    mms += "M";
 
     String aas = "";
     //aas += "a a a a a a a a a a";
     //aas += " a a a a a a a a a a";
-    aas += " a a a a a a a a a a";
-    // a a a a";
-    //aas += " a a a a a a a a a";
+    //aas += " a a a a a";
+    //aas += "a a a a a a a a a a";
     //aas += " a a a a a a a a a a";
-    //aas += " a a";
+    aas += " a a a a";
+    //aas += " a a a a a a a a a a";
+    //aas += " a a a a a a a a a a";
+    //aas += " a a a a";
 
-    String bops = "bop bop bop bop bop";
-    bops += " bop bop";
-    // bops += " bop bop bop bop bop";
+    String bops = "bop bop bop";
+    //bops += " bop bop bop";
+    //bops += " bop bop bop bop bop";
+    //bops += " bop bop bop bop bop";
     //bops += " bop bop bop bop bop bop";
-    //bops += " bop bop";
+    //bops += " bop bop bop";
+    // bops += " bop bop bop bop bop bop";
+    //bops += " bop bop bop bop bop bop";
+    //bops += " bop bop bop bop bop";
+    // bops += " bop bop bop bop bop";
+    // bops += " bop bop bop bop bop";
+    bops += "";
 
-    pieOneItems.add(PieChartItem(1, iis, pieOneColor!));
+    pieOneItems.add(PieChartItem(1, bops, pieOneColor!));
     pieOneItems.add(PieChartItem(1, "Floorsssssssss", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Run around good sir", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", pieOneColor));
     pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
-    //pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
-    //pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
-    //pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
+    pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
 
-    pieTwoItems.add(PieChartItem(1, iis, pieTwoColor!));
+    pieTwoItems.add(PieChartItem(1, bops, pieTwoColor!));
     pieTwoItems.add(PieChartItem(1, "Mopping", pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Clean Oven", pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Shovel Snow", pieTwoColor));
     pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
-    //pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
-    //pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
-    //pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
+    pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
 
     populateBounds(pieNamesItems.length);
 

@@ -1,6 +1,8 @@
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 
+import '../Global.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -13,9 +15,16 @@ class HomeScreen extends StatelessWidget {
     //user up to 3, maybe
     //Also use title of first chart as title here in the Scaffold
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Chart 1"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Global.toolbarHeight),
+        child: AppBar(
+          toolbarHeight: Global.toolbarHeight,
+          centerTitle: true,
+          title: Text(
+            "Chart 1",
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+        ),
       ),
       body: Stack(
         children: [
