@@ -100,6 +100,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   late int numChunks;
   late double CHUNK_SIZE;
+  late double spaceBetweenLines;
 
   //When using 'l' or 'i' as the smallest letter
   final double WIDTH_OF_SMALLEST_LETTER = 0.1145861761;
@@ -125,6 +126,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           textDirection: TextDirection.ltr,
         );
     pie = widget.pie;
+    spaceBetweenLines = 20;
+    if (!Global.isPhone) spaceBetweenLines += 25;
+    if (Global.isHighPixelRatio) spaceBetweenLines += 5;
     if (!isNames) setUpPhraseChunks();
     super.initState();
   }
@@ -134,7 +138,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   final _testPainter = TextPainter(textDirection: TextDirection.ltr);
-  double getAlphaForSpecificLetter(String letter) {
+  double getAlphaForSpecificLetter(String letter, double desiredRadius) {
     _testPainter.text = TextSpan(
       text: letter,
       style: widget.textStyle,
@@ -144,14 +148,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       maxWidth: double.maxFinite,
     );
     final double d = _testPainter.width;
-    final double alpha = 2 * asin(d / (2 * userChosenRadius));
+    final double alpha = 2 * asin(d / (2 * desiredRadius));
     return alpha;
   }
 
-  double getTotalPhraseAlpha(String word) {
+  double getTotalPhraseAlpha(String word, double desiredRadius) {
     double sum = 0;
     for (var currLetter in word.characters) {
-      sum += getAlphaForSpecificLetter(currLetter);
+      sum += getAlphaForSpecificLetter(currLetter, desiredRadius);
     }
     return sum;
   }
@@ -194,20 +198,20 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return finalString;
   }
 
-  double getTotalPadding(String phrase) {
-    double chunkAlpha = getTotalPhraseAlpha(phrase);
+  double getTotalPadding(String phrase, double desiredRadius) {
+    double chunkAlpha = getTotalPhraseAlpha(phrase, desiredRadius);
     return getTotalPaddingAsIntegerIncrements(chunkAlpha, CHUNK_SIZE);
   }
 
   // This method is used while calculating overflow
   double getHalfOfTotalPaddingFor(String phrase) {
-    double totalPadding = getTotalPadding(phrase);
+    double totalPadding = getTotalPadding(phrase, userChosenRadius);
     double halfOfTotalPadding = totalPadding / 2;
     return halfOfTotalPadding;
   }
 
-  List<double> getLeftAndRightPadding(String phrase) {
-    double totalPadding = getTotalPadding(phrase);
+  List<double> getLeftAndRightPadding(String phrase, double desiredRadius) {
+    double totalPadding = getTotalPadding(phrase, desiredRadius);
 
     // Break padding into left and right, favoring left
     double remainder = totalPadding % 2;
@@ -256,11 +260,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     List<String> unpaddedPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
     List<String> phrasesToReturn = List.empty(growable: true);
 
+    double currRadius = userChosenRadius;
+
     // For every unpaddedPhrase, add padding
     for (String phrase in unpaddedPhrases) {
-      List<double> paddings = getLeftAndRightPadding(phrase);
+      List<double> paddings = getLeftAndRightPadding(phrase, currRadius);
       String paddedString =
           addPaddingToInitialPhrase(phrase, paddings.first, paddings.last);
+      currRadius -= spaceBetweenLines / 2;
       phrasesToReturn.add(paddedString);
     }
     return phrasesToReturn;
@@ -376,6 +383,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         _animation.value + 1.57079632679,
                         chunkPhraseList,
                         numChunks,
+                        spaceBetweenLines,
                       )
                     : PieTextPainter(
                         items: this.widget.items,

@@ -11,9 +11,11 @@ class ArcTextPainter extends CustomPainter {
     this.initialAngle,
     this.listOfChunkPhrases,
     this.numChunks,
+    this.spaceBetweenLines,
   );
   double userChosenRadius;
   double initialAngle;
+  double spaceBetweenLines;
   final TextStyle textStyle;
   final _textPainter = TextPainter(textDirection: TextDirection.ltr);
   final List<List<String>> listOfChunkPhrases;
@@ -28,10 +30,6 @@ class ArcTextPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double spaceBetweenLines = 20;
-    if (!Global.isPhone) spaceBetweenLines += 25;
-    if (Global.isHighPixelRatio) spaceBetweenLines += 5;
-
     _paintChunks(
         listOfChunkPhrases, numChunks, spaceBetweenLines, canvas, size);
   }
