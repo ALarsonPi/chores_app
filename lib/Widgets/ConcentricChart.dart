@@ -8,15 +8,18 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
 
+  List<String> circleOneText;
   Color circleOneColor;
   Color circleOneFontColor;
   double circleOneFontSize;
   double circleOneRadiusProportion;
 
+  List<String> circleTwoText;
   Color circleTwoColor;
   Color circleTwoFontColor;
   double circleTwoFontSize;
 
+  List<String> circleThreeText;
   Color circleThreeColor;
   Color circleThreeFontColor;
   double circleThreeFontSize;
@@ -26,8 +29,11 @@ class ConcentricChart extends StatefulWidget {
   ConcentricChart({
     super.key,
     required this.numberOfRings,
+    required this.circleOneText,
     required this.circleOneColor,
+    required this.circleTwoText,
     required this.circleTwoColor,
+    required this.circleThreeText,
     required this.circleThreeColor,
     required this.circleOneFontColor,
     required this.circleTwoFontColor,
@@ -51,9 +57,9 @@ class ConcentricChart extends StatefulWidget {
 }
 
 class _ConcentricChartState extends State<ConcentricChart> {
-  List<PieChartItem> pieNamesItems = List.empty(growable: true);
-  List<PieChartItem> pieOneItems = List.empty(growable: true);
-  List<PieChartItem> pieTwoItems = List.empty(growable: true);
+  List<PieChartItem> circleOneItems = List.empty(growable: true);
+  List<PieChartItem> circleTwoItems = List.empty(growable: true);
+  List<PieChartItem> circleThreeItems = List.empty(growable: true);
 
   List<Center> rotatablePies = List.empty(growable: true);
   late PieInfo namesPie;
@@ -128,7 +134,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion,
       //In names circle - is a coefficient
       textRadius: widget.circleOneRadiusProportion,
-      items: pieNamesItems,
+      items: circleOneItems,
       currRingNum: 1,
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
@@ -136,7 +142,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
     firstPie = PieInfo(
       pieHeightCoefficient: MediaQuery.of(context).size.height * pie1Proportion,
-      items: pieOneItems,
+      items: circleTwoItems,
       textRadius: ring2TextRadius,
       currRingNum: 2,
       textSize: widget.circleTwoFontSize,
@@ -145,7 +151,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
     secondPie = PieInfo(
       pieHeightCoefficient: MediaQuery.of(context).size.height * pie2Proportion,
-      items: pieTwoItems,
+      items: circleThreeItems,
       textRadius: ring3TextRadius,
       currRingNum: 3,
       textSize: widget.circleThreeFontSize,
@@ -164,36 +170,24 @@ class _ConcentricChartState extends State<ConcentricChart> {
   @override
   void initState() {
     //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
-    //AND A MINIMUM OF 3 ITEMS
+    //AND A MINIMUM OF 2 ITEMS
+    assert(widget.circleOneText.length > 1 && widget.circleOneText.length <= 8);
+    assert(widget.circleTwoText.length > 1 && widget.circleTwoText.length <= 8);
+    assert(widget.circleThreeText.length > 1 &&
+        widget.circleThreeText.length <= 8);
 
-    Color namesColor = widget.circleOneColor;
-    Color pieOneColor = widget.circleTwoColor;
-    Color pieTwoColor = widget.circleThreeColor;
+    for (String circleOneItem in widget.circleOneText) {
+      circleOneItems.add(PieChartItem(1, circleOneItem, widget.circleOneColor));
+    }
 
-    // Color? namesColor = Colors.red[200];
-    // Color? pieOneColor = Colors.red[400];
-    // Color? pieTwoColor = Colors.red[700];
+    for (String circleTwoItem in widget.circleTwoText) {
+      circleTwoItems.add(PieChartItem(1, circleTwoItem, widget.circleTwoColor));
+    }
 
-    // Color? namesColor = Colors.purple[100];
-    // Color? pieOneColor = Colors.purple[300];
-    // Color? pieTwoColor = Colors.purple[500];
-
-    // Color? namesColor = Colors.green[200];
-    // Color? pieOneColor = Colors.green[500];
-    // Color? pieTwoColor = Colors.green[700];
-
-    // Color? namesColor = Colors.orange[200];
-    // Color? pieOneColor = Colors.orange[500];
-    // Color? pieTwoColor = Colors.orange[700];
-
-    pieNamesItems.add(PieChartItem(1, "Jacob", namesColor));
-    pieNamesItems.add(PieChartItem(1, "Jonathan", namesColor));
-    pieNamesItems.add(PieChartItem(1, "James", namesColor));
-    pieNamesItems.add(PieChartItem(1, "Adopted\nHobo", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "John\nCina", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Jamison\nIII", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Santa\nClaus", namesColor));
-    // pieNamesItems.add(PieChartItem(1, "Abe\nLincoln", namesColor));
+    for (String circleThreeItem in widget.circleTwoText) {
+      circleThreeItems
+          .add(PieChartItem(1, circleThreeItem, widget.circleThreeColor));
+    }
 
     String iis = "";
     iis += "iiiiiiiiii"; //1
@@ -252,44 +246,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     // bops += " bop bop bop bop bop";
     bops += "";
 
-    pieOneItems.add(PieChartItem(1, bops, pieOneColor));
-    pieOneItems.add(PieChartItem(
-        1,
-        "Floorsssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-        pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Run around good sir", pieOneColor));
-    pieOneItems.add(PieChartItem(1, "Clean the Toilet :)", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Don't die", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Wash the fat dogs", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Clean up after", pieOneColor));
-    // pieOneItems.add(PieChartItem(1, "Give a speech", pieOneColor));
-
-    pieTwoItems.add(PieChartItem(1, bops, pieTwoColor));
-    pieTwoItems.add(PieChartItem(
-        1,
-        "Clean Oven with all your might; mind; and strength with an eye single to the glory of God",
-        pieTwoColor));
-    pieTwoItems.add(PieChartItem(
-        1,
-        "Clean Oven with all your might, mind, and strength with an eye single to the glory of God",
-        pieTwoColor));
-    pieTwoItems.add(PieChartItem(1, "Shovel Snow", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Grow Potatoes", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Travel to Russia", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Give coal to naughty kids", pieTwoColor));
-    // pieTwoItems.add(PieChartItem(1, "Beat the South", pieTwoColor));
-
-    populateBounds(pieNamesItems.length);
-
-    //In terms of getting a formula for how many letters can be input for a
-    // certain chart - it will require 3 things
-    // 1. Num Items (primarily)
-    // 2. Type of device (tablet/phone)
-    // 3. Pixel/Aspect Ratio
-    // 4. And will probably need a safe zone (and I'll err on the safe side)
-    // Might end up making it something that I calculate ahead of time for a
-    // base value and then using the device type and aspect ratio to
-    // tweak it slightly
+    populateBounds(circleOneItems.length);
 
     super.initState();
   }
