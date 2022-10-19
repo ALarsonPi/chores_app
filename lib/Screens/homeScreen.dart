@@ -13,29 +13,29 @@ class HomeScreen extends StatelessWidget {
       "Jonathan",
       "James",
       "Adopted Hobo",
-      "John Cina",
-      "Jamison III",
-      "Santa Claus",
-      "Abe Lincoln"
+      // "John Cina",
+      // "Jamison III",
+      // "Santa Claus",
+      // "Abe Lincoln"
     ];
     List<String> circle2Text = [
       "bop bop bop",
       "Clean Floors (Sweep, mop)",
       "Run around good sir",
-      "Clean the Toilet :)",
-      "Don't die",
-      "Wash the fat dogs",
-      "Clean up after the baby",
-      "Give a speech"
+      "Clean the Bathroom",
+      // "Don't die",
+      // "Wash the fat dogs",
+      // "Clean up after the baby",
+      // "Give a speech"
     ];
     List<String> circle3Text = [
       "bop bop bop bop",
-      "Clean oven with all your might mind and strength with an eye single to the glory of God",
+      // "Clean oven with all your might mind and strength with an eye single to the glory of God",
       "Shovel Snow",
       "Grow Potatoes",
       "Travel to Russia",
-      "Give coal to naughty kids",
-      "Beat the South"
+      // "Give coal to naughty kids",
+      // "Beat the South"
     ];
 
     //In the future we'll grab any/all charts from system memory
@@ -60,17 +60,24 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ConcentricChart(
-            numberOfRings: 3,
+            numberOfRings: 2,
+            height: MediaQuery.of(context).size.height,
+            //Circle 1
             circleOneText: circle1Text,
+            circleOneRadiusProportions: const [0.25, 0.35],
             circleOneColor: Global.currentTheme.primaryColor,
             circleOneFontColor: Colors.black,
             circleOneFontSize: 8.0,
-            circleOneRadiusProportion: 0.6,
+            circleOneTextRadiusProportion: 0.6,
+            //Circle 2
             circleTwoText: circle2Text,
+            circleTwoRadiusProportions: const [0.4, 0.75],
             circleTwoColor: Global.currentTheme.secondaryColor,
             circleTwoFontColor: Colors.white,
+            //Circle 3
             circleTwoFontSize: 14.0,
             circleThreeText: circle3Text,
+            circleThreeRadiusProportions: const [0.9, 0],
             circleThreeColor: Global.currentTheme.tertiaryColor,
             circleThreeFontColor: Colors.white,
             circleThreeFontSize: 14.0,

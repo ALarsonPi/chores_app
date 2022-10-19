@@ -7,22 +7,26 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
+  double height;
 
   List<String> circleOneText;
   Color circleOneColor;
   Color circleOneFontColor;
   double circleOneFontSize;
-  double circleOneRadiusProportion;
+  double circleOneTextRadiusProportion;
+  List<double> circleOneRadiusProportions;
 
   List<String> circleTwoText;
   Color circleTwoColor;
   Color circleTwoFontColor;
   double circleTwoFontSize;
+  List<double> circleTwoRadiusProportions;
 
   List<String> circleThreeText;
   Color circleThreeColor;
   Color circleThreeFontColor;
   double circleThreeFontSize;
+  List<double> circleThreeRadiusProportions;
 
   late double namesFontSize;
   late final double outerRingsFontSize;
@@ -38,10 +42,14 @@ class ConcentricChart extends StatefulWidget {
     required this.circleOneFontColor,
     required this.circleTwoFontColor,
     required this.circleThreeFontColor,
-    this.circleOneRadiusProportion = 0.6,
+    this.height = 1080,
+    this.circleOneTextRadiusProportion = 0.6,
     this.circleOneFontSize = 8.0,
     this.circleTwoFontSize = 14.0,
     this.circleThreeFontSize = 14.0,
+    this.circleOneRadiusProportions = const [0.25, 0.35],
+    this.circleTwoRadiusProportions = const [0.4, 0.75],
+    this.circleThreeRadiusProportions = const [0.9, 0],
   }) {
     double pixelRatioCoefficient = (Global.isHighPixelRatio) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -62,107 +70,102 @@ class _ConcentricChartState extends State<ConcentricChart> {
   List<PieChartItem> circleThreeItems = List.empty(growable: true);
 
   List<Center> rotatablePies = List.empty(growable: true);
-  late PieInfo namesPie;
-  late PieInfo firstPie;
-  late PieInfo secondPie;
+  late PieInfo circleOnePie;
+  late PieInfo circleTwoPie;
+  late PieInfo circleThreePie;
 
   @override
   void didChangeDependencies() {
-    double nameProportion = 0.0;
-    double pie1Proportion = 0.0;
-    double pie2Proportion = 0.0;
+    int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
+    double circleOneProportion =
+        widget.circleOneRadiusProportions[proportionIndex];
+    double circleTwoProportion =
+        widget.circleTwoRadiusProportions[proportionIndex];
+    double circleThreeProportion =
+        widget.circleThreeRadiusProportions[proportionIndex];
 
-    double ring2TextRadius = 0.0;
-    double ring3TextRadius = 0.0;
+    double circleTwoTextRadius = 0.0;
+    double circleThreeTextRadius = 0.0;
 
     if (widget.numberOfRings == 2) {
-      nameProportion = 0.35;
-      if (!Global.isPhone) nameProportion += 0.1;
-      if (Global.isHighPixelRatio) nameProportion -= 0.08;
+      if (!Global.isPhone) circleOneProportion += 0.1;
+      if (Global.isHighPixelRatio) circleOneProportion -= 0.08;
 
-      pie1Proportion = 0.75;
-      pie2Proportion = 0.00;
-
-      ring2TextRadius = (MediaQuery.of(context).size.height * 0.45) / 2.0;
+      circleTwoTextRadius = (widget.height * 0.45) / 2.0;
       if (Global.isHighPixelRatio) {
-        ring2TextRadius -= 45;
+        circleTwoTextRadius -= 45;
         if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          ring2TextRadius += 35.0;
+          circleTwoTextRadius += 35.0;
         }
       }
-      if (!Global.isPhone) ring2TextRadius += 75;
-      ring3TextRadius = 0.0;
+      if (!Global.isPhone) circleTwoTextRadius += 75;
+      circleThreeTextRadius = 0.0;
     } else if (widget.numberOfRings == 3) {
-      nameProportion = 0.25;
-
-      if (!Global.isPhone) nameProportion += 0.06;
+      if (!Global.isPhone) circleOneProportion += 0.06;
       if (Global.isHighPixelRatio) {
-        nameProportion -= 0.06;
+        circleOneProportion -= 0.06;
         if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          nameProportion += 0.03;
+          circleOneProportion += 0.03;
         }
       }
 
-      pie1Proportion = 0.4;
-      if (!Global.isPhone) pie1Proportion += 0.12;
+      if (!Global.isPhone) circleTwoProportion += 0.12;
       if (Global.isHighPixelRatio) {
-        pie1Proportion -= 0.08;
+        circleTwoProportion -= 0.08;
         if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          pie1Proportion += 0.05;
+          circleTwoProportion += 0.05;
         }
       }
 
-      pie2Proportion = 0.9;
+      circleTwoTextRadius = (widget.height * circleTwoProportion) / 2.45;
+      if (!Global.isPhone) circleTwoTextRadius += 5;
 
-      ring2TextRadius =
-          (MediaQuery.of(context).size.height * pie1Proportion) / 2.45;
-      if (!Global.isPhone) ring2TextRadius += 5;
+      circleThreeTextRadius = (widget.height * circleTwoProportion) / 1.65;
 
-      ring3TextRadius =
-          (MediaQuery.of(context).size.height * pie1Proportion) / 1.65;
-
-      if (!Global.isPhone) ring3TextRadius += 5;
+      if (!Global.isPhone) circleThreeTextRadius += 5;
       if (Global.isHighPixelRatio) {
-        ring3TextRadius += 5.0;
+        circleThreeTextRadius += 5.0;
         if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          ring3TextRadius += 5.0;
+          circleThreeTextRadius += 5.0;
         }
       }
     }
 
-    namesPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * nameProportion,
+    debugPrint(widget.height.toString());
+
+    circleOnePie = PieInfo(
+      pieHeightCoefficient: widget.height * circleOneProportion,
       //In names circle - is a coefficient
-      textRadius: widget.circleOneRadiusProportion,
+      textRadius: widget.circleOneTextRadiusProportion,
       items: circleOneItems,
       currRingNum: 1,
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
     );
 
-    firstPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * pie1Proportion,
+    circleTwoPie = PieInfo(
+      pieHeightCoefficient: widget.height * circleTwoProportion,
       items: circleTwoItems,
-      textRadius: ring2TextRadius,
+      textRadius: circleTwoTextRadius,
       currRingNum: 2,
       textSize: widget.circleTwoFontSize,
       textColor: widget.circleTwoFontColor,
     );
 
-    secondPie = PieInfo(
-      pieHeightCoefficient: MediaQuery.of(context).size.height * pie2Proportion,
+    circleThreePie = PieInfo(
+      pieHeightCoefficient: widget.height * circleThreeProportion,
       items: circleThreeItems,
-      textRadius: ring3TextRadius,
+      textRadius: circleThreeTextRadius,
       currRingNum: 3,
       textSize: widget.circleThreeFontSize,
       textColor: widget.circleThreeFontColor,
     );
 
     if (widget.numberOfRings == 3) {
-      rotatablePies.add(makePieChart(secondPie));
+      rotatablePies.add(makePieChart(circleThreePie));
     }
-    rotatablePies.add(makePieChart(firstPie));
-    rotatablePies.add(makePieChart(namesPie));
+    rotatablePies.add(makePieChart(circleTwoPie));
+    rotatablePies.add(makePieChart(circleOnePie));
 
     super.didChangeDependencies();
   }
