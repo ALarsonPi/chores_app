@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../Global.dart';
-
 class ArcTextPainter extends CustomPainter {
   ArcTextPainter(
     this.userChosenRadius,

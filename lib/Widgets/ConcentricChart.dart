@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import '../Global.dart';
 import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
@@ -8,6 +7,7 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
   double height;
+  double spaceBetweenLines;
 
   List<String> circleOneText;
   Color circleOneColor;
@@ -21,15 +21,15 @@ class ConcentricChart extends StatefulWidget {
   Color circleTwoFontColor;
   double circleTwoFontSize;
   List<double> circleTwoRadiusProportions;
+  double circleTwoTextPixelOffset;
 
   List<String> circleThreeText;
   Color circleThreeColor;
   Color circleThreeFontColor;
   double circleThreeFontSize;
   List<double> circleThreeRadiusProportions;
+  double circleThreeTextPixelOffset;
 
-  late double namesFontSize;
-  late final double outerRingsFontSize;
   ConcentricChart({
     super.key,
     required this.numberOfRings,
@@ -50,10 +50,13 @@ class ConcentricChart extends StatefulWidget {
     this.circleOneRadiusProportions = const [0.25, 0.35],
     this.circleTwoRadiusProportions = const [0.4, 0.75],
     this.circleThreeRadiusProportions = const [0.9, 0],
+    this.circleTwoTextPixelOffset = 0.0,
+    this.circleThreeTextPixelOffset = 0.0,
+    this.spaceBetweenLines = 20,
   }) {
-    double pixelRatioCoefficient = (Global.isHighPixelRatio) ? 0.0 : 0.05;
+    double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
-        ((Global.isPhone) ? 1.0 : 2.0) + pixelRatioCoefficient;
+        ((Device.get().isPhone) ? 1.0 : 2.0) + pixelRatioCoefficient;
     circleTwoFontSize *= textFontCoefficient;
     circleThreeFontSize *= textFontCoefficient;
   }
@@ -74,6 +77,18 @@ class _ConcentricChartState extends State<ConcentricChart> {
   late PieInfo circleTwoPie;
   late PieInfo circleThreePie;
 
+  String replaceSpaceWithNewLine(String string) {
+    return string.replaceAll(" ", '\n');
+  }
+
+  List<String> checkCircleOneForSpaces(List<String> list) {
+    List<String> newList = List.empty(growable: true);
+    for (String currString in list) {
+      newList.add(replaceSpaceWithNewLine(currString));
+    }
+    return newList;
+  }
+
   @override
   void didChangeDependencies() {
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
@@ -84,54 +99,25 @@ class _ConcentricChartState extends State<ConcentricChart> {
     double circleThreeProportion =
         widget.circleThreeRadiusProportions[proportionIndex];
 
-    double circleTwoTextRadius = 0.0;
-    double circleThreeTextRadius = 0.0;
-
-    if (widget.numberOfRings == 2) {
-      if (!Global.isPhone) circleOneProportion += 0.1;
-      if (Global.isHighPixelRatio) circleOneProportion -= 0.08;
-
-      circleTwoTextRadius = (widget.height * 0.45) / 2.0;
-      if (Global.isHighPixelRatio) {
-        circleTwoTextRadius -= 45;
-        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          circleTwoTextRadius += 35.0;
-        }
-      }
-      if (!Global.isPhone) circleTwoTextRadius += 75;
-      circleThreeTextRadius = 0.0;
-    } else if (widget.numberOfRings == 3) {
-      if (!Global.isPhone) circleOneProportion += 0.06;
-      if (Global.isHighPixelRatio) {
-        circleOneProportion -= 0.06;
-        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          circleOneProportion += 0.03;
-        }
-      }
-
-      if (!Global.isPhone) circleTwoProportion += 0.12;
-      if (Global.isHighPixelRatio) {
-        circleTwoProportion -= 0.08;
-        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          circleTwoProportion += 0.05;
-        }
-      }
-
-      circleTwoTextRadius = (widget.height * circleTwoProportion) / 2.45;
-      if (!Global.isPhone) circleTwoTextRadius += 5;
-
-      circleThreeTextRadius = (widget.height * circleTwoProportion) / 1.65;
-
-      if (!Global.isPhone) circleThreeTextRadius += 5;
-      if (Global.isHighPixelRatio) {
-        circleThreeTextRadius += 5.0;
-        if (Device.width > 1000 && Device.get().isIos && Global.isPhone) {
-          circleThreeTextRadius += 5.0;
-        }
-      }
+    if (Device.get().isAndroid && widget.numberOfRings == 2) {
+      circleOneProportion -= 0.1;
+    } else if (Device.get().isAndroid && widget.numberOfRings == 3) {
+      circleOneProportion -= 0.08;
+      circleTwoProportion -= 0.1;
     }
 
-    debugPrint(widget.height.toString());
+    if (Device.get().isTablet) {
+      circleOneProportion += 0.05;
+      circleTwoProportion += 0.1;
+    }
+
+    double circleTwoTextRadius = (Device.screenWidth / 2) -
+        (Device.screenWidth / ((widget.numberOfRings == 2) ? 10 : 5)) +
+        widget.circleTwoTextPixelOffset;
+
+    double circleThreeTextRadius = (Device.screenWidth / 2) -
+        (Device.screenWidth / ((widget.numberOfRings == 2) ? 0.0 : 12)) +
+        widget.circleThreeTextPixelOffset;
 
     circleOnePie = PieInfo(
       pieHeightCoefficient: widget.height * circleOneProportion,
@@ -179,6 +165,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     assert(widget.circleThreeText.length > 1 &&
         widget.circleThreeText.length <= 8);
 
+    widget.circleOneText = checkCircleOneForSpaces(widget.circleOneText);
     for (String circleOneItem in widget.circleOneText) {
       circleOneItems.add(PieChartItem(1, circleOneItem, widget.circleOneColor));
     }
@@ -187,7 +174,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       circleTwoItems.add(PieChartItem(1, circleTwoItem, widget.circleTwoColor));
     }
 
-    for (String circleThreeItem in widget.circleTwoText) {
+    for (String circleThreeItem in widget.circleThreeText) {
       circleThreeItems
           .add(PieChartItem(1, circleThreeItem, widget.circleThreeColor));
     }
@@ -267,6 +254,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
+          spaceBetweenLines: widget.spaceBetweenLines,
         ),
       ),
     );

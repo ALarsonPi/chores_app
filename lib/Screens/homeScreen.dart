@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
       // "Clean oven with all your might mind and strength with an eye single to the glory of God",
       "Shovel Snow",
       "Grow Potatoes",
-      "Travel to Russia",
+      "Travel to Russia nyet good sir hy ya dum doo doo",
       // "Give coal to naughty kids",
       // "Beat the South"
     ];
@@ -60,8 +60,9 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ConcentricChart(
-            numberOfRings: 2,
+            numberOfRings: 3,
             height: MediaQuery.of(context).size.height,
+            spaceBetweenLines: 15,
             //Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: const [0.25, 0.35],
@@ -71,9 +72,10 @@ class HomeScreen extends StatelessWidget {
             circleOneTextRadiusProportion: 0.6,
             //Circle 2
             circleTwoText: circle2Text,
-            circleTwoRadiusProportions: const [0.4, 0.75],
+            circleTwoRadiusProportions: const [0.40, 0.75],
             circleTwoColor: Global.currentTheme.secondaryColor,
             circleTwoFontColor: Colors.white,
+            circleThreeTextPixelOffset: 0,
             //Circle 3
             circleTwoFontSize: 14.0,
             circleThreeText: circle3Text,
@@ -81,6 +83,7 @@ class HomeScreen extends StatelessWidget {
             circleThreeColor: Global.currentTheme.tertiaryColor,
             circleThreeFontColor: Colors.white,
             circleThreeFontSize: 14.0,
+            circleTwoTextPixelOffset: 0,
           ),
         ],
       ),

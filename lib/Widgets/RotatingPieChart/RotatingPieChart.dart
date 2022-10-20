@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:flutter/material.dart';
-
-import '../../Global.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'RotationEndSimulation.dart';
 import 'TextPainters/NameTextPainter.dart';
 
@@ -17,6 +15,7 @@ class RotatingPieChart extends StatelessWidget {
   final List<double> bounds;
   late bool isNames;
   late double userChosenRadiusForText;
+  late double spaceBetweenLines;
   final PieInfo pie;
 
   RotatingPieChart({
@@ -24,11 +23,14 @@ class RotatingPieChart extends StatelessWidget {
     this.accellerationFactor = 1.0,
     required this.bounds,
     required this.pie,
+    required this.spaceBetweenLines,
   }) {
     items = pie.textAndAngleItems;
     sizeOfChart = pie.heightCoefficient;
     isNames = pie.ringNum == 1;
     userChosenRadiusForText = pie.startingRadiusOfText;
+    if (!Device.get().isPhone) spaceBetweenLines += 25;
+    if (Device.devicePixelRatio > 2) spaceBetweenLines += 5;
   }
 
   @override
@@ -51,6 +53,7 @@ class RotatingPieChart extends StatelessWidget {
             accellerationFactor: accellerationFactor,
             isNames: isNames,
             userChosenRadiusForText: userChosenRadiusForText,
+            spaceBetweenLines: spaceBetweenLines,
             pie: pie,
           ),
         ),
@@ -67,6 +70,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final bool isNames;
   final double userChosenRadiusForText;
   final TextStyle textStyle;
+  final double spaceBetweenLines;
   final PieInfo pie;
 
   const _RotatingPieChartInternal({
@@ -78,6 +82,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.isNames,
     required this.userChosenRadiusForText,
     required this.textStyle,
+    required this.spaceBetweenLines,
     required this.pie,
   }) : super(key: key);
 
@@ -95,12 +100,12 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late double textHeightCoefficient;
   late double userChosenRadius;
   late PieChartItemToText toText;
+  late double spaceBetweenLines;
   late PieInfo pie;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   late int numChunks;
   late double CHUNK_SIZE;
-  late double spaceBetweenLines;
 
   //When using 'l' or 'i' as the smallest letter
   final double WIDTH_OF_SMALLEST_LETTER = 0.1145861761;
@@ -126,9 +131,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           textDirection: TextDirection.ltr,
         );
     pie = widget.pie;
-    spaceBetweenLines = 20;
-    if (!Global.isPhone) spaceBetweenLines += 25;
-    if (Global.isHighPixelRatio) spaceBetweenLines += 5;
+    spaceBetweenLines = widget.spaceBetweenLines;
     if (!isNames) setUpPhraseChunks();
     super.initState();
   }
@@ -192,8 +195,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         }
       }
     }
-    if (!Global.isPhone) finalString = "~$finalString";
-    if (Global.isHighPixelRatio) finalString = "~$finalString";
+    if (!Device.get().isPhone) finalString = "~$finalString";
+    if (Device.devicePixelRatio > 2) finalString = "~$finalString";
 
     return finalString;
   }
