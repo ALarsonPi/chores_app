@@ -170,34 +170,21 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return total;
   }
 
-  String addPaddingToInitialPhrase(
-      String initialPhrase, double leftPaddingNum, double rightPaddingNum) {
+  String addPaddingToInitialPhrase(String initialPhrase, double leftPaddingNum,
+      double rightPaddingNum, bool hasOverflow) {
     String leftPadding = "";
-    String rightPadding = "";
     for (int j = 0; j < leftPaddingNum; j++) {
       leftPadding += "~~";
     }
-    String finalString = "$leftPadding$initialPhrase$rightPadding";
-    if (pie.ringNum == 3) {
-      finalString = "~~~$finalString";
-      if (rightPaddingNum >= 3) {
-        for (int i = 0;
-            i < rightPaddingNum + (7 - widget.items.length);
-            i += 2) {
-          finalString = "~~$finalString";
-        }
-      }
-    } else if (pie.ringNum == 2) {
-      finalString = "~$finalString";
-      if (rightPaddingNum >= 2 && leftPaddingNum <= 2) {
-        for (int i = 0; i < rightPaddingNum; i += 3) {
-          finalString = "~$finalString";
-        }
+    String finalString = "~$leftPadding$initialPhrase";
+
+    if (!hasOverflow && pie.ringNum == 3) {
+      for (int i = rightPaddingNum.floor(); i >= 0; i -= 2) {
+        finalString = "~~$finalString";
       }
     }
     if (!Device.get().isPhone) finalString = "~$finalString";
     if (Device.devicePixelRatio > 2) finalString = "~$finalString";
-
     return finalString;
   }
 
@@ -216,7 +203,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<double> getLeftAndRightPadding(String phrase, double desiredRadius) {
     double totalPadding = getTotalPadding(phrase, desiredRadius);
 
-    // Break padding into left and right, favoring left
+    // Break padding into left and right, if extra padding, it's dismissed
     double remainder = totalPadding % 2;
     double halfOfTotalPadding = totalPadding / 2;
 
@@ -264,12 +251,28 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     List<String> phrasesToReturn = List.empty(growable: true);
 
     double currRadius = userChosenRadius;
+    String chunkPadding = "";
 
     // For every unpaddedPhrase, add padding
-    for (String phrase in unpaddedPhrases) {
-      List<double> paddings = getLeftAndRightPadding(phrase, currRadius);
-      String paddedString =
-          addPaddingToInitialPhrase(phrase, paddings.first, paddings.last);
+    for (int i = 0; i < unpaddedPhrases.length; i++) {
+      List<double> paddings =
+          getLeftAndRightPadding(unpaddedPhrases[i], currRadius);
+      String paddedString = "";
+      if (i == 0) {
+        paddedString = addPaddingToInitialPhrase(
+          unpaddedPhrases[i],
+          paddings.first,
+          paddings.last,
+          unpaddedPhrases.length > 1,
+        );
+        for (int j = 0; j < '~'.allMatches(paddedString).length; j++) {
+          chunkPadding += "~";
+        }
+      } else {
+        int index = (paddings.last * 0.3).floor();
+        chunkPadding = chunkPadding.substring(index);
+        paddedString = chunkPadding + unpaddedPhrases[i];
+      }
       currRadius -= spaceBetweenLines / 2;
       phrasesToReturn.add(paddedString);
     }
