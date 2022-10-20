@@ -7,7 +7,7 @@ class Global {
   static double toolbarHeight = (isPhone) ? 65.0 : 85.0;
 
   // Make sure that this is defined before the chart is defined
-  static ThemeColors currentTheme = purpleTheme;
+  static ThemeColors currentTheme = blueTheme;
 
   static ThemeColors blueTheme = ThemeColors(
     primaryColor: Colors.lightBlue[100] as Color,

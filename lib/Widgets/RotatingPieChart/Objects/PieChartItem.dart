@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PieChartItem {
+  final Key key;
   final num val;
   final String name;
   final Color color;
@@ -15,7 +16,12 @@ class PieChartItem {
     return stringToReturn;
   }
 
-  PieChartItem(this.val, this.name, this.color) : assert(val != 0);
+  PieChartItem(
+      {this.val = 1,
+      this.name = "defaultName",
+      this.color = Colors.black,
+      this.key = const ValueKey("Default")})
+      : assert(val != 0);
 }
 
 typedef TextPainter PieChartItemToText(PieChartItem item, double total);

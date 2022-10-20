@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       "Jacob",
       "Jonathan",
       "James",
-      "Adopted Hobo",
+      // "Adopted Hobo",
       // "John Cina",
       // "Jamison III",
       // "Santa Claus",
@@ -24,12 +24,12 @@ class HomeScreen extends StatelessWidget {
       "Run around good sir",
       "Clean the Bathroom",
       // "Don't die",
-      // "Wash the fat dogs",
+      "Wash the fat dogs",
       // "Clean up after the baby",
       // "Give a speech"
     ];
     List<String> circle3Text = [
-      "bop bop bop bop",
+      "bop",
       // "Clean oven with all your might mind and strength with an eye single to the glory of God",
       "Shovel Snow",
       "Grow Potatoes",

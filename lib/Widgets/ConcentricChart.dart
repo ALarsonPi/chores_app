@@ -148,10 +148,10 @@ class _ConcentricChartState extends State<ConcentricChart> {
     );
 
     if (widget.numberOfRings == 3) {
-      rotatablePies.add(makePieChart(circleThreePie));
+      rotatablePies.add(makePieChart(circleThreePie, circleThreeBounds));
     }
-    rotatablePies.add(makePieChart(circleTwoPie));
-    rotatablePies.add(makePieChart(circleOnePie));
+    rotatablePies.add(makePieChart(circleTwoPie, circleTwoBounds));
+    rotatablePies.add(makePieChart(circleOnePie, circleOneBounds));
 
     super.didChangeDependencies();
   }
@@ -167,16 +167,29 @@ class _ConcentricChartState extends State<ConcentricChart> {
 
     widget.circleOneText = checkCircleOneForSpaces(widget.circleOneText);
     for (String circleOneItem in widget.circleOneText) {
-      circleOneItems.add(PieChartItem(1, circleOneItem, widget.circleOneColor));
+      circleOneItems.add(PieChartItem(
+        name: circleOneItem,
+        color: widget.circleOneColor,
+        key: ValueKey(circleOneItem),
+      ));
     }
 
     for (String circleTwoItem in widget.circleTwoText) {
-      circleTwoItems.add(PieChartItem(1, circleTwoItem, widget.circleTwoColor));
+      circleTwoItems.add(
+        PieChartItem(
+          name: circleTwoItem,
+          color: widget.circleTwoColor,
+        ),
+      );
     }
 
     for (String circleThreeItem in widget.circleThreeText) {
-      circleThreeItems
-          .add(PieChartItem(1, circleThreeItem, widget.circleThreeColor));
+      circleThreeItems.add(
+        PieChartItem(
+          name: circleThreeItem,
+          color: widget.circleThreeColor,
+        ),
+      );
     }
 
     String iis = "";
@@ -236,19 +249,26 @@ class _ConcentricChartState extends State<ConcentricChart> {
     // bops += " bop bop bop bop bop";
     bops += "";
 
-    populateBounds(circleOneItems.length);
+    // assuming that the circles are all the same length
+    circleOneBounds = populateBounds(circleOneItems.length);
+    circleTwoBounds = populateBounds(circleTwoItems.length);
+    circleThreeBounds = populateBounds(circleThreeItems.length);
 
     super.initState();
   }
 
-  List<double> bounds = List.empty(growable: true);
+  List<double> circleOneBounds = List.empty(growable: true);
+  List<double> circleTwoBounds = List.empty(growable: true);
+  List<double> circleThreeBounds = List.empty(growable: true);
   populateBounds(int numItems) {
+    List<double> newBounds = List.empty(growable: true);
     for (int i = 0; i <= numItems; i++) {
-      bounds.add(i / numItems);
+      newBounds.add(i / numItems);
     }
+    return newBounds;
   }
 
-  makePieChart(PieInfo pie) {
+  makePieChart(PieInfo pie, List<double> bounds) {
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
