@@ -346,6 +346,13 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return offset! - center;
   }
 
+  bool shouldFlip = true;
+  void shouldFlipFunction() {
+    setState(() {
+      shouldFlip = !shouldFlip;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -359,6 +366,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         var value = _controller.value + (diff / pi / 2);
         _controller.value = value % 1.0;
         lastDirection = newDirection;
+      },
+      onPanStart: (details) => {
+        shouldFlipFunction(),
       },
       onPanEnd: (details) {
         // non-angular velocity
@@ -380,6 +390,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
+        shouldFlipFunction();
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -400,6 +411,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         chunkPhraseList,
                         numChunks,
                         spaceBetweenLines,
+                        shouldFlip,
                       )
                     : PieTextPainter(
                         items: this.widget.items,

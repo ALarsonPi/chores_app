@@ -10,7 +10,9 @@ class ArcTextPainter extends CustomPainter {
     this.listOfChunkPhrases,
     this.numChunks,
     this.spaceBetweenLines,
+    this.shouldFlip,
   );
+  bool shouldFlip;
   double userChosenRadius;
   double initialAngle;
   double spaceBetweenLines;
@@ -92,7 +94,7 @@ class ArcTextPainter extends CustomPainter {
         (radiansToDegrees(initialAngle) % 360).ceilToDouble();
     double middleAngle = degreesOfChunk + ((360 / numChunks) / 2);
     // Angle for Arc text starts at 90 degrees
-    return (middleAngle >= 92 && middleAngle <= 272);
+    return (middleAngle >= 92 && middleAngle <= 272) && shouldFlip;
   }
 
   void _paintChunks(List<List<String>> listOfChunks, int numChunks,
@@ -176,5 +178,7 @@ class ArcTextPainter extends CustomPainter {
       (alpha + prevAngle) / 2;
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
 }
