@@ -105,10 +105,13 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   late int numChunks;
+  // ignore: non_constant_identifier_names
   late double CHUNK_SIZE;
 
   //When using 'l' or 'i' as the smallest letter
+  // ignore: non_constant_identifier_names
   final double WIDTH_OF_SMALLEST_LETTER = 0.1145861761;
+  // ignore: non_constant_identifier_names
   final double WIDTH_OF_SPACE = 0.16017116006731802;
 
   @override
@@ -178,9 +181,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
     String finalString = "~$leftPadding$initialPhrase";
 
+    if (numChunks == 2 && pie.ringNum == 2) {
+      finalString = "~~~$leftPadding$initialPhrase";
+    }
     if (!hasOverflow && pie.ringNum == 3) {
       for (int i = rightPaddingNum.floor(); i >= 0; i -= 2) {
-        finalString = "~~$finalString";
+        finalString = "~~~~$finalString";
+      }
+    } else {
+      if (numChunks == 2) {
+        finalString = "~~~~~~~~$leftPadding$initialPhrase";
       }
     }
     if (!Device.get().isPhone) finalString = "~$finalString";

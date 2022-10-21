@@ -22,8 +22,14 @@ class ArcTextPainter extends CustomPainter {
   late double actualRadius = userChosenRadius;
   late Canvas pieCanvas;
 
+  bool shouldReverse = false;
+
   double degreesToRadians(double degrees) {
     return degrees * pi / 180;
+  }
+
+  double radiansToDegrees(double radians) {
+    return radians * 180 / pi;
   }
 
   @override
@@ -33,7 +39,7 @@ class ArcTextPainter extends CustomPainter {
   }
 
   void _paintChunk(List<String> phrases, double spaceBetweenLines,
-      Canvas canvas, Size size) {
+      Canvas canvas, Size size, bool shouldReversePrint) {
     if (phrases.length == 1) {
       //We might consider changing this centering amount / allowing it to be customizable
       // or getting the next inner most circle's height and actually center the text between that
@@ -42,19 +48,65 @@ class ArcTextPainter extends CustomPainter {
     }
     for (String phrase in phrases) {
       canvas.save();
-      canvas.translate(size.width / 2, size.height / 2 - actualRadius);
-      _paintPhrase(canvas, size, initialAngle, actualRadius, phrase);
+
+      if (shouldReversePrint) {
+        canvas.translate(size.width / 2, size.height / 2);
+        canvas.translate(0, actualRadius);
+
+        double singleChunkSize = 360 / numChunks;
+        double initialAngleInDegrees = (radiansToDegrees(initialAngle) % 360);
+        double numChunksAwayFromZero =
+            initialAngleInDegrees.ceilToDouble() / singleChunkSize;
+
+        double amountToRotate = ((numChunks - numChunksAwayFromZero) *
+            degreesToRadians(singleChunkSize));
+
+        //If odd num, rotate slightly more
+        if (numChunks == 2) {
+          amountToRotate += (2 * pi / numChunks);
+        } else if (numChunks == 3) {
+          amountToRotate += (2 * pi / numChunks) / 2 - (2 * pi / numChunks);
+        } else if (numChunks == 5) {
+          amountToRotate += (2 * pi / numChunks) / 2;
+        } else if (numChunks == 6) {
+          amountToRotate += (2 * pi / numChunks);
+        } else if (numChunks == 7) {
+          amountToRotate += (2 * pi / numChunks) + (2 * pi / numChunks) / 2;
+        } else if (numChunks == 8) {
+          amountToRotate += 2 * (2 * pi / numChunks);
+        }
+        _reversePaintPhrase(canvas, size, amountToRotate + (2 * pi / numChunks),
+            actualRadius, phrase);
+      } else {
+        canvas.translate(size.width / 2, size.height / 2 - actualRadius);
+        _paintPhrase(canvas, size, initialAngle, actualRadius, phrase, false);
+      }
       actualRadius -= spaceBetweenLines;
       canvas.restore();
     }
     actualRadius = userChosenRadius;
   }
 
+  bool shouldReversePrint(double initialAngle) {
+    double degreesOfChunk =
+        (radiansToDegrees(initialAngle) % 360).ceilToDouble();
+    double middleAngle = degreesOfChunk + ((360 / numChunks) / 2);
+    // Angle for Arc text starts at 90 degrees
+    return (middleAngle >= 92 && middleAngle <= 272);
+  }
+
   void _paintChunks(List<List<String>> listOfChunks, int numChunks,
       double spaceBetweenLines, Canvas canvas, Size size) {
     for (int i = 0; i < numChunks; i++) {
       canvas.save();
-      _paintChunk(listOfChunks[i], spaceBetweenLines, canvas, size);
+      shouldReverse = shouldReversePrint(initialAngle);
+      List<String> listToUse = List.empty(growable: true);
+      if (shouldReverse) {
+        listToUse = listOfChunks[i].reversed.toList();
+      } else {
+        listToUse = listOfChunks[i];
+      }
+      _paintChunk(listToUse, spaceBetweenLines, canvas, size, shouldReverse);
       canvas.restore();
       incrementAngleByChunkSize();
     }
@@ -64,8 +116,29 @@ class ArcTextPainter extends CustomPainter {
     initialAngle += (2 * pi / numChunks);
   }
 
-  void _paintPhrase(Canvas canvas, Size size, double initialAngle,
+  // Problem 1 - Starting Position
+  // Problem 2 - Writing text the other direction
+  // LTR vs RTL?
+  // Problem 3 - Overflow problems?
+
+  void _reversePaintPhrase(Canvas canvas, Size size, double initialAngle,
       double radiusToUse, String phraseToPrint) {
+    if (initialAngle != 0) {
+      double d = 2 * radiusToUse * sin(initialAngle / 2);
+      final rotationAngle = _calculateRotationAngle(0, initialAngle);
+      canvas.rotate((shouldReverse) ? -rotationAngle : rotationAngle);
+      canvas.translate(d, 0);
+    }
+    double angle = initialAngle;
+
+    for (int i = 0; i < phraseToPrint.length; i++) {
+      angle = _drawLetter(
+          canvas, phraseToPrint[i], angle, radiusToUse, shouldReverse);
+    }
+  }
+
+  void _paintPhrase(Canvas canvas, Size size, double initialAngle,
+      double radiusToUse, String phraseToPrint, bool shouldReversePhrasePrint) {
     if (initialAngle != 0) {
       final d = 2 * radiusToUse * sin(initialAngle / 2);
       final rotationAngle = _calculateRotationAngle(0, initialAngle);
@@ -73,14 +146,14 @@ class ArcTextPainter extends CustomPainter {
       canvas.translate(d, 0);
     }
     double angle = initialAngle;
-
     for (int i = 0; i < phraseToPrint.length; i++) {
-      angle = _drawLetter(canvas, phraseToPrint[i], angle, radiusToUse);
+      angle = _drawLetter(canvas, phraseToPrint[i], angle, radiusToUse,
+          shouldReversePhrasePrint);
     }
   }
 
-  double _drawLetter(
-      Canvas canvas, String letter, double prevAngle, double actualRadius) {
+  double _drawLetter(Canvas canvas, String letter, double prevAngle,
+      double actualRadius, bool shouldDrawReverse) {
     bool shouldSkip = letter == "~";
     _textPainter.text =
         TextSpan(text: shouldSkip ? 'i' : letter, style: textStyle);
@@ -88,10 +161,10 @@ class ArcTextPainter extends CustomPainter {
       minWidth: 0,
       maxWidth: double.maxFinite,
     );
-    final double d = _textPainter.width;
+    double d = _textPainter.width;
     final double alpha = 2 * asin(d / (2 * actualRadius));
     final newAngle = _calculateRotationAngle(prevAngle, alpha);
-    canvas.rotate(newAngle);
+    canvas.rotate((shouldDrawReverse) ? -newAngle : newAngle);
     if (!shouldSkip) {
       _textPainter.paint(canvas, Offset(0, -_textPainter.height));
     }

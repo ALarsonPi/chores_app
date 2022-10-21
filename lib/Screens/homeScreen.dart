@@ -9,34 +9,40 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> circle1Text = [
-      "Jacob",
-      "Jonathan",
+      "Jacob the very dude",
+      "Jonathan the very dude",
       "James",
       "Adopted Hobo",
-      // "John Cina",
-      // "Jamison III",
-      // "Santa Claus",
-      // "Abe Lincoln"
+      //"Suuuper long long long long long long long long longlong long long long name",
+      "John Cina",
+      "Jamison III",
+      "Santa Claus",
+      "Abe Lincoln"
     ];
-    List<String> circle2Text = [
-      "bop bop bop",
-      "Clean Floors (Sweep, mop), but also remember to wipe the baseboards",
-      "Run around good sir",
-      "Clean the Bathroom",
-      // "Don't die",
-      //"Wash the fat dogs",
-      // "Clean up after the baby",
-      // "Give a speech"
-    ];
-    List<String> circle3Text = [
-      "bop",
-      // "Clean oven with all your might mind and strength with an eye single to the glory of God",
-      "Shovel Snow",
-      "Grow Potatoes",
-      "Travel to Russia nyet good sir hy ya dum doo doo",
-      // "Give coal to naughty kids",
-      // "Beat the South"
-    ];
+
+    List<String> circle2Text = circle1Text;
+    //[
+    //   "howdy",
+    //   "Clean Floors (Sweep, mop)",
+    //   // "Run around good sir",
+    //   // "Clean the Bathroom",
+    //   // "Don't die",
+    //   // "Wash the fat dogs",
+    //   // "Clean up after the baby",
+    //   // "Give a speech"
+    // ];
+
+    List<String> circle3Text = circle2Text;
+    // [
+    //   "bop bop bop",
+    //   "Clean oven with all your might mind and strength with an eye single to the glory of God",
+    //   "Shovel Snow",
+    //   "Grow Potatoes",
+    //   "Travel to Russia nyet",
+    //   //"Give coal to naughty kids",
+    //   //"Beat the South",
+    //   "Run",
+    // ];
 
     //In the future we'll grab any/all charts from system memory
     //or firebase (depending on updates and all that)
@@ -66,7 +72,8 @@ class HomeScreen extends StatelessWidget {
             //Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: const [0.25, 0.35],
-            circleOneColor: Global.currentTheme.primaryColor,
+            circleOneColor: Colors.transparent,
+            //Global.currentTheme.primaryColor,
             circleOneFontColor: Colors.black,
             circleOneFontSize: 8.0,
             circleOneTextRadiusProportion: 0.6,
@@ -74,14 +81,14 @@ class HomeScreen extends StatelessWidget {
             circleTwoText: circle2Text,
             circleTwoRadiusProportions: const [0.40, 0.75],
             circleTwoColor: Global.currentTheme.secondaryColor,
-            circleTwoFontColor: Colors.white,
+            circleTwoFontColor: Colors.black,
             circleThreeTextPixelOffset: 0,
             //Circle 3
             circleTwoFontSize: 14.0,
             circleThreeText: circle3Text,
             circleThreeRadiusProportions: const [0.9, 0],
             circleThreeColor: Global.currentTheme.tertiaryColor,
-            circleThreeFontColor: Colors.white,
+            circleThreeFontColor: Colors.black,
             circleThreeFontSize: 14.0,
             circleTwoTextPixelOffset: 0,
           ),
