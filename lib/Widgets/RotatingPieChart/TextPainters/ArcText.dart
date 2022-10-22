@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ArcTextPainter extends CustomPainter {
-  ArcTextPainter(
-    this.userChosenRadius,
-    this.textStyle,
-    this.initialAngle,
-    this.listOfChunkPhrases,
-    this.numChunks,
-    this.spaceBetweenLines,
-    this.shouldFlip,
-  );
+  ArcTextPainter({
+    required this.userChosenRadius,
+    required this.textStyle,
+    required this.initialAngle,
+    required this.listOfChunkPhrases,
+    required this.forwardPhraseAlpha,
+    required this.listOfReverseChunkPhrases,
+    required this.reversePhraseAlpha,
+    required this.numChunks,
+    required this.spaceBetweenLines,
+    required this.shouldFlip,
+  });
   bool shouldFlip;
   double userChosenRadius;
   double initialAngle;
@@ -19,7 +22,11 @@ class ArcTextPainter extends CustomPainter {
   final TextStyle textStyle;
   final _textPainter = TextPainter(textDirection: TextDirection.ltr);
   final List<List<String>> listOfChunkPhrases;
+  final List<List<String>> listOfReverseChunkPhrases;
   final int numChunks;
+
+  List<List<double>> forwardPhraseAlpha;
+  List<List<double>> reversePhraseAlpha;
 
   late double actualRadius = userChosenRadius;
   late Canvas pieCanvas;
@@ -37,18 +44,34 @@ class ArcTextPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _paintChunks(
-        listOfChunkPhrases, numChunks, spaceBetweenLines, canvas, size);
+        listOfChunkPhrases,
+        forwardPhraseAlpha,
+        listOfReverseChunkPhrases,
+        reversePhraseAlpha,
+        numChunks,
+        spaceBetweenLines,
+        canvas,
+        size);
   }
 
-  void _paintChunk(List<String> phrases, double spaceBetweenLines,
-      Canvas canvas, Size size, bool shouldReversePrint) {
+  void _paintChunk(
+      List<String> phrases,
+      List<double> phraseAlpha,
+      double spaceBetweenLines,
+      Canvas canvas,
+      Size size,
+      bool shouldReversePrint) {
     if (phrases.length == 1) {
       //We might consider changing this centering amount / allowing it to be customizable
       // or getting the next inner most circle's height and actually center the text between that
       // and the far edge of this circle
       actualRadius -= spaceBetweenLines / 2;
     }
-    for (String phrase in phrases) {
+    for (int i = 0; i < phrases.length; i++) {
+      double currPhraseAlpha = phraseAlpha[i];
+      double singleChunkAngle = (2 * pi / numChunks);
+      double halfPhraseAlpha = currPhraseAlpha / 2;
+
       canvas.save();
 
       if (shouldReversePrint) {
@@ -65,23 +88,36 @@ class ArcTextPainter extends CustomPainter {
 
         //If odd num, rotate slightly more
         if (numChunks == 2) {
-          amountToRotate += (2 * pi / numChunks);
+          amountToRotate += singleChunkAngle;
         } else if (numChunks == 3) {
-          amountToRotate += (2 * pi / numChunks) / 2 - (2 * pi / numChunks);
+          amountToRotate += (singleChunkAngle / 2) - singleChunkAngle;
         } else if (numChunks == 5) {
-          amountToRotate += (2 * pi / numChunks) / 2;
+          amountToRotate += singleChunkAngle / 2;
         } else if (numChunks == 6) {
-          amountToRotate += (2 * pi / numChunks);
+          amountToRotate += singleChunkAngle;
         } else if (numChunks == 7) {
-          amountToRotate += (2 * pi / numChunks) + (2 * pi / numChunks) / 2;
+          amountToRotate += singleChunkAngle + (singleChunkAngle / 2);
         } else if (numChunks == 8) {
-          amountToRotate += 2 * (2 * pi / numChunks);
+          amountToRotate += 2 * singleChunkAngle;
         }
-        _reversePaintPhrase(canvas, size, amountToRotate + (2 * pi / numChunks),
-            actualRadius, phrase);
+
+        double newInitialAngle = amountToRotate +
+            singleChunkAngle + //To offset by single chunk
+            (singleChunkAngle / 2) - //to start at mid-point
+            halfPhraseAlpha; //to offset by phrase length
+
+        _reversePaintPhrase(
+            canvas, size, newInitialAngle, actualRadius, phrases[i]);
       } else {
         canvas.translate(size.width / 2, size.height / 2 - actualRadius);
-        _paintPhrase(canvas, size, initialAngle, actualRadius, phrase, false);
+
+        double newInitialAngle = initialAngle +
+            //singleChunkAngle + // no need to offset by a single chunk
+            (singleChunkAngle / 2) - //to start at mid-point
+            halfPhraseAlpha; //to offset by phrase length
+
+        _paintPhrase(
+            canvas, size, newInitialAngle, actualRadius, phrases[i], false);
       }
       actualRadius -= spaceBetweenLines;
       canvas.restore();
@@ -97,18 +133,29 @@ class ArcTextPainter extends CustomPainter {
     return (middleAngle >= 92 && middleAngle <= 272) && shouldFlip;
   }
 
-  void _paintChunks(List<List<String>> listOfChunks, int numChunks,
-      double spaceBetweenLines, Canvas canvas, Size size) {
+  void _paintChunks(
+      List<List<String>> listOfChunks,
+      List<List<double>> forwardAlpha,
+      List<List<String>> listOfReverseChunks,
+      List<List<double>> reverseAlpha,
+      int numChunks,
+      double spaceBetweenLines,
+      Canvas canvas,
+      Size size) {
     for (int i = 0; i < numChunks; i++) {
       canvas.save();
       shouldReverse = shouldReversePrint(initialAngle);
-      List<String> listToUse = List.empty(growable: true);
+      List<String> phraseListToUse = List.empty(growable: true);
+      List<double> alphaListToUse = List.empty(growable: true);
       if (shouldReverse) {
-        listToUse = listOfChunks[i].reversed.toList();
+        phraseListToUse = listOfReverseChunks[i].reversed.toList();
+        alphaListToUse = reverseAlpha[i];
       } else {
-        listToUse = listOfChunks[i];
+        phraseListToUse = listOfChunks[i];
+        alphaListToUse = forwardAlpha[i];
       }
-      _paintChunk(listToUse, spaceBetweenLines, canvas, size, shouldReverse);
+      _paintChunk(phraseListToUse, alphaListToUse, spaceBetweenLines, canvas,
+          size, shouldReverse);
       canvas.restore();
       incrementAngleByChunkSize();
     }

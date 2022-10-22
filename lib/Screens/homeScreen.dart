@@ -13,36 +13,33 @@ class HomeScreen extends StatelessWidget {
       "Jonathan the very dude",
       "James",
       "Adopted Hobo",
-      //"Suuuper long long long long long long long long longlong long long long name",
       "John Cina",
       "Jamison III",
       "Santa Claus",
       "Abe Lincoln"
     ];
 
-    List<String> circle2Text = circle1Text;
-    //[
-    //   "howdy",
-    //   "Clean Floors (Sweep, mop)",
-    //   // "Run around good sir",
-    //   // "Clean the Bathroom",
-    //   // "Don't die",
-    //   // "Wash the fat dogs",
-    //   // "Clean up after the baby",
-    //   // "Give a speech"
-    // ];
+    List<String> circle2Text = [
+      "howdy",
+      "Clean Floors (Sweep, mop)",
+      "Run around good sir",
+      "Clean the Bathroom",
+      "Don't die",
+      "Wash the fat dogs",
+      "Clean up after the baby",
+      "Give a speech"
+    ];
 
-    List<String> circle3Text = circle2Text;
-    // [
-    //   "bop bop bop",
-    //   "Clean oven with all your might mind and strength with an eye single to the glory of God",
-    //   "Shovel Snow",
-    //   "Grow Potatoes",
-    //   "Travel to Russia nyet",
-    //   //"Give coal to naughty kids",
-    //   //"Beat the South",
-    //   "Run",
-    // ];
+    List<String> circle3Text = [
+      "bop bop bop",
+      "Clean oven ",
+      "Shovel Snow",
+      "Grow Potatoes",
+      "Travel to Russia nyet",
+      "Give coal to naughty kids",
+      "Beat the South",
+      "Run",
+    ];
 
     //In the future we'll grab any/all charts from system memory
     //or firebase (depending on updates and all that)

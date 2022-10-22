@@ -104,6 +104,11 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late PieInfo pie;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
+  List<List<String>> reversePhraseChunkList = List.empty(growable: true);
+
+  List<List<double>> forwardAlphaList = List.empty(growable: true);
+  List<List<double>> reverseAlphaList = List.empty(growable: true);
+
   late int numChunks;
   // ignore: non_constant_identifier_names
   late double CHUNK_SIZE;
@@ -203,13 +208,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return getTotalPaddingAsIntegerIncrements(chunkAlpha, CHUNK_SIZE);
   }
 
-  // This method is used while calculating overflow
-  double getHalfOfTotalPaddingFor(String phrase) {
-    double totalPadding = getTotalPadding(phrase, userChosenRadius);
-    double halfOfTotalPadding = totalPadding / 2;
-    return halfOfTotalPadding;
-  }
-
   List<double> getLeftAndRightPadding(String phrase, double desiredRadius) {
     double totalPadding = getTotalPadding(phrase, desiredRadius);
 
@@ -227,26 +225,34 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return paddings;
   }
 
+  bool checkIfShouldOverflow(double alphaDifference) {
+    return alphaDifference <= 0.35;
+  }
+
   List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
     List<String> phrasesToReturn = List.empty(growable: true);
     String currPhrase = fullPhrase;
-    double halfOfTotalPadding = getHalfOfTotalPaddingFor(currPhrase);
-    const int MIN_PADDING_FOR_OVERFLOW = 2;
-    bool isOverflowing = halfOfTotalPadding <= MIN_PADDING_FOR_OVERFLOW;
+    double radiusToMeasureAgainst = userChosenRadius;
 
-    // If it will overflow at least once
-    // overflow as many times as is needed
+    double phraseAlpha =
+        getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+    double chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+
+    bool isOverflowing = checkIfShouldOverflow(chunkDifference);
     if (isOverflowing) {
       while (isOverflowing) {
-        halfOfTotalPadding = getHalfOfTotalPaddingFor(currPhrase);
-        List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
-        phrasesToReturn.add(splitPhraseParts.first);
-        if (getHalfOfTotalPaddingFor(splitPhraseParts.last) <=
-            MIN_PADDING_FOR_OVERFLOW) {
+        phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+        chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+
+        radiusToMeasureAgainst -= spaceBetweenLines;
+
+        if (checkIfShouldOverflow(chunkDifference)) {
+          List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
+          phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
         } else {
           isOverflowing = false;
-          phrasesToReturn.add(splitPhraseParts.last);
+          phrasesToReturn.add(currPhrase);
         }
       }
     } else {
@@ -256,43 +262,95 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return phrasesToReturn;
   }
 
-  List<String> setUpPhraseChunk(String fullPhrase) {
-    List<String> unpaddedPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
+  bool checkIfShouldOverflowReverse(double alphaDifference) {
+    return alphaDifference <= 0.35;
+  }
+
+  List<String> getOverflowedPhrasePartsForReverseChunk(
+      String fullPhrase, int numLines) {
     List<String> phrasesToReturn = List.empty(growable: true);
+    String currPhrase = fullPhrase;
 
-    double currRadius = userChosenRadius;
-    String chunkPadding = "";
+    double radiusToMeasureAgainst =
+        userChosenRadius - (spaceBetweenLines * numLines);
 
-    // For every unpaddedPhrase, add padding
-    for (int i = 0; i < unpaddedPhrases.length; i++) {
-      List<double> paddings =
-          getLeftAndRightPadding(unpaddedPhrases[i], currRadius);
-      String paddedString = "";
-      if (i == 0) {
-        paddedString = addPaddingToInitialPhrase(
-          unpaddedPhrases[i],
-          paddings.first,
-          paddings.last,
-          unpaddedPhrases.length > 1,
-        );
-        for (int j = 0; j < '~'.allMatches(paddedString).length; j++) {
-          chunkPadding += "~";
+    double phraseAlpha =
+        getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+    double chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+
+    bool isOverflowing = checkIfShouldOverflowReverse(chunkDifference);
+    int index = 0;
+    if (isOverflowing) {
+      while (isOverflowing) {
+        phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+        chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+
+        radiusToMeasureAgainst += spaceBetweenLines;
+
+        if (checkIfShouldOverflowReverse(chunkDifference)) {
+          List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
+          phrasesToReturn.add(splitPhraseParts.first);
+          currPhrase = splitPhraseParts.last;
+        } else {
+          isOverflowing = false;
+          phrasesToReturn.add(currPhrase);
         }
-      } else {
-        int index = (paddings.last * 0.3).floor();
-        chunkPadding = chunkPadding.substring(index);
-        paddedString = chunkPadding + unpaddedPhrases[i];
+        index++;
       }
-      currRadius -= spaceBetweenLines / 2;
-      phrasesToReturn.add(paddedString);
+    } else {
+      phrasesToReturn.add(fullPhrase);
     }
+
     return phrasesToReturn;
+  }
+
+  void setUpPhraseChunkAndAddToLists(String fullPhrase) {
+    List<String> forwardPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
+    List<String> reversePhrases = getOverflowedPhrasePartsForReverseChunk(
+        fullPhrase, forwardPhrases.length);
+    chunkPhraseList.add(forwardPhrases);
+    reversePhraseChunkList.add(reversePhrases);
+  }
+
+  List<double> createAlphaListForward(
+      List<String> phrases, double initialRadius) {
+    List<double> alphaList = List.empty(growable: true);
+    double currRadius = initialRadius;
+    for (String phrase in phrases) {
+      alphaList.add(getTotalPhraseAlpha(phrase, currRadius));
+      currRadius -= spaceBetweenLines;
+    }
+    return alphaList;
+  }
+
+  List<double> createAlphaListReverse(
+      List<String> reversePhrases, double initialRadius) {
+    List<double> alphaList = List.empty(growable: true);
+    double currRadius = initialRadius;
+    for (String phrase in reversePhrases.reversed) {
+      alphaList.add(getTotalPhraseAlpha(phrase, currRadius));
+      currRadius -= spaceBetweenLines;
+    }
+    return alphaList;
   }
 
   setUpPhraseChunks() async {
     for (int i = 0; i < numChunks; i++) {
-      List<String> chunkPhrases = setUpPhraseChunk(widget.items[i].name);
-      chunkPhraseList.add(chunkPhrases);
+      setUpPhraseChunkAndAddToLists(widget.items[i].name);
+    }
+    fillAlphaLists();
+  }
+
+  fillAlphaLists() {
+    for (List<String> phrasesInAChunk in chunkPhraseList) {
+      List<double> alphaList =
+          createAlphaListForward(phrasesInAChunk, userChosenRadius);
+      forwardAlphaList.add(alphaList);
+    }
+    for (List<String> reversePhrasesInAChunk in reversePhraseChunkList) {
+      List<double> alphaListReverse =
+          createAlphaListReverse(reversePhrasesInAChunk, userChosenRadius);
+      reverseAlphaList.add(alphaListReverse);
     }
   }
 
@@ -301,14 +359,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     int i = (phraseToSplit.length / 2).floor();
     int numLettersToCheck = 5;
     numLettersToCheck = min(i, numLettersToCheck);
-    for (int j = 0; j < numLettersToCheck; j++) {
-      if (phraseToSplit[i] == " " ||
-          phraseToSplit[i] == "\t" ||
-          phraseToSplit[i] == "\n") {
-        phraseParts.add(phraseToSplit.substring(0, i).trim());
-        phraseParts.add(phraseToSplit.substring(i).trim());
+    if (phraseParts.isEmpty) {
+      for (int j = 0; j < numLettersToCheck; j++) {
+        if (phraseToSplit[i] == " " ||
+            phraseToSplit[i] == "\t" ||
+            phraseToSplit[i] == "\n") {
+          phraseParts.add(phraseToSplit.substring(0, i).trim());
+          phraseParts.add(phraseToSplit.substring(i).trim());
+        }
+        i++;
       }
-      i++;
     }
     if (phraseParts.isEmpty) {
       i = (phraseToSplit.length / 2).floor();
@@ -368,7 +428,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         lastDirection = newDirection;
       },
       onPanStart: (details) => {
-        shouldFlipFunction(),
+        //shouldFlipFunction(),
       },
       onPanEnd: (details) {
         // non-angular velocity
@@ -390,7 +450,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
-        shouldFlipFunction();
+        //shouldFlipFunction();
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -405,13 +465,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
               CustomPaint(
                 painter: (!isNames)
                     ? ArcTextPainter(
-                        userChosenRadius,
-                        textStyle,
-                        _animation.value + 1.57079632679,
-                        chunkPhraseList,
-                        numChunks,
-                        spaceBetweenLines,
-                        shouldFlip,
+                        userChosenRadius: userChosenRadius,
+                        textStyle: textStyle,
+                        initialAngle: _animation.value + 1.57079632679,
+                        listOfChunkPhrases: chunkPhraseList,
+                        forwardPhraseAlpha: forwardAlphaList,
+                        listOfReverseChunkPhrases: reversePhraseChunkList,
+                        reversePhraseAlpha: reverseAlphaList,
+                        numChunks: numChunks,
+                        spaceBetweenLines: spaceBetweenLines,
+                        shouldFlip: shouldFlip,
                       )
                     : PieTextPainter(
                         items: this.widget.items,
