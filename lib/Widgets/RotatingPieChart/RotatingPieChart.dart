@@ -262,23 +262,28 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return phrasesToReturn;
   }
 
-  bool checkIfShouldOverflowReverse(double alphaDifference) {
-    return alphaDifference <= 0.35;
-  }
-
   List<String> getOverflowedPhrasePartsForReverseChunk(
       String fullPhrase, int numLines) {
     List<String> phrasesToReturn = List.empty(growable: true);
-    String currPhrase = fullPhrase;
+
+    //Reverse string so that the split actually makes
+    //sense when we reverse everything back
+    String currPhrase = fullPhrase.split('').reversed.join();
 
     double radiusToMeasureAgainst =
         userChosenRadius - (spaceBetweenLines * numLines);
+
+    debugPrint(currPhrase);
+    debugPrint("User chosen Radius:");
+    debugPrint(userChosenRadius.toString());
+    debugPrint("space between lines: " + spaceBetweenLines.toString());
+    debugPrint("Radius to start" + radiusToMeasureAgainst.toString() + '\n');
 
     double phraseAlpha =
         getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
     double chunkDifference = (2 * pi / numChunks) - phraseAlpha;
 
-    bool isOverflowing = checkIfShouldOverflowReverse(chunkDifference);
+    bool isOverflowing = checkIfShouldOverflow(chunkDifference);
     int index = 0;
     if (isOverflowing) {
       while (isOverflowing) {
@@ -287,7 +292,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
         radiusToMeasureAgainst += spaceBetweenLines;
 
-        if (checkIfShouldOverflowReverse(chunkDifference)) {
+        if (checkIfShouldOverflow(chunkDifference)) {
           List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
           phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
@@ -300,8 +305,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     } else {
       phrasesToReturn.add(fullPhrase);
     }
-
-    return phrasesToReturn;
+    for (int i = 0; i < phrasesToReturn.length; i++) {
+      phrasesToReturn[i] = phrasesToReturn[i].split('').reversed.join();
+    }
+    return phrasesToReturn.reversed.toList();
   }
 
   void setUpPhraseChunkAndAddToLists(String fullPhrase) {

@@ -165,10 +165,10 @@ class ArcTextPainter extends CustomPainter {
     initialAngle += (2 * pi / numChunks);
   }
 
-  // Problem 1 - Starting Position
-  // Problem 2 - Writing text the other direction
-  // LTR vs RTL?
-  // Problem 3 - Overflow problems?
+  // Problem 1 - Starting Position SOLVED
+  // Problem 2 - Writing text the other direction SOLVED
+  // LTR vs RTL? SOLVED
+  // Problem 3 - Overflow problems? working on it
 
   void _reversePaintPhrase(Canvas canvas, Size size, double initialAngle,
       double radiusToUse, String phraseToPrint) {
