@@ -9,36 +9,37 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> circle1Text = [
-      "Jacob the very dude",
-      "Jonathan the very dude",
-      "James",
-      "Adopted Hobo",
-      "John Cina",
-      "Jamison III",
-      "Santa Claus",
-      "Abe Lincoln"
+      "Person 1",
+      "Person 2",
+      "Person 3",
+      "Person 4",
+      // "John Cina",
+      // "Jamison III",
+      // "Santa Claus",
+      // "Abe Lincoln"
     ];
 
     List<String> circle2Text = [
-      "howdy",
-      "Clean Floors (Sweep, mop)",
-      "Run around good sir",
-      "Clean the Bathroom",
-      "Don't die",
-      "Wash the fat dogs",
-      "Clean up after the baby",
-      "Give a speech"
+      "Bathrooms",
+      //"Clean Floors (Sweep, mop)",
+      "Kitchen (dishes)",
+      "Kitchen (oven, counters)",
+      "Floors / windows",
+      // "Don't die",
+      // "Wash the fat dogs",
+      // "Clean up after the baby",
+      // "Give a speech"
     ];
 
     List<String> circle3Text = [
-      "bop bop bop",
-      "Clean oven ",
-      "Shovel Snow",
-      "Grow Potatoes",
-      "Travel to Russia nyet",
-      "Give coal to naughty kids",
-      "Beat the South",
-      "Run",
+      "Rooms",
+      "Rooms",
+      "Rooms",
+      "Rooms",
+      // "Travel to Russia nyet",
+      // "Give coal to naughty kids",
+      // "Beat the South",
+      // "Run",
     ];
 
     //In the future we'll grab any/all charts from system memory
@@ -69,8 +70,9 @@ class HomeScreen extends StatelessWidget {
             //Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: const [0.25, 0.35],
-            circleOneColor: Colors.transparent,
-            //Global.currentTheme.primaryColor,
+            circleOneColor:
+                //Colors.transparent,
+                Global.currentTheme.primaryColor,
             circleOneFontColor: Colors.black,
             circleOneFontSize: 8.0,
             circleOneTextRadiusProportion: 0.6,

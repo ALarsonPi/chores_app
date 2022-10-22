@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 class ArcTextPainter extends CustomPainter {
   ArcTextPainter({
@@ -14,7 +15,11 @@ class ArcTextPainter extends CustomPainter {
     required this.numChunks,
     required this.spaceBetweenLines,
     required this.shouldFlip,
+    this.isRing3 = false,
   });
+
+  bool isRing3;
+
   bool shouldFlip;
   double userChosenRadius;
   double initialAngle;
@@ -54,6 +59,33 @@ class ArcTextPainter extends CustomPainter {
         size);
   }
 
+  setActualRadius(int numPhrasesInChunk, bool shouldReverse) {
+    if (isRing3) actualRadius += 3 * spaceBetweenLines / 4;
+
+    // this part is a VERY imprecise art. Thought should be put into
+    // finding a way to actaully center text in the ring (vertically)
+    // regardless of how many chunks it has
+
+    // If we just have one line, try to center it
+    if (numPhrasesInChunk == 1) {
+      actualRadius +=
+          (shouldReverse) ? -spaceBetweenLines / 6 : -3 * spaceBetweenLines / 4;
+    } else if (numPhrasesInChunk == 2) {
+      actualRadius +=
+          (shouldReverse) ? spaceBetweenLines / 6 : -2 * spaceBetweenLines / 4;
+    } else if (numPhrasesInChunk == 3) {
+      actualRadius +=
+          (shouldReverse) ? spaceBetweenLines : spaceBetweenLines / 8;
+      if ((Device.get().isAndroid && Device.get().isPhone)) {
+        actualRadius +=
+            (shouldReverse) ? -spaceBetweenLines / 2 : -spaceBetweenLines / 4;
+      }
+    } else {
+      actualRadius +=
+          (shouldReverse) ? spaceBetweenLines * (numPhrasesInChunk - 3) : 0;
+    }
+  }
+
   void _paintChunk(
       List<String> phrases,
       List<double> phraseAlpha,
@@ -61,12 +93,7 @@ class ArcTextPainter extends CustomPainter {
       Canvas canvas,
       Size size,
       bool shouldReversePrint) {
-    if (phrases.length == 1) {
-      //We might consider changing this centering amount / allowing it to be customizable
-      // or getting the next inner most circle's height and actually center the text between that
-      // and the far edge of this circle
-      actualRadius -= spaceBetweenLines / 2;
-    }
+    setActualRadius(phrases.length, shouldReversePrint);
     for (int i = 0; i < phrases.length; i++) {
       double currPhraseAlpha = phraseAlpha[i];
       double singleChunkAngle = (2 * pi / numChunks);

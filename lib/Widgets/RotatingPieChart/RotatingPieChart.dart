@@ -270,14 +270,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     //sense when we reverse everything back
     String currPhrase = fullPhrase.split('').reversed.join();
 
-    double radiusToMeasureAgainst =
-        userChosenRadius - (spaceBetweenLines * numLines);
-
-    debugPrint(currPhrase);
-    debugPrint("User chosen Radius:");
-    debugPrint(userChosenRadius.toString());
-    debugPrint("space between lines: " + spaceBetweenLines.toString());
-    debugPrint("Radius to start" + radiusToMeasureAgainst.toString() + '\n');
+    double radiusToMeasureAgainst = userChosenRadius -
+        (spaceBetweenLines * numLines) +
+        (spaceBetweenLines / 2);
 
     double phraseAlpha =
         getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
@@ -303,7 +298,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         index++;
       }
     } else {
-      phrasesToReturn.add(fullPhrase);
+      phrasesToReturn.add(fullPhrase.split('').reversed.join());
     }
     for (int i = 0; i < phrasesToReturn.length; i++) {
       phrasesToReturn[i] = phrasesToReturn[i].split('').reversed.join();
@@ -482,6 +477,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         numChunks: numChunks,
                         spaceBetweenLines: spaceBetweenLines,
                         shouldFlip: shouldFlip,
+                        isRing3: this.widget.pie.ringNum == 3,
                       )
                     : PieTextPainter(
                         items: this.widget.items,
