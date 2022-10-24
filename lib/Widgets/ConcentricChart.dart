@@ -31,6 +31,7 @@ class ConcentricChart extends StatefulWidget {
   double circleThreeTextPixelOffset;
 
   bool shouldHaveFluidTextTransition;
+  int overflowLineLimit;
 
   ConcentricChart({
     super.key,
@@ -56,6 +57,7 @@ class ConcentricChart extends StatefulWidget {
     this.circleThreeTextPixelOffset = 0.0,
     this.spaceBetweenLines = 20,
     this.shouldHaveFluidTextTransition = true,
+    this.overflowLineLimit = 2,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -221,6 +223,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
           pie: pie,
           shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,
           spaceBetweenLines: widget.spaceBetweenLines,
+          overflowLineLimit: widget.overflowLineLimit,
         ),
       ),
     );

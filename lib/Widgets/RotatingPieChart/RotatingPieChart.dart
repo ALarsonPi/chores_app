@@ -18,6 +18,7 @@ class RotatingPieChart extends StatelessWidget {
   final List<double> bounds;
   double spaceBetweenLines;
   bool shouldHaveFluidTransition;
+  int overflowLineLimit;
 
   final PieInfo pie;
 
@@ -28,6 +29,7 @@ class RotatingPieChart extends StatelessWidget {
     required this.pie,
     required this.spaceBetweenLines,
     required this.shouldHaveFluidTransition,
+    required this.overflowLineLimit,
   }) {
     items = pie.textAndAngleItems;
     sizeOfChart = pie.heightCoefficient;
@@ -59,6 +61,7 @@ class RotatingPieChart extends StatelessWidget {
             userChosenRadiusForText: userChosenRadiusForText,
             spaceBetweenLines: spaceBetweenLines,
             shouldHaveFluidTransition: shouldHaveFluidTransition,
+            overflowLineLimit: overflowLineLimit,
             pie: pie,
           ),
         ),
@@ -78,6 +81,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final double spaceBetweenLines;
   final PieInfo pie;
   final bool shouldHaveFluidTransition;
+  final int overflowLineLimit;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -91,6 +95,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.spaceBetweenLines,
     required this.shouldHaveFluidTransition,
     required this.pie,
+    required this.overflowLineLimit,
   }) : super(key: key);
 
   @override
@@ -110,6 +115,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late double spaceBetweenLines;
   late PieInfo pie;
   late bool shouldHaveFluidTransition;
+  late int overflowLineLimit;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
@@ -132,6 +138,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
     shouldHaveFluidTransition = widget.shouldHaveFluidTransition;
+    overflowLineLimit = widget.overflowLineLimit;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
           text: TextSpan(
@@ -190,14 +197,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     double chunkDifference = (2 * pi / numChunks) - phraseAlpha;
 
     bool isOverflowing = checkIfShouldOverflow(chunkDifference);
+    int numLines = 1;
     if (isOverflowing) {
-      while (isOverflowing) {
+      while (isOverflowing && numLines <= widget.overflowLineLimit) {
         phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
         chunkDifference = (2 * pi / numChunks) - phraseAlpha;
 
         radiusToMeasureAgainst -= spaceBetweenLines;
 
-        if (checkIfShouldOverflow(chunkDifference)) {
+        if (checkIfShouldOverflow(chunkDifference) &&
+            numLines <= widget.overflowLineLimit) {
           List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
           phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
@@ -205,6 +214,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           isOverflowing = false;
           phrasesToReturn.add(currPhrase);
         }
+        numLines++;
       }
     } else {
       phrasesToReturn.add(fullPhrase);
@@ -230,15 +240,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     double chunkDifference = (2 * pi / numChunks) - phraseAlpha;
 
     bool isOverflowing = checkIfShouldOverflow(chunkDifference);
-    int index = 0;
     if (isOverflowing) {
-      while (isOverflowing) {
+      int numLines = 1;
+      while (isOverflowing && numLines <= widget.overflowLineLimit) {
         phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
         chunkDifference = (2 * pi / numChunks) - phraseAlpha;
 
         radiusToMeasureAgainst += spaceBetweenLines;
 
-        if (checkIfShouldOverflow(chunkDifference)) {
+        if (checkIfShouldOverflow(chunkDifference) &&
+            numLines != widget.overflowLineLimit) {
           List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
           phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
@@ -246,13 +257,20 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           isOverflowing = false;
           phrasesToReturn.add(currPhrase);
         }
-        index++;
+
+        numLines++;
       }
     } else {
+      // If there's only one (no overflow)
       phrasesToReturn.add(fullPhrase.split('').reversed.join());
     }
+
     for (int i = 0; i < phrasesToReturn.length; i++) {
       phrasesToReturn[i] = phrasesToReturn[i].split('').reversed.join();
+    }
+
+    if (fullPhrase.contains("dishes")) {
+      debugPrint("Size: " + phrasesToReturn.length.toString());
     }
     return phrasesToReturn.reversed.toList();
   }
@@ -360,7 +378,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   bool isNotBeingRotated = true;
-  void isNotBeingRotatedFunction() {
+  void startStopWheelRotation() {
     setState(() {
       isNotBeingRotated = !isNotBeingRotated;
     });
@@ -381,7 +399,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         lastDirection = newDirection;
       },
       onPanStart: (details) => {
-        isNotBeingRotatedFunction(),
+        startStopWheelRotation(),
       },
       onPanEnd: (details) {
         // non-angular velocity
@@ -403,7 +421,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
-        isNotBeingRotatedFunction();
+        startStopWheelRotation();
       },
       child: AnimatedBuilder(
         animation: _animation,

@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
     List<String> circle2Text = [
       "Bathrooms",
       //"Clean Floors (Sweep, mop)",
-      "Kitchen (dishes)",
+      "Kitchen (dishes) also more dishes and also more and more and also mas",
       "Kitchen (oven, counters)",
       "Floors / windows",
       // "Don't die",
@@ -68,6 +68,7 @@ class HomeScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             spaceBetweenLines: 15,
             shouldHaveFluidTextTransition: true,
+            overflowLineLimit: 3,
             //Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: const [0.25, 0.35],
