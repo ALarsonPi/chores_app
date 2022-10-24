@@ -67,6 +67,7 @@ class HomeScreen extends StatelessWidget {
             numberOfRings: 3,
             height: MediaQuery.of(context).size.height,
             spaceBetweenLines: 15,
+            shouldHaveFluidTextTransition: true,
             //Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: const [0.25, 0.35],

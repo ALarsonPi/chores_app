@@ -30,6 +30,8 @@ class ConcentricChart extends StatefulWidget {
   List<double> circleThreeRadiusProportions;
   double circleThreeTextPixelOffset;
 
+  bool shouldHaveFluidTextTransition;
+
   ConcentricChart({
     super.key,
     required this.numberOfRings,
@@ -53,6 +55,7 @@ class ConcentricChart extends StatefulWidget {
     this.circleTwoTextPixelOffset = 0.0,
     this.circleThreeTextPixelOffset = 0.0,
     this.spaceBetweenLines = 20,
+    this.shouldHaveFluidTextTransition = true,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -77,16 +80,16 @@ class _ConcentricChartState extends State<ConcentricChart> {
   late PieInfo circleTwoPie;
   late PieInfo circleThreePie;
 
-  String replaceSpaceWithNewLine(String string) {
-    return string.replaceAll(" ", '\n');
-  }
-
   List<String> checkCircleOneForSpaces(List<String> list) {
     List<String> newList = List.empty(growable: true);
     for (String currString in list) {
       newList.add(replaceSpaceWithNewLine(currString));
     }
     return newList;
+  }
+
+  String replaceSpaceWithNewLine(String string) {
+    return string.replaceAll(" ", '\n');
   }
 
   @override
@@ -192,64 +195,6 @@ class _ConcentricChartState extends State<ConcentricChart> {
       );
     }
 
-    String iis = "";
-    iis += "iiiiiiiiii"; //1
-    iis += "i"; //2
-    // iis += "iiiiiiiiii"; //3
-    // iis += "iiiiiiiiii"; //4
-    // iis += "iiiiiiiiii"; //5
-    // iis += "iiiiiiiiii"; //6
-    iis += "iiiiiiiiii"; //7
-    // iis += "iiiiiiiiii"; //8
-    //iis += "iiiiiiiiii"; //9
-    //iis += "iiiiiiiiii"; //10
-    iis += ""; //11
-    //iis += "iiiiiiiiii"; //12
-    // iis += "iiiiiiiiii"; //13
-    // iis += "iiiiiiiiii"; //14
-    //iis += "iiiiiiiiii"; //15
-    //iis += "iiiiiiiiii";
-    iis += "";
-    iis += "";
-
-    String mms = "";
-    mms += "MMM";
-    mms += "";
-    //mms += "MMMMMMMMMM";
-    //mms += "MMMMMMM";
-    // mms += "MMMMMMMMMM";
-    // mms += "MMMMMMMMMM";
-    //mms += "MMMMMMMM";
-    //mms += "MMMMMMMMMM";
-    //mms += "MMMMMMMMMM";
-    //mms += "MMMMMMMMMM";
-    mms += "M";
-
-    String aas = "";
-    //aas += "a a a a a a a a a a";
-    //aas += " a a a a a a a a a a";
-    //aas += " a a a a a";
-    //aas += "a a a a a a a a a a";
-    //aas += " a a a a a a a a a a";
-    aas += " a a a a";
-    //aas += " a a a a a a a a a a";
-    //aas += " a a a a a a a a a a";
-    //aas += " a a a a";
-
-    String bops = "bop bop bop";
-    //bops += " bop bop bop";
-    //bops += " bop bop bop bop bop";
-    //bops += " bop bop bop bop bop";
-    //bops += " bop bop bop bop bop bop";
-    //bops += " bop bop bop";
-    // bops += " bop bop bop bop bop bop";
-    //bops += " bop bop bop bop bop bop";
-    //bops += " bop bop bop bop bop";
-    // bops += " bop bop bop bop bop";
-    // bops += " bop bop bop bop bop";
-    bops += "";
-
-    // assuming that the circles are all the same length
     circleOneBounds = populateBounds(circleOneItems.length);
     circleTwoBounds = populateBounds(circleTwoItems.length);
     circleThreeBounds = populateBounds(circleThreeItems.length);
@@ -274,6 +219,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
+          shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,
           spaceBetweenLines: widget.spaceBetweenLines,
         ),
       ),

@@ -12,10 +12,13 @@ class RotatingPieChart extends StatelessWidget {
   final double accellerationFactor;
   late List<PieChartItem> items;
   late double sizeOfChart;
-  final List<double> bounds;
-  late bool isNames;
+  late bool isCircle1;
   late double userChosenRadiusForText;
-  late double spaceBetweenLines;
+
+  final List<double> bounds;
+  double spaceBetweenLines;
+  bool shouldHaveFluidTransition;
+
   final PieInfo pie;
 
   RotatingPieChart({
@@ -24,10 +27,11 @@ class RotatingPieChart extends StatelessWidget {
     required this.bounds,
     required this.pie,
     required this.spaceBetweenLines,
+    required this.shouldHaveFluidTransition,
   }) {
     items = pie.textAndAngleItems;
     sizeOfChart = pie.heightCoefficient;
-    isNames = pie.ringNum == 1;
+    isCircle1 = pie.ringNum == 1;
     userChosenRadiusForText = pie.startingRadiusOfText;
     if (!Device.get().isPhone) spaceBetweenLines += 25;
     if (Device.devicePixelRatio > 2) spaceBetweenLines += 5;
@@ -51,9 +55,10 @@ class RotatingPieChart extends StatelessWidget {
             textStyle: pie.textStyle,
             textHeightCoefficient: userChosenRadiusForText,
             accellerationFactor: accellerationFactor,
-            isNames: isNames,
+            isCircle1: isCircle1,
             userChosenRadiusForText: userChosenRadiusForText,
             spaceBetweenLines: spaceBetweenLines,
+            shouldHaveFluidTransition: shouldHaveFluidTransition,
             pie: pie,
           ),
         ),
@@ -67,11 +72,12 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final List<PieChartItem> items;
   final double textHeightCoefficient;
   final List<double> bounds;
-  final bool isNames;
+  final bool isCircle1;
   final double userChosenRadiusForText;
   final TextStyle textStyle;
   final double spaceBetweenLines;
   final PieInfo pie;
+  final bool shouldHaveFluidTransition;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -79,10 +85,11 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.items,
     required this.textHeightCoefficient,
     required this.bounds,
-    required this.isNames,
+    required this.isCircle1,
     required this.userChosenRadiusForText,
     required this.textStyle,
     required this.spaceBetweenLines,
+    required this.shouldHaveFluidTransition,
     required this.pie,
   }) : super(key: key);
 
@@ -95,13 +102,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  late bool isNames;
+  late bool isCircle1;
   late TextStyle textStyle;
   late double textHeightCoefficient;
   late double userChosenRadius;
   late PieChartItemToText toText;
   late double spaceBetweenLines;
   late PieInfo pie;
+  late bool shouldHaveFluidTransition;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
@@ -112,26 +120,18 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<bool> flipStatusArray = List.empty(growable: true);
 
   late int numChunks;
-  // ignore: non_constant_identifier_names
-  late double CHUNK_SIZE;
-
-  //When using 'l' or 'i' as the smallest letter
-  // ignore: non_constant_identifier_names
-  final double WIDTH_OF_SMALLEST_LETTER = 0.1145861761;
-  // ignore: non_constant_identifier_names
-  final double WIDTH_OF_SPACE = 0.16017116006731802;
 
   @override
   void initState() {
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
-    isNames = widget.isNames;
+    isCircle1 = widget.isCircle1;
     userChosenRadius = widget.textHeightCoefficient;
     numChunks = widget.items.length;
-    CHUNK_SIZE = (2 * pi / numChunks);
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
+    shouldHaveFluidTransition = widget.shouldHaveFluidTransition;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
           text: TextSpan(
@@ -145,7 +145,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     for (int i = 0; i < numChunks; i++) {
       flipStatusArray.add(false);
     }
-    if (!isNames) setUpPhraseChunks();
+    if (!isCircle1) setUpPhraseChunks();
     super.initState();
   }
 
@@ -174,60 +174,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       sum += getAlphaForSpecificLetter(currLetter, desiredRadius);
     }
     return sum;
-  }
-
-  double getTotalPaddingAsIntegerIncrements(
-      double totalWordAlpha, double chunkAlpha) {
-    double total = ((chunkAlpha - totalWordAlpha) / WIDTH_OF_SMALLEST_LETTER)
-        .ceilToDouble();
-    return total;
-  }
-
-  String addPaddingToInitialPhrase(String initialPhrase, double leftPaddingNum,
-      double rightPaddingNum, bool hasOverflow) {
-    String leftPadding = "";
-    for (int j = 0; j < leftPaddingNum; j++) {
-      leftPadding += "~~";
-    }
-    String finalString = "~$leftPadding$initialPhrase";
-
-    if (numChunks == 2 && pie.ringNum == 2) {
-      finalString = "~~~$leftPadding$initialPhrase";
-    }
-    if (!hasOverflow && pie.ringNum == 3) {
-      for (int i = rightPaddingNum.floor(); i >= 0; i -= 2) {
-        finalString = "~~~~$finalString";
-      }
-    } else {
-      if (numChunks == 2) {
-        finalString = "~~~~~~~~$leftPadding$initialPhrase";
-      }
-    }
-    if (!Device.get().isPhone) finalString = "~$finalString";
-    if (Device.devicePixelRatio > 2) finalString = "~$finalString";
-    return finalString;
-  }
-
-  double getTotalPadding(String phrase, double desiredRadius) {
-    double chunkAlpha = getTotalPhraseAlpha(phrase, desiredRadius);
-    return getTotalPaddingAsIntegerIncrements(chunkAlpha, CHUNK_SIZE);
-  }
-
-  List<double> getLeftAndRightPadding(String phrase, double desiredRadius) {
-    double totalPadding = getTotalPadding(phrase, desiredRadius);
-
-    // Break padding into left and right, if extra padding, it's dismissed
-    double remainder = totalPadding % 2;
-    double halfOfTotalPadding = totalPadding / 2;
-
-    double leftPaddingAmount = halfOfTotalPadding + remainder;
-    double rightPaddingAmount = halfOfTotalPadding;
-
-    List<double> paddings = List.empty(growable: true);
-    paddings.add(leftPaddingAmount);
-    paddings.add(rightPaddingAmount);
-
-    return paddings;
   }
 
   bool checkIfShouldOverflow(double alphaDifference) {
@@ -413,10 +359,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return offset! - center;
   }
 
-  bool isStill = true;
-  void isStillFunction() {
+  bool isNotBeingRotated = true;
+  void isNotBeingRotatedFunction() {
     setState(() {
-      isStill = !isStill;
+      isNotBeingRotated = !isNotBeingRotated;
     });
   }
 
@@ -435,7 +381,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         lastDirection = newDirection;
       },
       onPanStart: (details) => {
-        isStillFunction(),
+        isNotBeingRotatedFunction(),
       },
       onPanEnd: (details) {
         // non-angular velocity
@@ -457,7 +403,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
-        isStillFunction();
+        isNotBeingRotatedFunction();
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -470,7 +416,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                 child: widget,
               ),
               CustomPaint(
-                painter: (!isNames)
+                painter: (!isCircle1)
                     ? ArcTextPainter(
                         userChosenRadius: userChosenRadius,
                         textStyle: textStyle,
@@ -482,8 +428,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         numChunks: numChunks,
                         spaceBetweenLines: spaceBetweenLines,
                         isRing3: this.widget.pie.ringNum == 3,
-                        isRotating: !isStill,
-                        shouldHaveFluidTransition: true,
+                        isRotating: !isNotBeingRotated,
+                        shouldHaveFluidTransition: shouldHaveFluidTransition,
                         flipStatusArray: flipStatusArray,
                       )
                     : PieTextPainter(

@@ -15,7 +15,7 @@ class ArcTextPainter extends CustomPainter {
     required this.numChunks,
     required this.spaceBetweenLines,
     required this.isRotating,
-    this.shouldHaveFluidTransition = true,
+    required this.shouldHaveFluidTransition,
     this.isRing3 = false,
     this.flipStatusArray = const [false],
   });
