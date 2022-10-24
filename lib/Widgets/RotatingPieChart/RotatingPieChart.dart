@@ -109,6 +109,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<List<double>> forwardAlphaList = List.empty(growable: true);
   List<List<double>> reverseAlphaList = List.empty(growable: true);
 
+  List<bool> flipStatusArray = List.empty(growable: true);
+
   late int numChunks;
   // ignore: non_constant_identifier_names
   late double CHUNK_SIZE;
@@ -140,6 +142,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         );
     pie = widget.pie;
     spaceBetweenLines = widget.spaceBetweenLines;
+    for (int i = 0; i < numChunks; i++) {
+      flipStatusArray.add(false);
+    }
     if (!isNames) setUpPhraseChunks();
     super.initState();
   }
@@ -408,10 +413,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return offset! - center;
   }
 
-  bool shouldFlip = true;
-  void shouldFlipFunction() {
+  bool isStill = true;
+  void isStillFunction() {
     setState(() {
-      shouldFlip = !shouldFlip;
+      isStill = !isStill;
     });
   }
 
@@ -430,7 +435,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         lastDirection = newDirection;
       },
       onPanStart: (details) => {
-        //shouldFlipFunction(),
+        isStillFunction(),
       },
       onPanEnd: (details) {
         // non-angular velocity
@@ -452,7 +457,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
             initialVelocity: angularRotation,
           ),
         );
-        //shouldFlipFunction();
+        isStillFunction();
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -476,8 +481,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         reversePhraseAlpha: reverseAlphaList,
                         numChunks: numChunks,
                         spaceBetweenLines: spaceBetweenLines,
-                        shouldFlip: shouldFlip,
                         isRing3: this.widget.pie.ringNum == 3,
+                        isRotating: !isStill,
+                        shouldHaveFluidTransition: true,
+                        flipStatusArray: flipStatusArray,
                       )
                     : PieTextPainter(
                         items: this.widget.items,

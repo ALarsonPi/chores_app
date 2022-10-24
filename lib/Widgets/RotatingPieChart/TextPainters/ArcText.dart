@@ -14,13 +14,19 @@ class ArcTextPainter extends CustomPainter {
     required this.reversePhraseAlpha,
     required this.numChunks,
     required this.spaceBetweenLines,
-    required this.shouldFlip,
+    required this.isRotating,
+    this.shouldHaveFluidTransition = true,
     this.isRing3 = false,
+    this.flipStatusArray = const [false],
   });
 
   bool isRing3;
 
-  bool shouldFlip;
+  bool shouldHaveFluidTransition;
+  List<bool> flipStatusArray;
+  List<bool> lastFlippedStatus = List.empty(growable: true);
+
+  bool isRotating;
   double userChosenRadius;
   double initialAngle;
   double spaceBetweenLines;
@@ -49,14 +55,15 @@ class ArcTextPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _paintChunks(
-        listOfChunkPhrases,
-        forwardPhraseAlpha,
-        listOfReverseChunkPhrases,
-        reversePhraseAlpha,
-        numChunks,
-        spaceBetweenLines,
-        canvas,
-        size);
+      listOfChunkPhrases,
+      forwardPhraseAlpha,
+      listOfReverseChunkPhrases,
+      reversePhraseAlpha,
+      numChunks,
+      spaceBetweenLines,
+      canvas,
+      size,
+    );
   }
 
   setActualRadius(int numPhrasesInChunk, bool shouldReverse) {
@@ -87,12 +94,13 @@ class ArcTextPainter extends CustomPainter {
   }
 
   void _paintChunk(
-      List<String> phrases,
-      List<double> phraseAlpha,
-      double spaceBetweenLines,
-      Canvas canvas,
-      Size size,
-      bool shouldReversePrint) {
+    List<String> phrases,
+    List<double> phraseAlpha,
+    double spaceBetweenLines,
+    Canvas canvas,
+    Size size,
+    bool shouldReversePrint,
+  ) {
     setActualRadius(phrases.length, shouldReversePrint);
     for (int i = 0; i < phrases.length; i++) {
       double currPhraseAlpha = phraseAlpha[i];
@@ -157,18 +165,17 @@ class ArcTextPainter extends CustomPainter {
         (radiansToDegrees(initialAngle) % 360).ceilToDouble();
     double middleAngle = degreesOfChunk + ((360 / numChunks) / 2);
     // Angle for Arc text starts at 90 degrees
-    return (middleAngle >= 92 && middleAngle <= 272) && shouldFlip;
+    return (middleAngle >= 92 && middleAngle <= 272);
   }
 
-  void _paintChunks(
-      List<List<String>> listOfChunks,
-      List<List<double>> forwardAlpha,
-      List<List<String>> listOfReverseChunks,
-      List<List<double>> reverseAlpha,
-      int numChunks,
-      double spaceBetweenLines,
-      Canvas canvas,
-      Size size) {
+  void paintFluidPhrases(
+    Canvas canvas,
+    Size size,
+    List<List<String>> listOfChunks,
+    List<List<double>> forwardAlpha,
+    List<List<String>> listOfReverseChunks,
+    List<List<double>> reverseAlpha,
+  ) {
     for (int i = 0; i < numChunks; i++) {
       canvas.save();
       shouldReverse = shouldReversePrint(initialAngle);
@@ -188,14 +195,67 @@ class ArcTextPainter extends CustomPainter {
     }
   }
 
+  void setCurrentFlipStatus() {
+    double initialAngleAtStart = initialAngle;
+    for (int i = 0; i < numChunks; i++) {
+      shouldReverse = shouldReversePrint(initialAngle);
+
+      if (shouldReverse) {
+        flipStatusArray[i] = true;
+      } else {
+        flipStatusArray[i] = false;
+      }
+
+      incrementAngleByChunkSize();
+    }
+    initialAngle = initialAngleAtStart;
+  }
+
+  void _paintChunks(
+    List<List<String>> listOfChunks,
+    List<List<double>> forwardAlpha,
+    List<List<String>> listOfReverseChunks,
+    List<List<double>> reverseAlpha,
+    int numChunks,
+    double spaceBetweenLines,
+    Canvas canvas,
+    Size size,
+  ) {
+    if (shouldHaveFluidTransition) {
+      paintFluidPhrases(canvas, size, listOfChunks, forwardAlpha,
+          listOfReverseChunks, reverseAlpha);
+      return;
+    }
+
+    if (!isRotating) {
+      setCurrentFlipStatus();
+    }
+
+    lastFlippedStatus.clear();
+    lastFlippedStatus.addAll(flipStatusArray);
+
+    for (int i = 0; i < numChunks; i++) {
+      canvas.save();
+      shouldReverse = lastFlippedStatus[i];
+      List<String> phraseListToUse = List.empty(growable: true);
+      List<double> alphaListToUse = List.empty(growable: true);
+      if (shouldReverse) {
+        phraseListToUse = listOfReverseChunks[i].reversed.toList();
+        alphaListToUse = reverseAlpha[i];
+      } else {
+        phraseListToUse = listOfChunks[i];
+        alphaListToUse = forwardAlpha[i];
+      }
+      _paintChunk(phraseListToUse, alphaListToUse, spaceBetweenLines, canvas,
+          size, shouldReverse);
+      canvas.restore();
+      incrementAngleByChunkSize();
+    }
+  }
+
   void incrementAngleByChunkSize() {
     initialAngle += (2 * pi / numChunks);
   }
-
-  // Problem 1 - Starting Position SOLVED
-  // Problem 2 - Writing text the other direction SOLVED
-  // LTR vs RTL? SOLVED
-  // Problem 3 - Overflow problems? working on it
 
   void _reversePaintPhrase(Canvas canvas, Size size, double initialAngle,
       double radiusToUse, String phraseToPrint) {
