@@ -534,14 +534,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   /// and [PieChartPainter] to actaully draw out the background color of the charts
   @override
   Widget build(BuildContext context) {
-    if (chunkPhraseList.isEmpty) {
-      setUpPhraseChunks();
-    }
-    assert(chunkPhraseList.isNotEmpty, "${chunkPhraseList.length}");
-    assert(reversePhraseChunkList.isNotEmpty);
-    assert(forwardAlphaList.isNotEmpty);
-    assert(reverseAlphaList.isNotEmpty);
-
     return GestureDetector(
       onPanDown: (details) {
         lastDirection = getDirection(details.globalPosition);
