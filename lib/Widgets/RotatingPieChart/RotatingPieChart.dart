@@ -8,11 +8,24 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'RotationEndSimulation.dart';
 import 'TextPainters/NameTextPainter.dart';
 
+/// Pie Chart that is rotatable by the User
+/// and has text displayed around it's edges if desired
 class RotatingPieChart extends StatelessWidget {
+  /// Rate at whcih the acceleration / decceleration occurs when the user
+  /// spins the chart
   final double accellerationFactor;
+
+  /// The Segments of the PieChart
   late List<PieChartItem> items;
+
+  /// The width of the chart. Will constrain the stack to this size
   late double sizeOfChart;
+
+  /// Is this the innermost circle? If so, then we'll use a different type of
+  /// text painter
   late bool isCircle1;
+
+  /// The Radius at which the text will be drawn
   late double userChosenRadiusForText;
 
   final List<double> bounds;
@@ -23,9 +36,15 @@ class RotatingPieChart extends StatelessWidget {
   int overflowLineLimit;
   double chunkOverflowLimitProportion;
 
+  /// The Pie which holds info about this circle
   final PieInfo pie;
+
+  /// The color of the border lines around the circle / between the segments
   final Color linesColor;
 
+  /// Constructor which takes these parameters and calculates the spaceBetweenLines
+  /// based on what was sent in as well as whether the device is a phone
+  /// and if the device has a pixelAspectRatio above 2
   RotatingPieChart({
     super.key,
     this.accellerationFactor = 1.0,
@@ -47,6 +66,9 @@ class RotatingPieChart extends StatelessWidget {
     if (Device.devicePixelRatio > 2) spaceBetweenLines += 5;
   }
 
+  /// Creates a Container which holds the inner pie chart, the color of the container
+  /// is transparent so the corners don't show and the shape of the decoration is
+  /// a circle to help with that same issue
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -82,6 +104,7 @@ class RotatingPieChart extends StatelessWidget {
   }
 }
 
+/// Internal State for the rotating pie chart
 class _RotatingPieChartInternal extends StatefulWidget {
   final double accellerationFactor;
   final List<PieChartItem> items;
@@ -124,9 +147,14 @@ class _RotatingPieChartInternal extends StatefulWidget {
       _RotatingPieChartInternalState();
 }
 
+/// The Internal State of the Rotating Pie Chart
 class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     with SingleTickerProviderStateMixin {
+  /// The controller of the animation of this chart
   late AnimationController _controller;
+
+  /// The animation that shows when starting up the app. Spins the circle twice
+  /// around then stops in the correct position
   late Animation<double> _animation;
 
   late bool isCircle1;
@@ -142,16 +170,27 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late List<double> ringBorders;
   late bool shouldFlipText;
 
+  /// Phrases as built for the upper quadrants
   List<List<String>> chunkPhraseList = List.empty(growable: true);
+
+  /// Phrases as built for the lower quadrants
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
 
+  /// List of Alpha (length in pixels) of the phrases for the upper quadrants
   List<List<double>> forwardAlphaList = List.empty(growable: true);
+
+  /// List of Alpha (length in pixels) of the phrases for the lower quadrants
   List<List<double>> reverseAlphaList = List.empty(growable: true);
 
+  /// List to keep track of which elements should be flipped
   List<bool> flipStatusArray = List.empty(growable: true);
 
+  /// Number of chunks the chart has (for every text item provided, there should
+  /// be one chunk / segment)
   late int numChunks;
 
+  /// All variables are initialized, animation is prepared and performed
+  /// Call to [setUpPhraseChunks] is made if it applies
   @override
   void initState() {
     _controller = AnimationController(vsync: this);
@@ -191,6 +230,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   final _testPainter = TextPainter(textDirection: TextDirection.ltr);
+
+  /// Gets the alpha for a specific letter based on it's size and fontstyle
   double getAlphaForSpecificLetter(String letter, double desiredRadius) {
     _testPainter.text = TextSpan(
       text: letter,
@@ -205,6 +246,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return alpha;
   }
 
+  /// Gets the alpha for a phrase using the [getAlphaForSpecificLetter] method
   double getTotalPhraseAlpha(String word, double desiredRadius) {
     double sum = 0;
     for (var currLetter in word.characters) {
@@ -213,10 +255,15 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return sum;
   }
 
+  /// Checks to see if the phrase should overflow into the next line
+  /// Should overflow if the alphaDifference (chunkAlpha - actualAlphaOfPhrase)
+  /// is less than the limit provided by the overflowLimitProportion
   bool checkIfShouldOverflow(double alphaDifference) {
     return alphaDifference <= widget.overflowLimitProportion;
   }
 
+  /// For forward phrases, this function splits the phrase into chunks that
+  /// all fit into the segment. Returns a list of those split phrases for the chunks
   List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
     List<String> phrasesToReturn = List.empty(growable: true);
     String currPhrase = fullPhrase;
@@ -267,6 +314,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return phrasesToReturn;
   }
 
+  /// For reverse phrases (those which will be used in the lower quadrants),
+  /// this function splits the phrase into chunks that
+  /// all fit into the segment. Returns a list of those split phrases for the chunks
   List<String> getOverflowedPhrasePartsForReverseChunk(
       String fullPhrase, int numLines) {
     List<String> phrasesToReturn = List.empty(growable: true);
@@ -329,6 +379,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return phrasesToReturn.reversed.toList();
   }
 
+  /// Master method that gets overflowed chunks and adds them to the appropriate lists
   void setUpPhraseChunkAndAddToLists(String fullPhrase) {
     List<String> forwardPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
     List<String> reversePhrases = getOverflowedPhrasePartsForReverseChunk(
@@ -337,6 +388,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     reversePhraseChunkList.add(reversePhrases);
   }
 
+  /// Creates the alpha list for forward phrases
   List<double> createAlphaListForward(
       List<String> phrases, double initialRadius) {
     List<double> alphaList = List.empty(growable: true);
@@ -348,6 +400,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return alphaList;
   }
 
+  /// Creates the alpha list for lower quadrant phrases
   List<double> createAlphaListReverse(
       List<String> reversePhrases, double initialRadius) {
     List<double> alphaList = List.empty(growable: true);
@@ -359,6 +412,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return alphaList;
   }
 
+  /// Sets up all the lists - phrases and alpha lists for upper and lower quadrants
   setUpPhraseChunks() async {
     for (int i = 0; i < numChunks; i++) {
       setUpPhraseChunkAndAddToLists(widget.items[i].name);
@@ -366,6 +420,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     fillAlphaLists();
   }
 
+  /// Fills the alpha lists for each chunk of phrases
   fillAlphaLists() {
     for (List<String> phrasesInAChunk in chunkPhraseList) {
       List<double> alphaList =
@@ -379,6 +434,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
   }
 
+  /// Splits a phrase if overflow is necessary.
+  /// Finds where the string needs to split to no longer be overflowing.
+  /// Then, tries to find a space ' ' a certain number of letters before
+  /// but if it can't find a space, will just add a hyphen and split from there
   List<String> splitPhraseForOverflow(String phraseToSplit) {
     List<String> phraseParts = List.empty(growable: true);
     int numLettersToCheck = 6;
@@ -426,14 +485,17 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return phraseParts;
   }
 
+  /// Closes the controller / disploses of it
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  /// The dirction last dragged by the user
   late Offset lastDirection;
 
+  /// Gets the last direction to set [lastDirection]
   Offset getDirection(Offset globalPosition) {
     RenderBox? box = context.findRenderObject() as RenderBox?;
     Offset? offset = box?.globalToLocal(globalPosition);
@@ -442,7 +504,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return offset! - center;
   }
 
+  /// Variable to record when the chart is being rotated and when it's still
   bool isNotBeingRotated = true;
+
+  /// Sets the [isNotBeingRotated] variable and updates the chart's state
   void startStopWheelRotation() {
     if (widget.shoudFlipText) {
       setState(() {
@@ -451,6 +516,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
   }
 
+  /// Using a gesture detector, the chart detects when someone starts spinning
+  /// the chart. The chart is animated with a [RotationEndSimulation] which
+  /// just applies friction until the wheel stops. When it finally stops, it
+  /// clicks into the correct position it's closest to.
+  /// Uses three different CustomPainters -
+  /// [ArcTextPainter] for the two outermost rings
+  /// [PieTextPainter] for the inner most ring
+  /// and [PieChartPainter] to actaully draw out the background color of the charts
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

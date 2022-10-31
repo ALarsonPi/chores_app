@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 
+/// @nodoc
 class Global {
   static bool isPhone = Device.get().isPhone;
   static bool isHighPixelRatio = (Device.devicePixelRatio > 2);

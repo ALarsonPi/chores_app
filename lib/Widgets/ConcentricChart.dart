@@ -4,6 +4,9 @@ import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
 
+/// A series of two or three concentric pie charts that can hold text
+/// One use for it (the one I've used it for) is to simulate a concentric
+/// circle chore chart
 class ConcentricChart extends StatefulWidget {
   /// Number of Rings in the chart, must be either TWO or THREE
   int numberOfRings;
@@ -174,16 +177,29 @@ class ConcentricChart extends StatefulWidget {
   }
 }
 
+/// Concentric Chart State
 class _ConcentricChartState extends State<ConcentricChart> {
   List<PieChartItem> circleOneItems = List.empty(growable: true);
   List<PieChartItem> circleTwoItems = List.empty(growable: true);
   List<PieChartItem> circleThreeItems = List.empty(growable: true);
 
+  /// List of actual [RotatablePieChart] Objects that are placed in a
+  /// stack over one another to create the concentric effect
   List<Center> rotatablePies = List.empty(growable: true);
+
+  /// Info about the first (innermost) pie chart
   late PieInfo circleOnePie;
+
+  /// Info about the second pie chart (middle ring if 3 rings or outer ring if 2 rings)
   late PieInfo circleTwoPie;
+
+  /// Info about the third pie chart (outer ring)
   late PieInfo circleThreePie;
 
+  /// The inner circle doesn't have arc/curved text so instead
+  /// for every space in the text of the first circle, a new line is inserted
+  /// this allows for the inner text to be more centered and stay in their
+  /// segment better
   List<String> checkCircleOneForSpaces(List<String> list) {
     List<String> newList = List.empty(growable: true);
     for (String currString in list) {
@@ -192,10 +208,14 @@ class _ConcentricChartState extends State<ConcentricChart> {
     return newList;
   }
 
+  /// Helper function for [checkCircleOneForSpaces] function
   String replaceSpaceWithNewLine(String string) {
     return string.replaceAll(" ", '\n');
   }
 
+  /// Function that takes a radius proportion and applies a specific aspect
+  /// ratio to it to account for that aspect ratio
+  /// Formula is (radius * 1 + (IntegerAbovePixelRatio - ActualPixelRatio))
   double getProportionValue(double radius) {
     if (radius != 1.0 && Device.devicePixelRatio > 2.0) {
       return radius *
@@ -205,6 +225,53 @@ class _ConcentricChartState extends State<ConcentricChart> {
     }
   }
 
+  /// Initializes the text Lists and adds PieChartItems (with text and color)
+  /// (which function as segments of the PieChart) to
+  /// [circleOneItems], [circleTwoItems], [circleThreeItems]
+  /// Then populates bounds for each list, which are where the lines should be for
+  /// each segment
+  @override
+  void initState() {
+    widget.circleOneText = checkCircleOneForSpaces(widget.circleOneText);
+    for (String circleOneItem in widget.circleOneText) {
+      circleOneItems.add(PieChartItem(
+        name: circleOneItem,
+        color: widget.circleOneColor,
+        key: ValueKey(circleOneItem),
+      ));
+    }
+
+    for (String circleTwoItem in widget.circleTwoText) {
+      circleTwoItems.add(
+        PieChartItem(
+          name: circleTwoItem,
+          color: widget.circleTwoColor,
+        ),
+      );
+    }
+
+    for (String circleThreeItem in widget.circleThreeText) {
+      circleThreeItems.add(
+        PieChartItem(
+          name: circleThreeItem,
+          color: widget.circleThreeColor,
+        ),
+      );
+    }
+
+    circleOneBounds = populateBounds(circleOneItems.length);
+    circleTwoBounds = populateBounds(circleTwoItems.length);
+    circleThreeBounds = populateBounds(circleThreeItems.length);
+
+    super.initState();
+  }
+
+  /// Function where most variables are initialized for the Concentric Chart
+  /// Proportions are calculated, info is inserted into the pie chart objects
+  /// and the pie chart objects are inserted into the [rotatablePies] list
+  /// Also some device specific changes are applied to certain proportions
+  /// Whether the device is a tablet or phone, whether Android or iPhone, and
+  /// the number of rings all play a part in these slight tweaks to the numbers
   @override
   void didChangeDependencies() {
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
@@ -300,52 +367,17 @@ class _ConcentricChartState extends State<ConcentricChart> {
     super.didChangeDependencies();
   }
 
-  @override
-  void initState() {
-    //THESE CHARTS SHOULD HAVE A MAX OF 8 ITEMS
-    //AND A MINIMUM OF 2 ITEMS
-    assert(widget.circleOneText.length > 1 && widget.circleOneText.length <= 8);
-    assert(widget.circleTwoText.length > 1 && widget.circleTwoText.length <= 8);
-    assert(widget.circleThreeText.length > 1 &&
-        widget.circleThreeText.length <= 8);
-
-    widget.circleOneText = checkCircleOneForSpaces(widget.circleOneText);
-    for (String circleOneItem in widget.circleOneText) {
-      circleOneItems.add(PieChartItem(
-        name: circleOneItem,
-        color: widget.circleOneColor,
-        key: ValueKey(circleOneItem),
-      ));
-    }
-
-    for (String circleTwoItem in widget.circleTwoText) {
-      circleTwoItems.add(
-        PieChartItem(
-          name: circleTwoItem,
-          color: widget.circleTwoColor,
-        ),
-      );
-    }
-
-    for (String circleThreeItem in widget.circleThreeText) {
-      circleThreeItems.add(
-        PieChartItem(
-          name: circleThreeItem,
-          color: widget.circleThreeColor,
-        ),
-      );
-    }
-
-    circleOneBounds = populateBounds(circleOneItems.length);
-    circleTwoBounds = populateBounds(circleTwoItems.length);
-    circleThreeBounds = populateBounds(circleThreeItems.length);
-
-    super.initState();
-  }
-
+  /// Bounds (where each segment should start / end) for the first circle
   List<double> circleOneBounds = List.empty(growable: true);
+
+  /// Bounds (where each segment should start / end) for the second circle
   List<double> circleTwoBounds = List.empty(growable: true);
+
+  /// Bounds (where each segment should start / end) for the second circle
   List<double> circleThreeBounds = List.empty(growable: true);
+
+  /// Uses the [numItems] to populate the bounds for a [PieChartItem]
+  /// returns a list of the bounds
   populateBounds(int numItems) {
     List<double> newBounds = List.empty(growable: true);
     for (int i = 0; i <= numItems; i++) {
@@ -354,6 +386,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
     return newBounds;
   }
 
+  /// Takes a [PieInfo] which holds all the info for a circle and the bounds for it
+  /// and makes a [RotatingPieChart] using that info which is centered and in a
+  /// SafeArea
   makePieChart(PieInfo pie, List<double> bounds) {
     return Center(
       child: SafeArea(
@@ -372,6 +407,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
     );
   }
 
+  /// Builds the Concentric Chart. Is just a stack with all the
+  /// pie charts made using [makePieChart]
   @override
   Widget build(BuildContext context) {
     return Builder(

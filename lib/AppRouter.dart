@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Screens/SplashScreen.dart';
 
+/// @nodoc
 class AppRouter extends StatelessWidget {
   const AppRouter({Key? key}) : super(key: key);
 

@@ -4,6 +4,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 
 import '../Global.dart';
 
+/// @nodoc
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
