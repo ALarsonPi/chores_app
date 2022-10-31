@@ -18,8 +18,10 @@ class RotatingPieChart extends StatelessWidget {
   final List<double> bounds;
   double spaceBetweenLines;
   bool shouldHaveFluidTransition;
+  bool shouldFlipText;
   bool shouldCenterTextVertically;
   int overflowLineLimit;
+  double chunkOverflowLimitProportion;
 
   final PieInfo pie;
   final Color linesColor;
@@ -34,6 +36,8 @@ class RotatingPieChart extends StatelessWidget {
     required this.shouldCenterTextVertically,
     required this.overflowLineLimit,
     required this.linesColor,
+    required this.chunkOverflowLimitProportion,
+    required this.shouldFlipText,
   }) {
     items = pie.items;
     sizeOfChart = pie.width;
@@ -67,7 +71,9 @@ class RotatingPieChart extends StatelessWidget {
             shouldHaveFluidTransition: shouldHaveFluidTransition,
             shouldCenterTextVertically: shouldCenterTextVertically,
             overflowLineLimit: overflowLineLimit,
+            overflowLimitProportion: chunkOverflowLimitProportion,
             linesColor: linesColor,
+            shoudFlipText: shouldFlipText,
             pie: pie,
           ),
         ),
@@ -89,7 +95,10 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final bool shouldHaveFluidTransition;
   final bool shouldCenterTextVertically;
   final int overflowLineLimit;
+  final double overflowLimitProportion;
+
   final Color linesColor;
+  final bool shoudFlipText;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -106,6 +115,8 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.pie,
     required this.overflowLineLimit,
     required this.linesColor,
+    required this.overflowLimitProportion,
+    required this.shoudFlipText,
   }) : super(key: key);
 
   @override
@@ -129,6 +140,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool shouldCenterTextVertically;
   late int overflowLineLimit;
   late List<double> ringBorders;
+  late bool shouldFlipText;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
@@ -153,6 +165,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     shouldHaveFluidTransition = widget.shouldHaveFluidTransition;
     shouldCenterTextVertically = widget.shouldCenterTextVertically;
     overflowLineLimit = widget.overflowLineLimit;
+    shouldFlipText = widget.shoudFlipText;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
           text: TextSpan(
@@ -201,7 +214,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   bool checkIfShouldOverflow(double alphaDifference) {
-    return alphaDifference <= 0.15;
+    return alphaDifference <= widget.overflowLimitProportion;
   }
 
   List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
@@ -431,9 +444,11 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   bool isNotBeingRotated = true;
   void startStopWheelRotation() {
-    setState(() {
-      isNotBeingRotated = !isNotBeingRotated;
-    });
+    if (widget.shoudFlipText) {
+      setState(() {
+        isNotBeingRotated = !isNotBeingRotated;
+      });
+    }
   }
 
   @override
@@ -489,24 +504,30 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                 painter: (!isCircle1)
                     ? ArcTextPainter(
                         userChosenRadius: userChosenRadius,
+                        shouldFlipText: shouldFlipText,
+                        shouldCenterText: shouldCenterTextVertically,
                         textStyle: textStyle,
                         initialAngle: _animation.value + 1.57079632679,
                         listOfChunkPhrases: chunkPhraseList,
                         forwardPhraseAlpha: forwardAlphaList,
-                        listOfReverseChunkPhrases: reversePhraseChunkList,
-                        listOfCenterValues: [
-                          (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
-                          0,
-                          0,
-                          0
-                        ],
-                        reversePhraseAlpha: reverseAlphaList,
+                        listOfReverseChunkPhrases: (shouldFlipText)
+                            ? reversePhraseChunkList
+                            : chunkPhraseList,
+                        reversePhraseAlpha: (shouldFlipText)
+                            ? reverseAlphaList
+                            : forwardAlphaList,
                         numChunks: numChunks,
                         spaceBetweenLines: spaceBetweenLines,
                         isRing3: this.widget.pie.ringNum == 3,
                         isRotating: !isNotBeingRotated,
                         shouldHaveFluidTransition: shouldHaveFluidTransition,
                         flipStatusArray: flipStatusArray,
+                        listOfCenterValues: [
+                          (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
+                          0,
+                          0,
+                          0
+                        ],
                       )
                     : PieTextPainter(
                         items: this.widget.items,

@@ -5,51 +5,143 @@ import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
+  /// Number of Rings in the chart, must be either TWO or THREE
   int numberOfRings;
+
+  /// Width of the chart, often the entire width of the screen for maximum radius
   double width;
+
+  /// Amount of space (pixels) between each line of text
   double spaceBetweenLines;
-  List<Color> linesColors;
 
-  List<String> circleOneText;
-  Color circleOneColor;
-  Color circleOneFontColor;
-  double circleOneFontSize;
-  double circleOneTextRadiusProportion;
-  List<double> circleOneRadiusProportions;
+  /// Variable that controls whether or not the text in the bottom half will
+  /// be flipped rightside up rather than upside down
+  /// Used in conjunction with [shouldHaveFluidTextTransition]
+  bool shouldFlipText;
 
-  List<String> circleTwoText;
-  Color circleTwoColor;
-  Color circleTwoFontColor;
-  double circleTwoFontSize;
-  List<double> circleTwoRadiusProportions;
-  List<double> circleTwoTextProportions;
-  double circleTwoTextPixelOffset;
-
-  List<String> circleThreeText;
-  Color circleThreeColor;
-  Color circleThreeFontColor;
-  double circleThreeFontSize;
-  List<double> circleThreeRadiusProportions;
-  List<double> circleThreeTextProportions;
-  double circleThreeTextPixelOffset;
-
+  /// Allow for fluid text transition
+  /// If true (and [shouldFlipText] is true) then
+  /// text will flip when the median of the segment crosses the equator/zero line
+  /// If false (and [shouldFlipText] is true) then
+  /// text will remain unflipped and unchanged while spinning the circle, and flip
+  /// to the correct position after the user stops spinning
   bool shouldHaveFluidTextTransition;
+
+  /// Number of lines at which the overflow should stop overflowing
+  /// Ex. value of 2 will allow for only two lines of text in each ring
+  /// Anything else that would have overflowed will be put into the last line
   int overflowLineLimit;
+
+  /// If true, will center text for lines with more than one line
   bool shouldTextCenterVertically;
 
+  /// Color of the border of the rings and segments
+  List<Color> linesColors;
+
+  /// The proportion at which the overflow should occur [0.0-1.0]
+  /// Basically, how much padding to allow on either side of your text
+  /// Larger the proportion, the larger the amount of padding
+  double chunkOverflowLimitProportion;
+
+  /// The list of phrases to use in circle one
+  /// Each phrase will go in a separate segment
+  List<String> circleOneText;
+
+  /// The color of the innermost circle
+  Color circleOneColor;
+
+  /// The color of the text in the innermost circle
+  Color circleOneFontColor;
+
+  /// The size of the text in the innermost circle
+  double circleOneFontSize;
+
+  /// The Proportion at which the text of the inner most circle should be displayed [0.0-1.0]
+  /// The inner most circle is the only circle that uses a direct proportion to show the text
+  /// 0.5 would have a radius half the size of the circle
+  double circleOneTextRadiusProportion;
+
+  /// The radii for the circle (not the text) of the innermost circle
+  /// Typically starts at zero and goes to a certain proportion [0.0-1.0] of the width
+  List<double> circleOneRadiusProportions;
+
+  /// Text to put into the second circle (inner ring if there are 3 rings,
+  /// outer ring if there are 2 rings). Each is put in it's own segment
+  List<String> circleTwoText;
+
+  /// Color of the second ring
+  Color circleTwoColor;
+
+  /// Color of the text in the second ring
+  Color circleTwoFontColor;
+
+  /// Size of the text in the second ring
+  double circleTwoFontSize;
+
+  /// Radius of the second ring (two values)
+  /// First value is for ring with 3 rings, second value is for ring with 2 rings
+  /// Both are proportions of the width given
+  /// should be drawn [0.0-1.0]
+  List<double> circleTwoRadiusProportions;
+
+  /// Proportion of width at which to draw the text on the second ring (two values)
+  /// First value is for ring with 3 rings, second value is for ring with 2 rings
+  /// should be a value [0.0-1.0]
+  List<double> circleTwoTextProportions;
+
+  /// A pixel offset of the text in the second ring
+  /// A positve value moves the text farther away from the center
+  /// while a negative value moves the text closer to the center
+  double circleTwoTextPixelOffset;
+
+  /// Text to put into the outermost circle (only shown if ringNum == 3)
+  ///  Each is put in it's own segment
+  List<String> circleThreeText;
+
+  /// The color of the outermost ring
+  Color circleThreeColor;
+
+  /// The text color in the outermost ring
+  Color circleThreeFontColor;
+
+  /// The size of the text in the outermost ring
+  double circleThreeFontSize;
+
+  /// Radius of the outermost ring (two values)
+  /// First value is for ring with 3 rings
+  /// second value is for ring with 2 rings (typically 0)
+  /// Both are proportions of the width given
+  /// should be a value [0.0-1.0]
+  List<double> circleThreeRadiusProportions;
+
+  /// Proportion of width at which to draw the text on the outermost ring (two values)
+  /// First value is for ring with 3 rings
+  /// second value is for ring with 2 rings (typically 0)
+  /// should be a value [0.0-1.0]
+  List<double> circleThreeTextProportions;
+
+  /// A pixel offset of the text in the outermost ring
+  /// A positve value moves the text farther away from the center
+  /// while a negative value moves the text closer to the center
+  double circleThreeTextPixelOffset;
+
+  /// Constructor for concentric chart
+  /// Required - [width], [numberOfRings], and all the general info about each
+  /// ring including (text, general background color, and font color)
+  /// Everything else is not required, but set to defaults
   ConcentricChart({
     super.key,
     required this.numberOfRings,
+    required this.width,
     required this.circleOneText,
     required this.circleOneColor,
+    required this.circleOneFontColor,
     required this.circleTwoText,
     required this.circleTwoColor,
+    required this.circleTwoFontColor,
     required this.circleThreeText,
     required this.circleThreeColor,
-    required this.circleOneFontColor,
-    required this.circleTwoFontColor,
     required this.circleThreeFontColor,
-    this.width = 1080,
     this.circleOneTextRadiusProportion = 0.6,
     this.circleOneFontSize = 8.0,
     this.circleTwoFontSize = 14.0,
@@ -66,6 +158,8 @@ class ConcentricChart extends StatefulWidget {
     this.shouldTextCenterVertically = true,
     this.overflowLineLimit = 2,
     this.linesColors = const [Colors.black, Colors.black, Colors.black],
+    this.chunkOverflowLimitProportion = 0.15,
+    this.shouldFlipText = true,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -266,11 +360,13 @@ class _ConcentricChartState extends State<ConcentricChart> {
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
+          shouldFlipText: widget.shouldFlipText,
           linesColor: pie.linesColor,
           shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,
           shouldCenterTextVertically: widget.shouldTextCenterVertically,
           spaceBetweenLines: widget.spaceBetweenLines,
           overflowLineLimit: widget.overflowLineLimit,
+          chunkOverflowLimitProportion: widget.chunkOverflowLimitProportion,
         ),
       ),
     );

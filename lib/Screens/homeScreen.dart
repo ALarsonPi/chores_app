@@ -75,9 +75,9 @@ class HomeScreen extends StatelessWidget {
       circle3TextProportions = [0.4, 0];
 
       if (Global.isHighPixelRatio && Device.get().isAndroid) {
-        circle1Proportions = [0.3, 0.6];
-        circle2Proportions = [0.55, 1.0];
-        circle2TextProportions = [0.165, 0.4];
+        circle1Proportions = [0.35, 0.6];
+        circle2Proportions = [0.575, 1.0];
+        circle2TextProportions = [0.17, 0.4];
         circle3TextProportions = [0.28, 0];
       }
     } else {
@@ -110,9 +110,11 @@ class HomeScreen extends StatelessWidget {
             spaceBetweenLines: 15,
             linesColors: const [Colors.blue, Colors.white, Colors.white],
             // Settings
+            shouldFlipText: true,
             shouldTextCenterVertically: true,
             shouldHaveFluidTextTransition: true,
             overflowLineLimit: 2,
+            chunkOverflowLimitProportion: 0.15,
             // Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: circle1Proportions,

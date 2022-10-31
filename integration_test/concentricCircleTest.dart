@@ -39,7 +39,7 @@ void main() {
             children: [
               ConcentricChart(
                 numberOfRings: 3,
-                height: 1080,
+                width: 1080,
                 spaceBetweenLines: 15,
                 //Circle 1
                 circleOneText: const ["hello", "hello2"],

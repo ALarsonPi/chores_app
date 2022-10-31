@@ -17,6 +17,8 @@ class ArcTextPainter extends CustomPainter {
     required this.spaceBetweenLines,
     required this.isRotating,
     required this.shouldHaveFluidTransition,
+    required this.shouldFlipText,
+    required this.shouldCenterText,
     this.isRing3 = false,
     this.flipStatusArray = const [false],
   });
@@ -30,6 +32,8 @@ class ArcTextPainter extends CustomPainter {
   bool isRing3;
   bool isRotating;
   bool shouldHaveFluidTransition;
+  bool shouldFlipText;
+  bool shouldCenterText;
   bool shouldReverse = false;
 
   double userChosenRadius;
@@ -68,16 +72,17 @@ class ArcTextPainter extends CustomPainter {
   }
 
   setActualTextRadius(int numPhrasesInChunk, bool shouldReverse) {
-    // This is still a bit hard coded, but better than it was
+    if (shouldCenterText) {
+      // This is still a bit hard coded, but better than it was
+      if (shouldReverse) actualRadius += 10;
 
-    if (shouldReverse) actualRadius += 10;
-
-    if (shouldReverse && numPhrasesInChunk == 2) {
-      actualRadius += spaceBetweenLines / 2;
-    } else if (shouldReverse && numPhrasesInChunk == 3) {
-      actualRadius += spaceBetweenLines;
-    } else {
-      actualRadius += numPhrasesInChunk + (spaceBetweenLines / 2);
+      if (shouldReverse && numPhrasesInChunk == 2) {
+        actualRadius += spaceBetweenLines / 2;
+      } else if (shouldReverse && numPhrasesInChunk == 3) {
+        actualRadius += spaceBetweenLines;
+      } else {
+        actualRadius += numPhrasesInChunk + (spaceBetweenLines / 2);
+      }
     }
   }
 
@@ -89,7 +94,7 @@ class ArcTextPainter extends CustomPainter {
     Size size,
     bool shouldReversePrint,
   ) {
-    setActualTextRadius(phrases.length, shouldReversePrint);
+    setActualTextRadius(phrases.length, shouldReversePrint && shouldFlipText);
     for (int i = 0; i < phrases.length; i++) {
       double currPhraseAlpha = phraseAlpha[i];
       double singleChunkAngle = (2 * pi / numChunks);
@@ -97,7 +102,7 @@ class ArcTextPainter extends CustomPainter {
 
       canvas.save();
 
-      if (shouldReversePrint) {
+      if (shouldReversePrint && shouldFlipText) {
         canvas.translate(size.width / 2, size.height / 2);
         canvas.translate(0, actualRadius);
 
@@ -209,13 +214,13 @@ class ArcTextPainter extends CustomPainter {
     Canvas canvas,
     Size size,
   ) {
-    if (shouldHaveFluidTransition) {
+    if (shouldFlipText && shouldHaveFluidTransition) {
       paintFluidPhrases(canvas, size, listOfChunks, forwardAlpha,
           listOfReverseChunks, reverseAlpha);
       return;
     }
 
-    if (!isRotating) {
+    if (shouldFlipText && !isRotating) {
       setCurrentFlipStatus();
     }
 
