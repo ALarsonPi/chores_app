@@ -384,6 +384,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     List<String> forwardPhrases = getOverflowedPhrasePartsForChunk(fullPhrase);
     List<String> reversePhrases = getOverflowedPhrasePartsForReverseChunk(
         fullPhrase, forwardPhrases.length);
+    assert(forwardPhrases.isNotEmpty);
+    assert(reversePhrases.isNotEmpty);
     chunkPhraseList.add(forwardPhrases);
     reversePhraseChunkList.add(reversePhrases);
   }
@@ -413,7 +415,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   /// Sets up all the lists - phrases and alpha lists for upper and lower quadrants
-  setUpPhraseChunks() async {
+  setUpPhraseChunks() {
+    assert(numChunks > 0);
     for (int i = 0; i < numChunks; i++) {
       setUpPhraseChunkAndAddToLists(widget.items[i].name);
     }
@@ -463,6 +466,11 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         checkerIndex++) {
       index2 = subString.length - checkerIndex;
       spaceSubString = subString.substring(0, index2);
+      if (index2 == 0) {
+        break;
+      }
+      assert(spaceSubString.isNotEmpty);
+
       if (spaceSubString.characters.last == " " ||
           spaceSubString.characters.last == "\t" ||
           spaceSubString.characters.last == "\n") {
@@ -526,6 +534,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   /// and [PieChartPainter] to actaully draw out the background color of the charts
   @override
   Widget build(BuildContext context) {
+    if (chunkPhraseList.isEmpty) {
+      setUpPhraseChunks();
+    }
+    assert(chunkPhraseList.isNotEmpty, "${chunkPhraseList.length}");
+    assert(reversePhraseChunkList.isNotEmpty);
+    assert(forwardAlphaList.isNotEmpty);
+    assert(reverseAlphaList.isNotEmpty);
+
     return GestureDetector(
       onPanDown: (details) {
         lastDirection = getDirection(details.globalPosition);

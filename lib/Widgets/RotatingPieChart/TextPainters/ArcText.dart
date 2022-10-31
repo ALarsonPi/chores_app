@@ -59,6 +59,9 @@ class ArcTextPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    assert(listOfChunkPhrases.isNotEmpty);
+    assert(listOfReverseChunkPhrases.isNotEmpty);
+
     _paintChunks(
       listOfChunkPhrases,
       forwardPhraseAlpha,
@@ -214,6 +217,11 @@ class ArcTextPainter extends CustomPainter {
     Canvas canvas,
     Size size,
   ) {
+    assert(listOfChunks.isNotEmpty);
+    assert(forwardAlpha.isNotEmpty);
+    assert(listOfReverseChunkPhrases.isNotEmpty);
+    assert(reverseAlpha.isNotEmpty);
+
     if (shouldFlipText && shouldHaveFluidTransition) {
       paintFluidPhrases(canvas, size, listOfChunks, forwardAlpha,
           listOfReverseChunks, reverseAlpha);

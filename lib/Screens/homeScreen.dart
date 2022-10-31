@@ -15,30 +15,21 @@ class HomeScreen extends StatelessWidget {
       "Jamie",
       "William",
       "Abby",
-      "John Cina",
-      "Jamison III",
-      "Santa Claus",
-      "Abe Lincoln"
+      // "John Cina",
+      // "Jamison III",
+      // "Santa Claus",
+      // "Abe Lincoln"
     ];
 
     List<String> circle2Text = [
-      "Bathe up up up up u pu pup ",
-      "Bathe",
-      "Bathe",
-      "Bathe",
-      "Bathe",
-      "Bathe",
-      "Bathe",
-      "Bathe",
-
-      // "Clean Floors (Sweep)",
-      // "Kitchen (dishes)",
-      // "Kitchen (oven)",
-      // "Floors / windows",
-      // "Don't die",
-      // "Wash the fat",
-      // "Clean up after baby",
-      // "Give a speech"
+      "Sweep/Mop",
+      "Dishwasher",
+      "Pots/Pans",
+      "Windows",
+      "Mop",
+      "Sweep",
+      "Lawn",
+      "Run around"
     ];
 
     List<String> circle3Text = [
