@@ -6,8 +6,9 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 
 class ConcentricChart extends StatefulWidget {
   int numberOfRings;
-  double height;
+  double width;
   double spaceBetweenLines;
+  List<Color> linesColors;
 
   List<String> circleOneText;
   Color circleOneColor;
@@ -21,6 +22,7 @@ class ConcentricChart extends StatefulWidget {
   Color circleTwoFontColor;
   double circleTwoFontSize;
   List<double> circleTwoRadiusProportions;
+  List<double> circleTwoTextProportions;
   double circleTwoTextPixelOffset;
 
   List<String> circleThreeText;
@@ -28,10 +30,12 @@ class ConcentricChart extends StatefulWidget {
   Color circleThreeFontColor;
   double circleThreeFontSize;
   List<double> circleThreeRadiusProportions;
+  List<double> circleThreeTextProportions;
   double circleThreeTextPixelOffset;
 
   bool shouldHaveFluidTextTransition;
   int overflowLineLimit;
+  bool shouldTextCenterVertically;
 
   ConcentricChart({
     super.key,
@@ -45,19 +49,23 @@ class ConcentricChart extends StatefulWidget {
     required this.circleOneFontColor,
     required this.circleTwoFontColor,
     required this.circleThreeFontColor,
-    this.height = 1080,
+    this.width = 1080,
     this.circleOneTextRadiusProportion = 0.6,
     this.circleOneFontSize = 8.0,
     this.circleTwoFontSize = 14.0,
     this.circleThreeFontSize = 14.0,
-    this.circleOneRadiusProportions = const [0.25, 0.35],
-    this.circleTwoRadiusProportions = const [0.4, 0.75],
-    this.circleThreeRadiusProportions = const [0.9, 0],
+    this.circleOneRadiusProportions = const [0.4, 0.6],
+    this.circleTwoRadiusProportions = const [0.7, 1.0],
+    this.circleTwoTextProportions = const [0.25, 0.4],
+    this.circleThreeRadiusProportions = const [1.0, 0],
+    this.circleThreeTextProportions = const [0.4, 0],
     this.circleTwoTextPixelOffset = 0.0,
     this.circleThreeTextPixelOffset = 0.0,
     this.spaceBetweenLines = 20,
     this.shouldHaveFluidTextTransition = true,
+    this.shouldTextCenterVertically = true,
     this.overflowLineLimit = 2,
+    this.linesColors = const [Colors.black, Colors.black, Colors.black],
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -94,15 +102,30 @@ class _ConcentricChartState extends State<ConcentricChart> {
     return string.replaceAll(" ", '\n');
   }
 
+  double getProportionValue(double radius) {
+    if (radius != 1.0 && Device.devicePixelRatio > 2.0) {
+      return radius *
+          (1 + (Device.devicePixelRatio.ceil() - Device.devicePixelRatio));
+    } else {
+      return radius;
+    }
+  }
+
   @override
   void didChangeDependencies() {
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
     double circleOneProportion =
-        widget.circleOneRadiusProportions[proportionIndex];
+        getProportionValue(widget.circleOneRadiusProportions[proportionIndex]);
+
     double circleTwoProportion =
-        widget.circleTwoRadiusProportions[proportionIndex];
-    double circleThreeProportion =
-        widget.circleThreeRadiusProportions[proportionIndex];
+        getProportionValue(widget.circleTwoRadiusProportions[proportionIndex]);
+    double circleTwoTextProportion =
+        getProportionValue(widget.circleTwoTextProportions[proportionIndex]);
+
+    double circleThreeProportion = getProportionValue(
+        widget.circleThreeRadiusProportions[proportionIndex]);
+    double circleThreeTextProportion =
+        getProportionValue(widget.circleThreeTextProportions[proportionIndex]);
 
     if (Device.get().isAndroid && widget.numberOfRings == 2) {
       circleOneProportion -= 0.1;
@@ -116,43 +139,65 @@ class _ConcentricChartState extends State<ConcentricChart> {
       circleTwoProportion += 0.1;
     }
 
-    double circleTwoTextRadius = (Device.screenWidth / 2) -
-        (Device.screenWidth / ((widget.numberOfRings == 2) ? 10 : 5)) +
-        widget.circleTwoTextPixelOffset;
+    // double circleTwoTextRadius = (Device.screenWidth / 2) -
+    //     (Device.screenWidth / ((widget.numberOfRings == 2) ? 10 : 5)) +
+    //     widget.circleTwoTextPixelOffset;
 
-    double circleThreeTextRadius = (Device.screenWidth / 2) -
-        (Device.screenWidth / ((widget.numberOfRings == 2) ? 0.0 : 12)) +
-        widget.circleThreeTextPixelOffset;
+    double ringOnewidth = widget.width * circleOneProportion;
+    double ringTwowidth = widget.width * circleTwoProportion;
+    double ringThreewidth = widget.width * circleThreeProportion;
+
+    double ringTwoTextRadius = widget.width * circleTwoTextProportion;
+    double ringThreeTextRadius = widget.width * circleThreeTextProportion;
+
+    // double ringTwoMiddlewidth = (ringOnewidth + ringTwowidth) / 2;
+    // double ringThreeMiddlewidth = (ringTwowidth + ringThreewidth) / 2;
+
+    double ringTwoMiddlewidth = (ringTwoTextRadius);
+    double ringThreeMiddlewidth = (ringThreeTextRadius);
 
     circleOnePie = PieInfo(
-      pieHeightCoefficient: widget.height * circleOneProportion,
+      width: ringOnewidth,
       //In names circle - is a coefficient
       textRadius: widget.circleOneTextRadiusProportion,
       items: circleOneItems,
-      currRingNum: 1,
+      linesColor: widget.linesColors[0],
+      ringNum: 1,
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
+      ringBorders: [
+        0,
+        ringOnewidth,
+      ],
     );
 
     circleTwoPie = PieInfo(
-      pieHeightCoefficient: widget.height * circleTwoProportion,
+      width: ringTwowidth,
       items: circleTwoItems,
-      textRadius: circleTwoTextRadius,
-      currRingNum: 2,
+      textRadius: ringTwoMiddlewidth,
+      linesColor: widget.linesColors[1],
+      ringNum: 2,
       textSize: widget.circleTwoFontSize,
       textColor: widget.circleTwoFontColor,
-    );
-
-    circleThreePie = PieInfo(
-      pieHeightCoefficient: widget.height * circleThreeProportion,
-      items: circleThreeItems,
-      textRadius: circleThreeTextRadius,
-      currRingNum: 3,
-      textSize: widget.circleThreeFontSize,
-      textColor: widget.circleThreeFontColor,
+      ringBorders: [
+        ringOnewidth,
+        ringTwowidth * (1 + circleTwoProportion),
+      ],
     );
 
     if (widget.numberOfRings == 3) {
+      circleThreePie = PieInfo(
+          width: ringThreewidth,
+          items: circleThreeItems,
+          textRadius: ringThreeMiddlewidth,
+          linesColor: widget.linesColors[2],
+          ringNum: 3,
+          textSize: widget.circleThreeFontSize,
+          textColor: widget.circleThreeFontColor,
+          ringBorders: [
+            ringTwowidth,
+            ringThreewidth,
+          ]);
       rotatablePies.add(makePieChart(circleThreePie, circleThreeBounds));
     }
     rotatablePies.add(makePieChart(circleTwoPie, circleTwoBounds));
@@ -221,7 +266,9 @@ class _ConcentricChartState extends State<ConcentricChart> {
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
+          linesColor: pie.linesColor,
           shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,
+          shouldCenterTextVertically: widget.shouldTextCenterVertically,
           spaceBetweenLines: widget.spaceBetweenLines,
           overflowLineLimit: widget.overflowLineLimit,
         ),

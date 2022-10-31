@@ -18,9 +18,11 @@ class RotatingPieChart extends StatelessWidget {
   final List<double> bounds;
   double spaceBetweenLines;
   bool shouldHaveFluidTransition;
+  bool shouldCenterTextVertically;
   int overflowLineLimit;
 
   final PieInfo pie;
+  final Color linesColor;
 
   RotatingPieChart({
     super.key,
@@ -29,12 +31,14 @@ class RotatingPieChart extends StatelessWidget {
     required this.pie,
     required this.spaceBetweenLines,
     required this.shouldHaveFluidTransition,
+    required this.shouldCenterTextVertically,
     required this.overflowLineLimit,
+    required this.linesColor,
   }) {
-    items = pie.textAndAngleItems;
-    sizeOfChart = pie.heightCoefficient;
+    items = pie.items;
+    sizeOfChart = pie.width;
     isCircle1 = pie.ringNum == 1;
-    userChosenRadiusForText = pie.startingRadiusOfText;
+    userChosenRadiusForText = pie.textRadius;
     if (!Device.get().isPhone) spaceBetweenLines += 25;
     if (Device.devicePixelRatio > 2) spaceBetweenLines += 5;
   }
@@ -61,7 +65,9 @@ class RotatingPieChart extends StatelessWidget {
             userChosenRadiusForText: userChosenRadiusForText,
             spaceBetweenLines: spaceBetweenLines,
             shouldHaveFluidTransition: shouldHaveFluidTransition,
+            shouldCenterTextVertically: shouldCenterTextVertically,
             overflowLineLimit: overflowLineLimit,
+            linesColor: linesColor,
             pie: pie,
           ),
         ),
@@ -81,7 +87,9 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final double spaceBetweenLines;
   final PieInfo pie;
   final bool shouldHaveFluidTransition;
+  final bool shouldCenterTextVertically;
   final int overflowLineLimit;
+  final Color linesColor;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -94,8 +102,10 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.textStyle,
     required this.spaceBetweenLines,
     required this.shouldHaveFluidTransition,
+    required this.shouldCenterTextVertically,
     required this.pie,
     required this.overflowLineLimit,
+    required this.linesColor,
   }) : super(key: key);
 
   @override
@@ -107,6 +117,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+
   late bool isCircle1;
   late TextStyle textStyle;
   late double textHeightCoefficient;
@@ -115,7 +126,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late double spaceBetweenLines;
   late PieInfo pie;
   late bool shouldHaveFluidTransition;
+  late bool shouldCenterTextVertically;
   late int overflowLineLimit;
+  late List<double> ringBorders;
 
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
@@ -133,11 +146,12 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     isCircle1 = widget.isCircle1;
-    userChosenRadius = widget.textHeightCoefficient;
+    userChosenRadius = widget.userChosenRadiusForText;
     numChunks = widget.items.length;
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
     shouldHaveFluidTransition = widget.shouldHaveFluidTransition;
+    shouldCenterTextVertically = widget.shouldCenterTextVertically;
     overflowLineLimit = widget.overflowLineLimit;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
@@ -148,11 +162,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
           textDirection: TextDirection.ltr,
         );
     pie = widget.pie;
+    ringBorders = pie.ringBorders;
+
     spaceBetweenLines = widget.spaceBetweenLines;
     for (int i = 0; i < numChunks; i++) {
       flipStatusArray.add(false);
     }
     if (!isCircle1) setUpPhraseChunks();
+
     super.initState();
   }
 
@@ -184,7 +201,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   }
 
   bool checkIfShouldOverflow(double alphaDifference) {
-    return alphaDifference <= 0.35;
+    return alphaDifference <= 0.15;
   }
 
   List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
@@ -208,8 +225,22 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         if (checkIfShouldOverflow(chunkDifference) &&
             numLines <= widget.overflowLineLimit) {
           List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
-          phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
+
+          // Check for special case where we're finishing up and need to add
+          // the last line due to the overflow limit
+          phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+          chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+          if (numLines == widget.overflowLineLimit) {
+            if (splitPhraseParts.first.characters.last == "-") {
+              splitPhraseParts.first = splitPhraseParts.first
+                  .substring(0, splitPhraseParts.first.length - 1);
+            }
+            splitPhraseParts.first += splitPhraseParts.last;
+            phrasesToReturn.add(splitPhraseParts.first);
+          } else {
+            phrasesToReturn.add(splitPhraseParts.first);
+          }
         } else {
           isOverflowing = false;
           phrasesToReturn.add(currPhrase);
@@ -251,13 +282,26 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         if (checkIfShouldOverflow(chunkDifference) &&
             numLines != widget.overflowLineLimit) {
           List<String> splitPhraseParts = splitPhraseForOverflow(currPhrase);
-          phrasesToReturn.add(splitPhraseParts.first);
           currPhrase = splitPhraseParts.last;
+
+          // Check for special case where we're finishing up and need to add
+          // the last line due to the overflow limit
+          phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
+          chunkDifference = (2 * pi / numChunks) - phraseAlpha;
+          if (numLines == widget.overflowLineLimit) {
+            if (splitPhraseParts.first.characters.last == "-") {
+              splitPhraseParts.first = splitPhraseParts.first
+                  .substring(0, splitPhraseParts.first.length - 1);
+            }
+            splitPhraseParts.first += splitPhraseParts.last;
+            phrasesToReturn.add(splitPhraseParts.first);
+          } else {
+            phrasesToReturn.add(splitPhraseParts.first);
+          }
         } else {
           isOverflowing = false;
           phrasesToReturn.add(currPhrase);
         }
-
         numLines++;
       }
     } else {
@@ -269,9 +313,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       phrasesToReturn[i] = phrasesToReturn[i].split('').reversed.join();
     }
 
-    if (fullPhrase.contains("dishes")) {
-      debugPrint("Size: " + phrasesToReturn.length.toString());
-    }
     return phrasesToReturn.reversed.toList();
   }
 
@@ -327,37 +368,48 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   List<String> splitPhraseForOverflow(String phraseToSplit) {
     List<String> phraseParts = List.empty(growable: true);
-    int i = (phraseToSplit.length / 2).floor();
-    int numLettersToCheck = 5;
-    numLettersToCheck = min(i, numLettersToCheck);
-    if (phraseParts.isEmpty) {
-      for (int j = 0; j < numLettersToCheck; j++) {
-        if (phraseToSplit[i] == " " ||
-            phraseToSplit[i] == "\t" ||
-            phraseToSplit[i] == "\n") {
-          phraseParts.add(phraseToSplit.substring(0, i).trim());
-          phraseParts.add(phraseToSplit.substring(i).trim());
-        }
-        i++;
+    int numLettersToCheck = 6;
+
+    bool shouldOverflow = true;
+    int index = phraseToSplit.length;
+    String subString = phraseToSplit;
+    for (; index > 1; index--) {
+      subString = phraseToSplit.substring(0, index);
+      double phraseAlpha = getTotalPhraseAlpha(subString, userChosenRadius);
+      double alphaDifference = (2 * pi / numChunks) - phraseAlpha;
+      shouldOverflow = checkIfShouldOverflow(alphaDifference);
+      if (!shouldOverflow) {
+        break;
       }
     }
-    if (phraseParts.isEmpty) {
-      i = (phraseToSplit.length / 2).floor();
-      for (int j = 0; j < numLettersToCheck; j++) {
-        if (phraseToSplit[i] == " " ||
-            phraseToSplit[i] == "\t" ||
-            phraseToSplit[i] == "\n") {
-          phraseParts.add(phraseToSplit.substring(0, i).trim());
-          phraseParts.add(phraseToSplit.substring(i).trim());
-        }
-        i--;
+
+    String spaceSubString = subString;
+    int index2 = index;
+    bool foundSpace = false;
+    for (int checkerIndex = 0;
+        checkerIndex <= numLettersToCheck;
+        checkerIndex++) {
+      index2 = subString.length - checkerIndex;
+      spaceSubString = subString.substring(0, index2);
+      if (spaceSubString.characters.last == " " ||
+          spaceSubString.characters.last == "\t" ||
+          spaceSubString.characters.last == "\n") {
+        foundSpace = true;
+        break;
       }
     }
-    if (phraseParts.isEmpty) {
-      i = (phraseToSplit.length / 2).floor();
-      phraseParts.add('${phraseToSplit.substring(0, i).trim()}-');
-      phraseParts.add(phraseToSplit.substring(i).trim());
+
+    if (foundSpace) {
+      // Minus 1 to account for the space
+      phraseParts.add(phraseToSplit.substring(0, index2 - 1));
+      phraseParts.add(phraseToSplit.substring(index2));
+    } else {
+      // Minus 1 to account for the hyphen
+      // ignore: prefer_interpolation_to_compose_strings
+      phraseParts.add(phraseToSplit.substring(0, index - 1) + "-");
+      phraseParts.add(phraseToSplit.substring(index - 1));
     }
+
     return phraseParts;
   }
 
@@ -442,6 +494,12 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                         listOfChunkPhrases: chunkPhraseList,
                         forwardPhraseAlpha: forwardAlphaList,
                         listOfReverseChunkPhrases: reversePhraseChunkList,
+                        listOfCenterValues: [
+                          (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
+                          0,
+                          0,
+                          0
+                        ],
                         reversePhraseAlpha: reverseAlphaList,
                         numChunks: numChunks,
                         spaceBetweenLines: spaceBetweenLines,
@@ -470,6 +528,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         child: CustomPaint(
           painter: PieChartPainter(
             items: widget.items,
+            linesColor: widget.linesColor,
           ),
         ),
       ),

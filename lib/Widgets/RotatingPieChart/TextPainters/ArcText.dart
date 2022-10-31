@@ -11,6 +11,7 @@ class ArcTextPainter extends CustomPainter {
     required this.listOfChunkPhrases,
     required this.forwardPhraseAlpha,
     required this.listOfReverseChunkPhrases,
+    required this.listOfCenterValues,
     required this.reversePhraseAlpha,
     required this.numChunks,
     required this.spaceBetweenLines,
@@ -20,29 +21,29 @@ class ArcTextPainter extends CustomPainter {
     this.flipStatusArray = const [false],
   });
 
-  bool isRing3;
-
-  bool shouldHaveFluidTransition;
+  List<double> listOfCenterValues = List.empty(growable: true);
   List<bool> flipStatusArray;
   List<bool> lastFlippedStatus = List.empty(growable: true);
+  List<List<double>> forwardPhraseAlpha;
+  List<List<double>> reversePhraseAlpha;
 
+  bool isRing3;
   bool isRotating;
+  bool shouldHaveFluidTransition;
+  bool shouldReverse = false;
+
   double userChosenRadius;
   double initialAngle;
   double spaceBetweenLines;
+
   final TextStyle textStyle;
   final _textPainter = TextPainter(textDirection: TextDirection.ltr);
   final List<List<String>> listOfChunkPhrases;
   final List<List<String>> listOfReverseChunkPhrases;
   final int numChunks;
 
-  List<List<double>> forwardPhraseAlpha;
-  List<List<double>> reversePhraseAlpha;
-
   late double actualRadius = userChosenRadius;
   late Canvas pieCanvas;
-
-  bool shouldReverse = false;
 
   double degreesToRadians(double degrees) {
     return degrees * pi / 180;
@@ -66,30 +67,17 @@ class ArcTextPainter extends CustomPainter {
     );
   }
 
-  setActualRadius(int numPhrasesInChunk, bool shouldReverse) {
-    if (isRing3) actualRadius += 3 * spaceBetweenLines / 4;
+  setActualTextRadius(int numPhrasesInChunk, bool shouldReverse) {
+    // This is still a bit hard coded, but better than it was
 
-    // this part is a VERY imprecise art. Thought should be put into
-    // finding a way to actaully center text in the ring (vertically)
-    // regardless of how many chunks it has
+    if (shouldReverse) actualRadius += 10;
 
-    // If we just have one line, try to center it
-    if (numPhrasesInChunk == 1) {
-      actualRadius +=
-          (shouldReverse) ? -spaceBetweenLines / 6 : -3 * spaceBetweenLines / 4;
-    } else if (numPhrasesInChunk == 2) {
-      actualRadius +=
-          (shouldReverse) ? spaceBetweenLines / 6 : -2 * spaceBetweenLines / 4;
-    } else if (numPhrasesInChunk == 3) {
-      actualRadius +=
-          (shouldReverse) ? spaceBetweenLines : spaceBetweenLines / 8;
-      if ((Device.get().isAndroid && Device.get().isPhone)) {
-        actualRadius +=
-            (shouldReverse) ? -spaceBetweenLines / 2 : -spaceBetweenLines / 4;
-      }
+    if (shouldReverse && numPhrasesInChunk == 2) {
+      actualRadius += spaceBetweenLines / 2;
+    } else if (shouldReverse && numPhrasesInChunk == 3) {
+      actualRadius += spaceBetweenLines;
     } else {
-      actualRadius +=
-          (shouldReverse) ? spaceBetweenLines * (numPhrasesInChunk - 3) : 0;
+      actualRadius += numPhrasesInChunk + (spaceBetweenLines / 2);
     }
   }
 
@@ -101,7 +89,7 @@ class ArcTextPainter extends CustomPainter {
     Size size,
     bool shouldReversePrint,
   ) {
-    setActualRadius(phrases.length, shouldReversePrint);
+    setActualTextRadius(phrases.length, shouldReversePrint);
     for (int i = 0; i < phrases.length; i++) {
       double currPhraseAlpha = phraseAlpha[i];
       double singleChunkAngle = (2 * pi / numChunks);

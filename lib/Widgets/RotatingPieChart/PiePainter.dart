@@ -7,8 +7,10 @@ class PieChartPainter extends AlignedCustomPainterInterface {
   final List<PieChartItem> items;
   final double total;
   final double rotation;
+  final Color linesColor;
 
-  PieChartPainter({this.rotation = 0, required this.items})
+  PieChartPainter(
+      {this.rotation = 0, required this.items, required this.linesColor})
       : total = items.fold(0.0, (total, el) => total + el.val);
 
   @override
@@ -18,7 +20,7 @@ class PieChartPainter extends AlignedCustomPainterInterface {
     double soFar = rotation;
     Paint outlinePaint = Paint()
       //The chart circle border color
-      ..color = Colors.white
+      ..color = linesColor
       ..style = PaintingStyle.stroke;
 
     for (int i = 0; i < items.length; ++i) {

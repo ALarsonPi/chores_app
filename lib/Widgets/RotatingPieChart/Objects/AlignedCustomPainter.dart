@@ -6,6 +6,7 @@ abstract class AlignedCustomPainterInterface extends CustomPainter {
     // for convenience I'm doing all the drawing in a 100x100 square then moving it rather than worrying
     // about the actual size.
     // Also, using a 100x100 square for convenience so we can hardcode values.
+    // And this size seems to work for normal length names
     FittedSizes fittedSizes =
         applyBoxFit(BoxFit.contain, const Size(100.0, 100.0), size);
     var dest = fittedSizes.destination;

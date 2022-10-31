@@ -1,5 +1,6 @@
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 import '../Global.dart';
 
@@ -9,37 +10,45 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> circle1Text = [
-      "Person 1",
-      "Person 2",
-      "Person 3",
-      "Person 4",
-      // "John Cina",
-      // "Jamison III",
-      // "Santa Claus",
-      // "Abe Lincoln"
+      "John",
+      "Jamie",
+      "William",
+      "Abby",
+      "John Cina",
+      "Jamison III",
+      "Santa Claus",
+      "Abe Lincoln"
     ];
 
     List<String> circle2Text = [
-      "Bathrooms",
-      //"Clean Floors (Sweep, mop)",
-      "Kitchen (dishes) also more dishes and also more and more and also mas",
-      "Kitchen (oven, counters)",
-      "Floors / windows",
+      "Bathe up up up up u pu pup ",
+      "Bathe",
+      "Bathe",
+      "Bathe",
+      "Bathe",
+      "Bathe",
+      "Bathe",
+      "Bathe",
+
+      // "Clean Floors (Sweep)",
+      // "Kitchen (dishes)",
+      // "Kitchen (oven)",
+      // "Floors / windows",
       // "Don't die",
-      // "Wash the fat dogs",
-      // "Clean up after the baby",
+      // "Wash the fat",
+      // "Clean up after baby",
       // "Give a speech"
     ];
 
     List<String> circle3Text = [
-      "Rooms",
-      "Rooms",
-      "Rooms",
-      "Rooms",
-      // "Travel to Russia nyet",
-      // "Give coal to naughty kids",
-      // "Beat the South",
-      // "Run",
+      "Vacuum",
+      "Mop + sweep patio",
+      "Mow lawn each week",
+      "Babysit little Jessica",
+      "Travel to Russia",
+      "Give coal to kids",
+      "Beat the South",
+      "Run",
     ];
 
     //In the future we'll grab any/all charts from system memory
@@ -48,6 +57,37 @@ class HomeScreen extends StatelessWidget {
     //have one chart but in the future I'm thinking of giving the
     //user up to 3, maybe
     //Also use title of first chart as title here in the Scaffold
+    double screenWidth = MediaQuery.of(context).size.width;
+    int currNumRingsToUse = 3;
+
+    List<double> circle1Proportions = [];
+    List<double> circle2Proportions = [];
+    List<double> circle2TextProportions = [];
+    List<double> circle3Proportions = [];
+    List<double> circle3TextProportions = [];
+
+    if (MediaQuery.of(context).size.width < 350 || Global.isPhone) {
+      circle1Proportions = [0.4, 0.6];
+      circle2Proportions = [0.7, 1.0];
+      circle3Proportions = [1.0, 0];
+
+      circle2TextProportions = [0.25, 0.4];
+      circle3TextProportions = [0.4, 0];
+
+      if (Global.isHighPixelRatio && Device.get().isAndroid) {
+        circle1Proportions = [0.3, 0.6];
+        circle2Proportions = [0.55, 1.0];
+        circle2TextProportions = [0.165, 0.4];
+        circle3TextProportions = [0.28, 0];
+      }
+    } else {
+      circle1Proportions = [0.35, 0.5];
+      circle2Proportions = [0.6, 1.0];
+      circle3Proportions = [1.0, 0];
+
+      circle2TextProportions = [0.25, 0.35];
+      circle3TextProportions = [0.4, 0];
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -64,30 +104,36 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ConcentricChart(
-            numberOfRings: 3,
-            height: MediaQuery.of(context).size.height,
+            // Gen Info
+            numberOfRings: currNumRingsToUse,
+            width: MediaQuery.of(context).size.width,
             spaceBetweenLines: 15,
+            linesColors: const [Colors.blue, Colors.white, Colors.white],
+            // Settings
+            shouldTextCenterVertically: true,
             shouldHaveFluidTextTransition: true,
-            overflowLineLimit: 3,
-            //Circle 1
+            overflowLineLimit: 2,
+            // Circle 1
             circleOneText: circle1Text,
-            circleOneRadiusProportions: const [0.25, 0.35],
+            circleOneRadiusProportions: circle1Proportions,
             circleOneColor:
                 //Colors.transparent,
                 Global.currentTheme.primaryColor,
             circleOneFontColor: Colors.black,
             circleOneFontSize: 8.0,
             circleOneTextRadiusProportion: 0.6,
-            //Circle 2
+            // Circle 2
             circleTwoText: circle2Text,
-            circleTwoRadiusProportions: const [0.40, 0.75],
+            circleTwoRadiusProportions: circle2Proportions,
+            circleTwoTextProportions: circle2TextProportions,
             circleTwoColor: Global.currentTheme.secondaryColor,
             circleTwoFontColor: Colors.black,
             circleThreeTextPixelOffset: 0,
-            //Circle 3
             circleTwoFontSize: 14.0,
+            // Circle 3
             circleThreeText: circle3Text,
-            circleThreeRadiusProportions: const [0.9, 0],
+            circleThreeRadiusProportions: circle3Proportions,
+            circleThreeTextProportions: circle3TextProportions,
             circleThreeColor: Global.currentTheme.tertiaryColor,
             circleThreeFontColor: Colors.black,
             circleThreeFontSize: 14.0,

@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'PieChartItem.dart';
 
 class PieInfo {
-  late double heightCoefficient;
-  late double startingRadiusOfText;
-  late List<PieChartItem> textAndAngleItems;
-  late int ringNum;
+  double width;
+  double textRadius;
+  List<PieChartItem> items;
+  int ringNum;
+  Color linesColor;
+
+  late List<double> ringBorders;
   late TextStyle textStyle;
 
   //Could I just send in one number, and have the pieCoefficient be a certain
   //amount more?
-  PieInfo({
-    required pieHeightCoefficient,
-    required items,
-    required textRadius,
-    required currRingNum,
-    required textSize,
-    required textColor,
-  }) {
-    heightCoefficient = pieHeightCoefficient;
-    startingRadiusOfText = textRadius;
-    textAndAngleItems = items;
-    ringNum = currRingNum;
+  PieInfo(
+      {required this.width,
+      required this.textRadius,
+      required this.items,
+      required this.ringNum,
+      required this.linesColor,
+      required textSize,
+      required textColor,
+      required this.ringBorders}) {
     textStyle = TextStyle(
       fontSize: textSize,
       color: textColor,
@@ -32,10 +32,10 @@ class PieInfo {
   String toString() {
     String stringSum =
         // ignore: prefer_interpolation_to_compose_strings
-        "Pie Circle Info\nPie Width Multiplier: "
-        "${heightCoefficient}\nStarting radius of text"
-        "${startingRadiusOfText}\nText and angles in the chart: "
-        "${textAndAngleItems}";
+        "Pie Circle Info\nPie Width: "
+        "${width}\nStarting radius of text"
+        "${textRadius}\nText and angles in the chart: "
+        "${items}";
     return super.toString();
   }
 }
