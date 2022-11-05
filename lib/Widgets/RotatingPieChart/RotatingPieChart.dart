@@ -327,7 +327,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
     double radiusToMeasureAgainst = userChosenRadius -
         (spaceBetweenLines * numLines) +
-        (spaceBetweenLines / 2);
+        (3 * spaceBetweenLines / 2);
 
     double phraseAlpha =
         getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
@@ -471,9 +471,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       }
       assert(spaceSubString.isNotEmpty);
 
-      if (spaceSubString.characters.last == " " ||
-          spaceSubString.characters.last == "\t" ||
-          spaceSubString.characters.last == "\n") {
+      if (hasCharacterBreakpoint(spaceSubString.characters.last)) {
         foundSpace = true;
         break;
       }
@@ -481,7 +479,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
     if (foundSpace) {
       // Minus 1 to account for the space
-      phraseParts.add(phraseToSplit.substring(0, index2 - 1));
+      phraseParts.add(phraseToSplit.substring(0, index2));
       phraseParts.add(phraseToSplit.substring(index2));
     } else {
       // Minus 1 to account for the hyphen
@@ -491,6 +489,17 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
 
     return phraseParts;
+  }
+
+  bool hasCharacterBreakpoint(var currChar) {
+    List acceptableBreakpoints = [" ", "\t", "\n", "-", ",", ".", "_", "/"];
+    bool foundBreakpoint = false;
+    for (var breakpoint in acceptableBreakpoints) {
+      if (currChar == breakpoint) {
+        foundBreakpoint = true;
+      }
+    }
+    return foundBreakpoint;
   }
 
   /// Closes the controller / disploses of it

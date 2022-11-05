@@ -55,30 +55,30 @@ class HomeScreen extends StatelessWidget {
     List<double> circle1Proportions = [];
     List<double> circle2Proportions = [];
     List<double> circle2TextProportions = [];
-    List<double> circle3Proportions = [];
-    List<double> circle3TextProportions = [];
+    double circle3Proportion = 1.0;
+    double circle3TextProportion = 0.4;
 
     if (MediaQuery.of(context).size.width < 350 || Global.isPhone) {
       circle1Proportions = [0.4, 0.6];
       circle2Proportions = [0.7, 1.0];
-      circle3Proportions = [1.0, 0];
+      circle3Proportion = 1.0;
 
       circle2TextProportions = [0.25, 0.4];
-      circle3TextProportions = [0.4, 0];
+      circle3TextProportion = 0.4;
 
       if (Global.isHighPixelRatio && Device.get().isAndroid) {
         circle1Proportions = [0.35, 0.6];
         circle2Proportions = [0.575, 1.0];
         circle2TextProportions = [0.17, 0.4];
-        circle3TextProportions = [0.28, 0];
+        circle3TextProportion = 0.28;
       }
     } else {
       circle1Proportions = [0.35, 0.5];
       circle2Proportions = [0.6, 1.0];
-      circle3Proportions = [1.0, 0];
+      circle3Proportion = 1.0;
 
       circle2TextProportions = [0.25, 0.35];
-      circle3TextProportions = [0.4, 0];
+      circle3TextProportion = 0.4;
     }
 
     return Scaffold(
@@ -110,8 +110,7 @@ class HomeScreen extends StatelessWidget {
             // Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: circle1Proportions,
-            circleOneColor:
-                //Colors.transparent,
+            circleOneColor: //Colors.transparent,
                 Global.currentTheme.primaryColor,
             circleOneFontColor: Colors.black,
             circleOneFontSize: 8.0,
@@ -126,8 +125,8 @@ class HomeScreen extends StatelessWidget {
             circleTwoFontSize: 14.0,
             // Circle 3
             circleThreeText: circle3Text,
-            circleThreeRadiusProportions: circle3Proportions,
-            circleThreeTextProportions: circle3TextProportions,
+            circleThreeRadiusProportion: circle3Proportion,
+            circleThreeTextProportion: circle3TextProportion,
             circleThreeColor: Global.currentTheme.tertiaryColor,
             circleThreeFontColor: Colors.black,
             circleThreeFontSize: 14.0,

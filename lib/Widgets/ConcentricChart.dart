@@ -115,13 +115,13 @@ class ConcentricChart extends StatefulWidget {
   /// second value is for ring with 2 rings (typically 0)
   /// Both are proportions of the width given
   /// should be a value [0.0-1.0]
-  List<double> circleThreeRadiusProportions;
+  double circleThreeRadiusProportion;
 
   /// Proportion of width at which to draw the text on the outermost ring (two values)
   /// First value is for ring with 3 rings
   /// second value is for ring with 2 rings (typically 0)
   /// should be a value [0.0-1.0]
-  List<double> circleThreeTextProportions;
+  double circleThreeTextProportion;
 
   /// A pixel offset of the text in the outermost ring
   /// A positve value moves the text farther away from the center
@@ -152,8 +152,8 @@ class ConcentricChart extends StatefulWidget {
     this.circleOneRadiusProportions = const [0.4, 0.6],
     this.circleTwoRadiusProportions = const [0.7, 1.0],
     this.circleTwoTextProportions = const [0.25, 0.4],
-    this.circleThreeRadiusProportions = const [1.0, 0],
-    this.circleThreeTextProportions = const [0.4, 0],
+    this.circleThreeRadiusProportion = 1.0,
+    this.circleThreeTextProportion = 0.4,
     this.circleTwoTextPixelOffset = 0.0,
     this.circleThreeTextPixelOffset = 0.0,
     this.spaceBetweenLines = 20,
@@ -283,10 +283,10 @@ class _ConcentricChartState extends State<ConcentricChart> {
     double circleTwoTextProportion =
         getProportionValue(widget.circleTwoTextProportions[proportionIndex]);
 
-    double circleThreeProportion = getProportionValue(
-        widget.circleThreeRadiusProportions[proportionIndex]);
+    double circleThreeProportion =
+        getProportionValue(widget.circleThreeRadiusProportion);
     double circleThreeTextProportion =
-        getProportionValue(widget.circleThreeTextProportions[proportionIndex]);
+        getProportionValue(widget.circleThreeTextProportion);
 
     if (Device.get().isAndroid && widget.numberOfRings == 2) {
       circleOneProportion -= 0.1;
@@ -311,12 +311,6 @@ class _ConcentricChartState extends State<ConcentricChart> {
     double ringTwoTextRadius = widget.width * circleTwoTextProportion;
     double ringThreeTextRadius = widget.width * circleThreeTextProportion;
 
-    // double ringTwoMiddlewidth = (ringOnewidth + ringTwowidth) / 2;
-    // double ringThreeMiddlewidth = (ringTwowidth + ringThreewidth) / 2;
-
-    double ringTwoMiddlewidth = (ringTwoTextRadius);
-    double ringThreeMiddlewidth = (ringThreeTextRadius);
-
     circleOnePie = PieInfo(
       width: ringOnewidth,
       //In names circle - is a coefficient
@@ -335,7 +329,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
     circleTwoPie = PieInfo(
       width: ringTwowidth,
       items: circleTwoItems,
-      textRadius: ringTwoMiddlewidth,
+      textRadius: ringTwoTextRadius,
       linesColor: widget.linesColors[1],
       ringNum: 2,
       textSize: widget.circleTwoFontSize,
@@ -350,7 +344,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       circleThreePie = PieInfo(
           width: ringThreewidth,
           items: circleThreeItems,
-          textRadius: ringThreeMiddlewidth,
+          textRadius: ringThreeTextRadius,
           linesColor: widget.linesColors[2],
           ringNum: 3,
           textSize: widget.circleThreeFontSize,

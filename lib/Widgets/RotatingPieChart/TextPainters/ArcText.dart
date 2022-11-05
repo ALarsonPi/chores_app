@@ -83,8 +83,10 @@ class ArcTextPainter extends CustomPainter {
         actualRadius += spaceBetweenLines / 2;
       } else if (shouldReverse && numPhrasesInChunk == 3) {
         actualRadius += spaceBetweenLines;
-      } else {
+      } else if (shouldReverse) {
         actualRadius += numPhrasesInChunk + (spaceBetweenLines / 2);
+      } else if (!shouldReverse && numPhrasesInChunk == 2) {
+        actualRadius += spaceBetweenLines / 2;
       }
     }
   }
