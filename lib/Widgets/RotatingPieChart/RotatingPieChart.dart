@@ -276,6 +276,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     bool isOverflowing = checkIfShouldOverflow(chunkDifference);
     int numLines = 1;
     if (isOverflowing) {
+      // If it's one word, don't split
+      if ((currPhrase.split(" ").length == 1)) {
+        // Unless it has a char breakpoint
+        if (!phraseHasCharacterBreakpoint(currPhrase)) {
+          phrasesToReturn.add(currPhrase);
+          return phrasesToReturn;
+        }
+      }
       while (isOverflowing && numLines <= widget.overflowLineLimit) {
         phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
         chunkDifference = (2 * pi / numChunks) - phraseAlpha;
@@ -335,6 +343,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
     bool isOverflowing = checkIfShouldOverflow(chunkDifference);
     if (isOverflowing) {
+      // If it's one word, don't split
+      if ((currPhrase.split(" ").length == 1)) {
+        // Unless it has a char breakpoint
+        if (!phraseHasCharacterBreakpoint(currPhrase)) {
+          phrasesToReturn.add(currPhrase);
+          return phrasesToReturn;
+        }
+      }
       int numLines = 1;
       while (isOverflowing && numLines <= widget.overflowLineLimit) {
         phraseAlpha = getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
@@ -500,6 +516,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       }
     }
     return foundBreakpoint;
+  }
+
+  bool phraseHasCharacterBreakpoint(String currPhrase) {
+    bool hasBreakpointChar = false;
+    for (var currChar in currPhrase.toString().characters) {
+      if (hasCharacterBreakpoint(currChar)) {
+        hasBreakpointChar = true;
+      }
+    }
+    return hasBreakpointChar;
   }
 
   /// Closes the controller / disploses of it

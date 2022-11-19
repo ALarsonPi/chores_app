@@ -57,7 +57,7 @@ void main() {
                 //Circle 3
                 circleTwoFontSize: 14.0,
                 circleThreeText: const ["chore3", "chore4"],
-                circleThreeRadiusProportions: const [0.9, 0],
+                circleThreeRadiusProportion: 0.9,
                 circleThreeColor: Global.currentTheme.tertiaryColor,
                 circleThreeFontColor: Colors.white,
                 circleThreeFontSize: 14.0,

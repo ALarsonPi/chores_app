@@ -13,23 +13,23 @@ class HomeScreen extends StatelessWidget {
     List<String> circle1Text = [
       "John",
       "Jamie",
-      "William",
+      "Will",
       "Abby",
-      // "John Cina",
-      // "Jamison III",
-      // "Santa Claus",
-      // "Abe Lincoln"
+      "Johnny",
+      "Jake",
+      "Santa",
+      "Abe"
     ];
 
     List<String> circle2Text = [
       "Sweep/Mop",
-      "Dishwasher",
+      "Sweep/Mop",
       "Pots/Pans",
       "Windows",
       "Mop",
       "Sweep",
       "Lawn",
-      "Run around"
+      "Clean Window"
     ];
 
     List<String> circle3Text = [
@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
     //have one chart but in the future I'm thinking of giving the
     //user up to 3, maybe
     //Also use title of first chart as title here in the Scaffold
-    double screenWidth = MediaQuery.of(context).size.width;
+
     int currNumRingsToUse = 3;
 
     List<double> circle1Proportions = [];
