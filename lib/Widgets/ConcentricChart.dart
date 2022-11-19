@@ -340,6 +340,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
       ],
     );
 
+    debugPrint("HERE");
+    bool isOuterRing = true;
     if (widget.numberOfRings == 3) {
       circleThreePie = PieInfo(
           width: ringThreewidth,
@@ -353,10 +355,13 @@ class _ConcentricChartState extends State<ConcentricChart> {
             ringTwowidth,
             ringThreewidth,
           ]);
-      rotatablePies.add(makePieChart(circleThreePie, circleThreeBounds));
+      rotatablePies
+          .add(makePieChart(circleThreePie, circleThreeBounds, isOuterRing));
+      isOuterRing = false;
     }
-    rotatablePies.add(makePieChart(circleTwoPie, circleTwoBounds));
-    rotatablePies.add(makePieChart(circleOnePie, circleOneBounds));
+    rotatablePies.add(makePieChart(circleTwoPie, circleTwoBounds, isOuterRing));
+
+    rotatablePies.add(makePieChart(circleOnePie, circleOneBounds, false));
 
     super.didChangeDependencies();
   }
@@ -383,12 +388,17 @@ class _ConcentricChartState extends State<ConcentricChart> {
   /// Takes a [PieInfo] which holds all the info for a circle and the bounds for it
   /// and makes a [RotatingPieChart] using that info which is centered and in a
   /// SafeArea
-  makePieChart(PieInfo pie, List<double> bounds) {
+  makePieChart(PieInfo pie, List<double> bounds, bool isOuterRing) {
+    debugPrint("For pie:" +
+        pie.ringNum.toString() +
+        ", isOuter? " +
+        isOuterRing.toString());
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
+          isOuterRing: isOuterRing,
           shouldFlipText: widget.shouldFlipText,
           linesColor: pie.linesColor,
           shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,

@@ -15,32 +15,32 @@ class HomeScreen extends StatelessWidget {
       "Jamie",
       "Will",
       "Abby",
-      "Johnny",
-      "Jake",
-      "Santa",
-      "Abe"
+      // "Johnny",
+      // "Jake",
+      // "Santa",
+      // "Abe"
     ];
 
     List<String> circle2Text = [
-      "Sweep/Mop",
+      "Will you",
       "Sweep/Mop",
       "Pots/Pans",
       "Windows",
-      "Mop",
-      "Sweep",
-      "Lawn",
-      "Clean Window"
+      // "Mop",
+      // "Sweep",
+      // "Lawn",
+      // "Clean Window"
     ];
 
     List<String> circle3Text = [
       "Vacuum",
-      "Mop + sweep patio",
+      "Mop + sweep",
       "Mow lawn each week",
-      "Babysit little Jessica",
-      "Travel to Russia",
-      "Give coal to kids",
-      "Beat the South",
-      "Run",
+      "Babysit",
+      // "Travel to Russia",
+      // "Give coal to",
+      // "Beat the South",
+      // "Run",
     ];
 
     //In the future we'll grab any/all charts from system memory

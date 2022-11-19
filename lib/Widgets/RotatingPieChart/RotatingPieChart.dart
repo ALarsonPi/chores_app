@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieInfo.dart';
+import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
 import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
-import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'RotationEndSimulation.dart';
@@ -35,6 +35,7 @@ class RotatingPieChart extends StatelessWidget {
   bool shouldCenterTextVertically;
   int overflowLineLimit;
   double chunkOverflowLimitProportion;
+  bool isOuterRing;
 
   /// The Pie which holds info about this circle
   final PieInfo pie;
@@ -57,6 +58,7 @@ class RotatingPieChart extends StatelessWidget {
     required this.linesColor,
     required this.chunkOverflowLimitProportion,
     required this.shouldFlipText,
+    required this.isOuterRing,
   }) {
     items = pie.items;
     sizeOfChart = pie.width;
@@ -97,6 +99,7 @@ class RotatingPieChart extends StatelessWidget {
             linesColor: linesColor,
             shoudFlipText: shouldFlipText,
             pie: pie,
+            isOuterRing: isOuterRing,
           ),
         ),
       ),
@@ -122,6 +125,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
 
   final Color linesColor;
   final bool shoudFlipText;
+  final bool isOuterRing;
 
   const _RotatingPieChartInternal({
     Key? key,
@@ -136,6 +140,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.shouldHaveFluidTransition,
     required this.shouldCenterTextVertically,
     required this.pie,
+    required this.isOuterRing,
     required this.overflowLineLimit,
     required this.linesColor,
     required this.overflowLimitProportion,
@@ -169,6 +174,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late int overflowLineLimit;
   late List<double> ringBorders;
   late bool shouldFlipText;
+  late bool isOuterRing;
 
   /// Phrases as built for the upper quadrants
   List<List<String>> chunkPhraseList = List.empty(growable: true);
@@ -205,6 +211,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     shouldCenterTextVertically = widget.shouldCenterTextVertically;
     overflowLineLimit = widget.overflowLineLimit;
     shouldFlipText = widget.shoudFlipText;
+    isOuterRing = widget.isOuterRing;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
           text: TextSpan(
@@ -559,6 +566,42 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     }
   }
 
+  CircularTextDirection getCurrTextDirection(double angleInDegrees) {
+    angleInDegrees = angleInDegrees % 360;
+    return (angleInDegrees >= 180 && angleInDegrees <= 270 ||
+            angleInDegrees <= 0 && angleInDegrees >= -90 ||
+            angleInDegrees >= 270 && angleInDegrees <= 360)
+        ? CircularTextDirection.clockwise
+        : CircularTextDirection.anticlockwise;
+  }
+
+  List<TextItem> getTextItems() {
+    List<TextItem> listOfItems = List.empty(growable: true);
+
+    for (int i = 0; i < numChunks; i++) {
+      double chunkDiff = (360 / numChunks);
+      double currStartAngle = ((chunkDiff * i) - (chunkDiff / 2)) +
+          radiansToDegrees(_animation.value);
+      listOfItems.add(
+        TextItem(
+          text: Text(
+            chunkPhraseList[i][0],
+            style: TextStyle(
+              fontSize: textStyle.fontSize,
+              color: textStyle.color,
+              fontWeight: textStyle.fontWeight,
+            ),
+          ),
+          space: 6,
+          startAngle: currStartAngle,
+          startAngleAlignment: StartAngleAlignment.center,
+          direction: getCurrTextDirection(currStartAngle),
+        ),
+      );
+    }
+    return listOfItems;
+  }
+
   /// Using a gesture detector, the chart detects when someone starts spinning
   /// the chart. The chart is animated with a [RotationEndSimulation] which
   /// just applies friction until the wheel stops. When it finally stops, it
@@ -618,33 +661,42 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
               ),
               CustomPaint(
                 painter: (!isCircle1)
-                    ? ArcTextPainter(
-                        userChosenRadius: userChosenRadius,
-                        shouldFlipText: shouldFlipText,
-                        shouldCenterText: shouldCenterTextVertically,
-                        textStyle: textStyle,
-                        initialAngle: _animation.value + 1.57079632679,
-                        listOfChunkPhrases: chunkPhraseList,
-                        forwardPhraseAlpha: forwardAlphaList,
-                        listOfReverseChunkPhrases: (shouldFlipText)
-                            ? reversePhraseChunkList
-                            : chunkPhraseList,
-                        reversePhraseAlpha: (shouldFlipText)
-                            ? reverseAlphaList
-                            : forwardAlphaList,
-                        numChunks: numChunks,
-                        spaceBetweenLines: spaceBetweenLines,
-                        isRing3: this.widget.pie.ringNum == 3,
-                        isRotating: !isNotBeingRotated,
-                        shouldHaveFluidTransition: shouldHaveFluidTransition,
-                        flipStatusArray: flipStatusArray,
-                        listOfCenterValues: [
-                          (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
-                          0,
-                          0,
-                          0
+                    ? _CircularTextPainter(
+                        textDirection: TextDirection.ltr,
+                        radius: pie.textRadius,
+                        isOuterRing: isOuterRing,
+                        children: [
+                          ...getTextItems(),
                         ],
                       )
+                    //  ArcTextPainter(
+                    //     userChosenRadius: userChosenRadius,
+                    //     shouldFlipText: shouldFlipText,
+                    //     shouldCenterText: shouldCenterTextVertically,
+                    //     textStyle: textStyle,
+                    //     initialAngle: _animation.value + 1.57079632679,
+                    //     listOfChunkPhrases: chunkPhraseList,
+                    //     forwardPhraseAlpha: forwardAlphaList,
+                    //     listOfReverseChunkPhrases: (shouldFlipText)
+                    //         ? reversePhraseChunkList
+                    //         : chunkPhraseList,
+                    //     reversePhraseAlpha: (shouldFlipText)
+                    //         ? reverseAlphaList
+                    //         : forwardAlphaList,
+                    //     numChunks: numChunks,
+                    //     spaceBetweenLines: spaceBetweenLines,
+                    //     isRing3: this.widget.pie.ringNum == 3,
+                    //     isRotating: !isNotBeingRotated,
+                    //     shouldHaveFluidTransition: shouldHaveFluidTransition,
+                    //     flipStatusArray: flipStatusArray,
+                    //     listOfCenterValues: [
+                    //       (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
+                    //       0,
+                    //       0,
+                    //       0
+                    //     ],
+                    //   )
+
                     : PieTextPainter(
                         items: this.widget.items,
                         rotation: _animation.value,
@@ -670,5 +722,198 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         ),
       ),
     );
+  }
+}
+
+// What exactly have I accomplished today? (in like 4 hours of being awake?)
+// 1. Ate, showered
+// 2. Did some research on another circular text solution after having a dream about something that might work
+// 3. Implemented a new solution, ogtten it to actually rotate, gotten it to have the correct text
+// 4. Investigated how the function works / uses the canvas to manipulate spacing, cahnged spacing based on ring type (if it's the outer one or not)
+// 5. Allowed text radius to be used to depict spacing
+
+enum CircularTextDirection { clockwise, anticlockwise }
+
+enum CircularTextPosition { outside, inside }
+
+enum StartAngleAlignment { start, center, end }
+
+class TextItem {
+  /// Text
+  final Text text;
+
+  /// Space between characters
+  double space;
+
+  /// Text starting position
+  final double startAngle;
+
+  /// Text alignment around [startAngle]
+  /// [StartAngleAlignment.start] text will starts from [startAngle]
+  /// [StartAngleAlignment.center] text will be centered on [startAngle]
+  /// [StartAngleAlignment.end] text will ends on [startAngle]
+  final StartAngleAlignment startAngleAlignment;
+
+  /// Text direction either clockwise or anticlockwise
+  final CircularTextDirection direction;
+
+  TextItem({
+    required this.text,
+    this.space = 10,
+    this.startAngle = 0,
+    this.startAngleAlignment = StartAngleAlignment.start,
+    this.direction = CircularTextDirection.clockwise,
+  }) : assert(space >= 0);
+
+  bool isChanged(TextItem oldTextItem) {
+    bool isTextChanged() {
+      return oldTextItem.text.data != text.data ||
+          oldTextItem.text.style != text.style;
+    }
+
+    return isTextChanged() ||
+        oldTextItem.space != space ||
+        oldTextItem.startAngle != startAngle ||
+        oldTextItem.startAngleAlignment != startAngleAlignment ||
+        oldTextItem.direction != direction;
+  }
+}
+
+class _CircularTextPainter extends CustomPainter {
+  final List<TextItem> children;
+  final CircularTextPosition position;
+  final Paint backgroundPaint;
+  final TextDirection textDirection;
+
+  double radius = 0.0;
+  bool isOuterRing;
+
+  _CircularTextPainter({
+    required this.children,
+    required this.radius,
+    this.isOuterRing = false,
+    this.position = CircularTextPosition.inside,
+    Paint? backgroundPaint,
+    required this.textDirection,
+  }) : this.backgroundPaint =
+            backgroundPaint ?? (Paint()..color = Colors.transparent);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    //radius = min(size.width / 2, size.height / 2);
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.drawCircle(Offset.zero, radius, backgroundPaint);
+
+    for (TextItem textItem in children) {
+      if (isOuterRing) {
+        textItem.space -= 2;
+      }
+      canvas.save();
+      List<TextPainter> _charPainters = [];
+      Text text = textItem.text;
+      for (var char in text.data!.split("")) {
+        TextPainter charPainter = TextPainter(
+            text: TextSpan(text: char, style: text.style),
+            textDirection: textDirection)
+          ..layout();
+        _charPainters.add(charPainter);
+      }
+
+      if (textItem.direction == CircularTextDirection.clockwise) {
+        _paintTextClockwise(canvas, size, textItem, _charPainters);
+      } else {
+        _paintTextAntiClockwise(canvas, size, textItem, _charPainters);
+      }
+      canvas.restore();
+      if (isOuterRing) {
+        textItem.space += 2;
+      }
+    }
+  }
+
+  void _paintTextClockwise(Canvas canvas, Size size, TextItem textItem,
+      List<TextPainter> _charPainters) {
+    bool hasStrokeStyle = backgroundPaint.style == PaintingStyle.stroke &&
+        backgroundPaint.strokeWidth > 0.0;
+    double angleShift = _calculateAngleShift(textItem, _charPainters.length);
+    canvas.rotate((textItem.startAngle + 90 - angleShift) * pi / 180);
+    for (int i = 0; i < _charPainters.length; i++) {
+      final tp = _charPainters[i];
+      final x = -tp.width / 2;
+      final y = position == CircularTextPosition.outside
+          ? (-radius - tp.height) -
+              (hasStrokeStyle ? backgroundPaint.strokeWidth / 2 : 0.0)
+          : -radius - (hasStrokeStyle ? tp.height / 2 : 0.0);
+
+      tp.paint(canvas, Offset(x, y));
+      canvas.rotate(textItem.space * pi / 180);
+    }
+  }
+
+  void _paintTextAntiClockwise(Canvas canvas, Size size, TextItem textItem,
+      List<TextPainter> _charPainters) {
+    bool hasStrokeStyle = backgroundPaint.style == PaintingStyle.stroke &&
+        backgroundPaint.strokeWidth > 0.0;
+
+    double angleShift = _calculateAngleShift(textItem, _charPainters.length);
+    canvas.rotate((textItem.startAngle - 90 + angleShift) * pi / 180);
+    for (int i = 0; i < _charPainters.length; i++) {
+      final tp = _charPainters[i];
+      final x = -tp.width / 2;
+      final y = position == CircularTextPosition.outside
+          ? radius + (hasStrokeStyle ? backgroundPaint.strokeWidth / 2 : 0.0)
+          : (radius - tp.height) + (hasStrokeStyle ? tp.height / 2 : 0.0);
+
+      tp.paint(canvas, Offset(x, y));
+      canvas.rotate(-textItem.space * pi / 180);
+    }
+  }
+
+  double _calculateAngleShift(TextItem textItem, int textLength) {
+    double angleShift = -1;
+    switch (textItem.startAngleAlignment) {
+      case StartAngleAlignment.start:
+        angleShift = 0;
+        break;
+      case StartAngleAlignment.center:
+        int halfItemsLength = textLength ~/ 2;
+        if (textLength % 2 == 0) {
+          angleShift =
+              ((halfItemsLength - 1) * textItem.space) + (textItem.space / 2);
+        } else {
+          angleShift = (halfItemsLength * textItem.space);
+        }
+        break;
+      case StartAngleAlignment.end:
+        angleShift = (textLength - 1) * textItem.space;
+        break;
+    }
+    return angleShift;
+  }
+
+  @override
+  bool shouldRepaint(_CircularTextPainter oldDelegate) {
+    bool isTextItemsChanged() {
+      bool isChanged = false;
+      for (int i = 0; i < children.length; i++) {
+        if (children[i].isChanged(oldDelegate.children[i])) {
+          isChanged = true;
+          break;
+        }
+      }
+      return isChanged;
+    }
+
+    bool isBackgroundPaintChanged() {
+      return oldDelegate.backgroundPaint.color != backgroundPaint.color ||
+          oldDelegate.backgroundPaint.style != backgroundPaint.style ||
+          oldDelegate.backgroundPaint.strokeWidth !=
+              backgroundPaint.strokeWidth;
+    }
+
+    return isTextItemsChanged() ||
+        oldDelegate.position != position ||
+        oldDelegate.textDirection != textDirection ||
+        isBackgroundPaintChanged();
   }
 }
