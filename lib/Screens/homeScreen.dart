@@ -15,21 +15,21 @@ class HomeScreen extends StatelessWidget {
       "Jamie",
       "Will",
       "Abby",
-      "Johnny",
-      "Jake",
-      "Santa",
-      "Abe"
+      // "Johnny",
+      // "Jake",
+      // "Santa",
+      // "Abe"
     ];
 
     List<String> circle2Text = [
       "Will you go",
       "Sweep/Mop go to",
       "Pots/Pans go to",
-      "Windows and window and also",
-      "Mop and sweep and mop",
-      "Sweep and mop and sweep",
-      "Lawn and mow and lawn",
-      "Clean Window and clean"
+      "Windows and window",
+      // "Mop and sweep and mop",
+      // "Sweep and mop and sweep",
+      // "Lawn and mow and lawn",
+      // "Clean Window and clean"
     ];
 
     List<String> circle3Text = [
@@ -37,10 +37,10 @@ class HomeScreen extends StatelessWidget {
       "Mop + sweep and go",
       "Mow lawn each week",
       "Babysit and go to the place",
-      "Travel to Russia my boi",
-      "Give coal to yessir",
-      "Beat the South yessir",
-      "Run run run away yessir",
+      // "Travel to Russia my boi",
+      // "Give coal to yessir",
+      // "Beat the South yessir",
+      // "Run run run away yessir",
     ];
 
     //In the future we'll grab any/all charts from system memory
@@ -52,24 +52,9 @@ class HomeScreen extends StatelessWidget {
 
     int currNumRingsToUse = 3;
 
-    List<double> circle1Proportions = [];
-    List<double> circle2Proportions = [];
+    List<double> circle1Proportions = [0.4, 0.6];
+    List<double> circle2Proportions = [0.7, 1.0];
     double circle3Proportion = 1.0;
-
-    if (MediaQuery.of(context).size.width < 350 || Global.isPhone) {
-      circle1Proportions = [0.4, 0.6];
-      circle2Proportions = [0.7, 1.0];
-      circle3Proportion = 1.0;
-
-      if (Global.isHighPixelRatio && Device.get().isAndroid) {
-        circle1Proportions = [0.35, 0.6];
-        circle2Proportions = [0.575, 1.0];
-      }
-    } else {
-      circle1Proportions = [0.35, 0.5];
-      circle2Proportions = [0.6, 1.0];
-      circle3Proportion = 1.0;
-    }
 
     return Scaffold(
       appBar: PreferredSize(

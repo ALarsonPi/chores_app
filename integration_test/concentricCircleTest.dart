@@ -53,7 +53,6 @@ void main() {
                 circleTwoRadiusProportions: const [0.40, 0.75],
                 circleTwoColor: Global.currentTheme.secondaryColor,
                 circleTwoFontColor: Colors.white,
-                circleThreeTextPixelOffset: 0,
                 //Circle 3
                 circleTwoFontSize: 14.0,
                 circleThreeText: const ["chore3", "chore4"],
@@ -61,7 +60,6 @@ void main() {
                 circleThreeColor: Global.currentTheme.tertiaryColor,
                 circleThreeFontColor: Colors.white,
                 circleThreeFontSize: 14.0,
-                circleTwoTextPixelOffset: 0,
               ),
             ],
           ),

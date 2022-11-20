@@ -233,6 +233,18 @@ class _ConcentricChartState extends State<ConcentricChart> {
   /// the number of rings all play a part in these slight tweaks to the numbers
   @override
   void didChangeDependencies() {
+    // Tweaking based on pixel ratio, device type, and whether it's a phone or tablet
+    if (MediaQuery.of(context).size.width < 350 || Device.get().isPhone) {
+      if (Device.devicePixelRatio > 2 && Device.get().isAndroid) {
+        widget.circleOneRadiusProportions[0] -= 0.05;
+        widget.circleTwoRadiusProportions[0] -= 0.125;
+      }
+    } else {
+      widget.circleOneRadiusProportions[0] -= 0.05;
+      widget.circleOneRadiusProportions[1] -= 0.1;
+      widget.circleTwoRadiusProportions[0] -= 0.1;
+    }
+
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
     double circleOneProportion =
         getProportionValue(widget.circleOneRadiusProportions[proportionIndex]);
