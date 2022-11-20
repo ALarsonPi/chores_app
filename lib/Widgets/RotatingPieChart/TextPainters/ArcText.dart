@@ -11,29 +11,19 @@ class ArcTextPainter extends CustomPainter {
     required this.listOfChunkPhrases,
     required this.forwardPhraseAlpha,
     required this.listOfReverseChunkPhrases,
-    required this.listOfCenterValues,
     required this.reversePhraseAlpha,
     required this.numChunks,
     required this.spaceBetweenLines,
     required this.isRotating,
-    required this.shouldHaveFluidTransition,
-    required this.shouldFlipText,
-    required this.shouldCenterText,
     this.isRing3 = false,
-    this.flipStatusArray = const [false],
   });
 
-  List<double> listOfCenterValues = List.empty(growable: true);
-  List<bool> flipStatusArray;
   List<bool> lastFlippedStatus = List.empty(growable: true);
   List<List<double>> forwardPhraseAlpha;
   List<List<double>> reversePhraseAlpha;
 
   bool isRing3;
   bool isRotating;
-  bool shouldHaveFluidTransition;
-  bool shouldFlipText;
-  bool shouldCenterText;
   bool shouldReverse = false;
 
   double userChosenRadius;
@@ -74,21 +64,11 @@ class ArcTextPainter extends CustomPainter {
     );
   }
 
-  setActualTextRadius(int numPhrasesInChunk, bool shouldReverse) {
-    if (shouldCenterText) {
-      // This is still a bit hard coded, but better than it was
-      if (shouldReverse) actualRadius += 10;
-
-      if (shouldReverse && numPhrasesInChunk == 2) {
-        actualRadius += spaceBetweenLines / 2;
-      } else if (shouldReverse && numPhrasesInChunk == 3) {
-        actualRadius += spaceBetweenLines;
-      } else if (shouldReverse) {
-        actualRadius += numPhrasesInChunk + (spaceBetweenLines / 2);
-      } else if (!shouldReverse && numPhrasesInChunk == 2) {
-        actualRadius += spaceBetweenLines / 2;
-      }
-    }
+  TextPainter getTextPainterForLetter(var letter, TextStyle? textStyle) {
+    return TextPainter(
+        text: TextSpan(text: letter, style: textStyle),
+        textDirection: TextDirection.ltr)
+      ..layout();
   }
 
   void _paintChunk(
@@ -99,7 +79,6 @@ class ArcTextPainter extends CustomPainter {
     Size size,
     bool shouldReversePrint,
   ) {
-    setActualTextRadius(phrases.length, shouldReversePrint && shouldFlipText);
     for (int i = 0; i < phrases.length; i++) {
       double currPhraseAlpha = phraseAlpha[i];
       double singleChunkAngle = (2 * pi / numChunks);
@@ -107,8 +86,15 @@ class ArcTextPainter extends CustomPainter {
 
       canvas.save();
 
-      if (shouldReversePrint && shouldFlipText) {
+      if (shouldReversePrint) {
         canvas.translate(size.width / 2, size.height / 2);
+        double letterHeight = getTextPainterForLetter("A", textStyle).height;
+        actualRadius += (letterHeight / 2);
+
+        if (phrases.length == 1) {
+          actualRadius -= (letterHeight / 2);
+        }
+
         canvas.translate(0, actualRadius);
 
         double singleChunkSize = 360 / numChunks;
@@ -141,7 +127,20 @@ class ArcTextPainter extends CustomPainter {
 
         _reversePaintPhrase(
             canvas, size, newInitialAngle, actualRadius, phrases[i]);
+
+        actualRadius -= (letterHeight / 2);
+        if (phrases.length == 1) {
+          actualRadius += (letterHeight / 2);
+        }
       } else {
+        double letterHeight = getTextPainterForLetter("A", textStyle).height;
+        actualRadius -= letterHeight / 2;
+        if (i == 0) actualRadius += (letterHeight / 2);
+
+        if (phrases.length == 1) {
+          actualRadius -= (letterHeight / 2);
+        }
+
         canvas.translate(size.width / 2, size.height / 2 - actualRadius);
 
         double newInitialAngle = initialAngle +
@@ -151,8 +150,14 @@ class ArcTextPainter extends CustomPainter {
 
         _paintPhrase(
             canvas, size, newInitialAngle, actualRadius, phrases[i], false);
+
+        actualRadius += letterHeight / 2;
+        if (phrases.length == 1) {
+          actualRadius += (letterHeight / 2);
+        }
       }
       actualRadius -= spaceBetweenLines;
+
       canvas.restore();
     }
     actualRadius = userChosenRadius;
@@ -193,22 +198,6 @@ class ArcTextPainter extends CustomPainter {
     }
   }
 
-  void setCurrentFlipStatus() {
-    double initialAngleAtStart = initialAngle;
-    for (int i = 0; i < numChunks; i++) {
-      shouldReverse = shouldReversePrint(initialAngle);
-
-      if (shouldReverse) {
-        flipStatusArray[i] = true;
-      } else {
-        flipStatusArray[i] = false;
-      }
-
-      incrementAngleByChunkSize();
-    }
-    initialAngle = initialAngleAtStart;
-  }
-
   void _paintChunks(
     List<List<String>> listOfChunks,
     List<List<double>> forwardAlpha,
@@ -224,36 +213,9 @@ class ArcTextPainter extends CustomPainter {
     assert(listOfReverseChunkPhrases.isNotEmpty);
     assert(reverseAlpha.isNotEmpty);
 
-    if (shouldFlipText && shouldHaveFluidTransition) {
-      paintFluidPhrases(canvas, size, listOfChunks, forwardAlpha,
-          listOfReverseChunks, reverseAlpha);
-      return;
-    }
-
-    if (shouldFlipText && !isRotating) {
-      setCurrentFlipStatus();
-    }
-
-    lastFlippedStatus.clear();
-    lastFlippedStatus.addAll(flipStatusArray);
-
-    for (int i = 0; i < numChunks; i++) {
-      canvas.save();
-      shouldReverse = lastFlippedStatus[i];
-      List<String> phraseListToUse = List.empty(growable: true);
-      List<double> alphaListToUse = List.empty(growable: true);
-      if (shouldReverse) {
-        phraseListToUse = listOfReverseChunks[i].reversed.toList();
-        alphaListToUse = reverseAlpha[i];
-      } else {
-        phraseListToUse = listOfChunks[i];
-        alphaListToUse = forwardAlpha[i];
-      }
-      _paintChunk(phraseListToUse, alphaListToUse, spaceBetweenLines, canvas,
-          size, shouldReverse);
-      canvas.restore();
-      incrementAngleByChunkSize();
-    }
+    paintFluidPhrases(canvas, size, listOfChunks, forwardAlpha,
+        listOfReverseChunks, reverseAlpha);
+    return;
   }
 
   void incrementAngleByChunkSize() {

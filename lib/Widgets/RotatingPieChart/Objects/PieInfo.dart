@@ -3,7 +3,7 @@ import 'PieChartItem.dart';
 
 class PieInfo {
   double width;
-  double textRadius;
+  double textProportion;
   List<PieChartItem> items;
   int ringNum;
   Color linesColor;
@@ -13,15 +13,16 @@ class PieInfo {
 
   //Could I just send in one number, and have the pieCoefficient be a certain
   //amount more?
-  PieInfo(
-      {required this.width,
-      required this.textRadius,
-      required this.items,
-      required this.ringNum,
-      required this.linesColor,
-      required textSize,
-      required textColor,
-      required this.ringBorders}) {
+  PieInfo({
+    required this.width,
+    required this.items,
+    required this.ringNum,
+    required this.linesColor,
+    required textSize,
+    required textColor,
+    this.ringBorders = const [0.0, 0.0],
+    this.textProportion = 0.0,
+  }) {
     textStyle = TextStyle(
       fontSize: textSize,
       color: textColor,
@@ -34,7 +35,7 @@ class PieInfo {
         // ignore: prefer_interpolation_to_compose_strings
         "Pie Circle Info\nPie Width: "
         "${width}\nStarting radius of text"
-        "${textRadius}\nText and angles in the chart: "
+        "${textProportion}\nText and angles in the chart: "
         "${items}";
     return super.toString();
   }

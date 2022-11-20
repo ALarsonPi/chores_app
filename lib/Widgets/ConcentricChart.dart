@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
 
 /// A series of two or three concentric pie charts that can hold text
 /// One use for it (the one I've used it for) is to simulate a concentric
@@ -17,26 +20,10 @@ class ConcentricChart extends StatefulWidget {
   /// Amount of space (pixels) between each line of text
   double spaceBetweenLines;
 
-  /// Variable that controls whether or not the text in the bottom half will
-  /// be flipped rightside up rather than upside down
-  /// Used in conjunction with [shouldHaveFluidTextTransition]
-  bool shouldFlipText;
-
-  /// Allow for fluid text transition
-  /// If true (and [shouldFlipText] is true) then
-  /// text will flip when the median of the segment crosses the equator/zero line
-  /// If false (and [shouldFlipText] is true) then
-  /// text will remain unflipped and unchanged while spinning the circle, and flip
-  /// to the correct position after the user stops spinning
-  bool shouldHaveFluidTextTransition;
-
   /// Number of lines at which the overflow should stop overflowing
   /// Ex. value of 2 will allow for only two lines of text in each ring
   /// Anything else that would have overflowed will be put into the last line
   int overflowLineLimit;
-
-  /// If true, will center text for lines with more than one line
-  bool shouldTextCenterVertically;
 
   /// Color of the border of the rings and segments
   List<Color> linesColors;
@@ -87,16 +74,6 @@ class ConcentricChart extends StatefulWidget {
   /// should be drawn [0.0-1.0]
   List<double> circleTwoRadiusProportions;
 
-  /// Proportion of width at which to draw the text on the second ring (two values)
-  /// First value is for ring with 3 rings, second value is for ring with 2 rings
-  /// should be a value [0.0-1.0]
-  List<double> circleTwoTextProportions;
-
-  /// A pixel offset of the text in the second ring
-  /// A positve value moves the text farther away from the center
-  /// while a negative value moves the text closer to the center
-  double circleTwoTextPixelOffset;
-
   /// Text to put into the outermost circle (only shown if ringNum == 3)
   ///  Each is put in it's own segment
   List<String> circleThreeText;
@@ -116,17 +93,6 @@ class ConcentricChart extends StatefulWidget {
   /// Both are proportions of the width given
   /// should be a value [0.0-1.0]
   double circleThreeRadiusProportion;
-
-  /// Proportion of width at which to draw the text on the outermost ring (two values)
-  /// First value is for ring with 3 rings
-  /// second value is for ring with 2 rings (typically 0)
-  /// should be a value [0.0-1.0]
-  double circleThreeTextProportion;
-
-  /// A pixel offset of the text in the outermost ring
-  /// A positve value moves the text farther away from the center
-  /// while a negative value moves the text closer to the center
-  double circleThreeTextPixelOffset;
 
   /// Constructor for concentric chart
   /// Required - [width], [numberOfRings], and all the general info about each
@@ -151,18 +117,11 @@ class ConcentricChart extends StatefulWidget {
     this.circleThreeFontSize = 14.0,
     this.circleOneRadiusProportions = const [0.4, 0.6],
     this.circleTwoRadiusProportions = const [0.7, 1.0],
-    this.circleTwoTextProportions = const [0.25, 0.4],
     this.circleThreeRadiusProportion = 1.0,
-    this.circleThreeTextProportion = 0.4,
-    this.circleTwoTextPixelOffset = 0.0,
-    this.circleThreeTextPixelOffset = 0.0,
-    this.spaceBetweenLines = 20,
-    this.shouldHaveFluidTextTransition = true,
-    this.shouldTextCenterVertically = true,
+    this.spaceBetweenLines = 5,
     this.overflowLineLimit = 2,
     this.linesColors = const [Colors.black, Colors.black, Colors.black],
     this.chunkOverflowLimitProportion = 0.15,
-    this.shouldFlipText = true,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -277,16 +236,10 @@ class _ConcentricChartState extends State<ConcentricChart> {
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
     double circleOneProportion =
         getProportionValue(widget.circleOneRadiusProportions[proportionIndex]);
-
     double circleTwoProportion =
         getProportionValue(widget.circleTwoRadiusProportions[proportionIndex]);
-    double circleTwoTextProportion =
-        getProportionValue(widget.circleTwoTextProportions[proportionIndex]);
-
     double circleThreeProportion =
         getProportionValue(widget.circleThreeRadiusProportion);
-    double circleThreeTextProportion =
-        getProportionValue(widget.circleThreeTextProportion);
 
     if (Device.get().isAndroid && widget.numberOfRings == 2) {
       circleOneProportion -= 0.1;
@@ -300,60 +253,46 @@ class _ConcentricChartState extends State<ConcentricChart> {
       circleTwoProportion += 0.1;
     }
 
-    // double circleTwoTextRadius = (Device.screenWidth / 2) -
-    //     (Device.screenWidth / ((widget.numberOfRings == 2) ? 10 : 5)) +
-    //     widget.circleTwoTextPixelOffset;
-
     double ringOnewidth = widget.width * circleOneProportion;
     double ringTwowidth = widget.width * circleTwoProportion;
     double ringThreewidth = widget.width * circleThreeProportion;
 
-    double ringTwoTextRadius = widget.width * circleTwoTextProportion;
-    double ringThreeTextRadius = widget.width * circleThreeTextProportion;
-
     circleOnePie = PieInfo(
       width: ringOnewidth,
       //In names circle - is a coefficient
-      textRadius: widget.circleOneTextRadiusProportion,
+      textProportion: widget.circleOneTextRadiusProportion,
       items: circleOneItems,
       linesColor: widget.linesColors[0],
       ringNum: 1,
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
-      ringBorders: [
-        0,
-        ringOnewidth,
-      ],
     );
 
     circleTwoPie = PieInfo(
       width: ringTwowidth,
       items: circleTwoItems,
-      textRadius: ringTwoTextRadius,
       linesColor: widget.linesColors[1],
       ringNum: 2,
       textSize: widget.circleTwoFontSize,
       textColor: widget.circleTwoFontColor,
       ringBorders: [
-        ringOnewidth,
-        ringTwowidth * (1 + circleTwoProportion),
+        ringOnewidth / 2,
+        ringTwowidth / 2,
       ],
     );
 
-    debugPrint("HERE");
     bool isOuterRing = true;
     if (widget.numberOfRings == 3) {
       circleThreePie = PieInfo(
           width: ringThreewidth,
           items: circleThreeItems,
-          textRadius: ringThreeTextRadius,
           linesColor: widget.linesColors[2],
           ringNum: 3,
           textSize: widget.circleThreeFontSize,
           textColor: widget.circleThreeFontColor,
           ringBorders: [
-            ringTwowidth,
-            ringThreewidth,
+            ringTwowidth / 2,
+            ringThreewidth / 2,
           ]);
       rotatablePies
           .add(makePieChart(circleThreePie, circleThreeBounds, isOuterRing));
@@ -389,20 +328,13 @@ class _ConcentricChartState extends State<ConcentricChart> {
   /// and makes a [RotatingPieChart] using that info which is centered and in a
   /// SafeArea
   makePieChart(PieInfo pie, List<double> bounds, bool isOuterRing) {
-    debugPrint("For pie:" +
-        pie.ringNum.toString() +
-        ", isOuter? " +
-        isOuterRing.toString());
     return Center(
       child: SafeArea(
         child: RotatingPieChart(
           bounds: bounds,
           pie: pie,
           isOuterRing: isOuterRing,
-          shouldFlipText: widget.shouldFlipText,
           linesColor: pie.linesColor,
-          shouldHaveFluidTransition: widget.shouldHaveFluidTextTransition,
-          shouldCenterTextVertically: widget.shouldTextCenterVertically,
           spaceBetweenLines: widget.spaceBetweenLines,
           overflowLineLimit: widget.overflowLineLimit,
           chunkOverflowLimitProportion: widget.chunkOverflowLimitProportion,

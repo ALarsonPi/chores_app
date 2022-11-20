@@ -25,14 +25,8 @@ class RotatingPieChart extends StatelessWidget {
   /// text painter
   late bool isCircle1;
 
-  /// The Radius at which the text will be drawn
-  late double userChosenRadiusForText;
-
   final List<double> bounds;
   double spaceBetweenLines;
-  bool shouldHaveFluidTransition;
-  bool shouldFlipText;
-  bool shouldCenterTextVertically;
   int overflowLineLimit;
   double chunkOverflowLimitProportion;
   bool isOuterRing;
@@ -52,20 +46,16 @@ class RotatingPieChart extends StatelessWidget {
     required this.bounds,
     required this.pie,
     required this.spaceBetweenLines,
-    required this.shouldHaveFluidTransition,
-    required this.shouldCenterTextVertically,
     required this.overflowLineLimit,
     required this.linesColor,
     required this.chunkOverflowLimitProportion,
-    required this.shouldFlipText,
     required this.isOuterRing,
   }) {
     items = pie.items;
     sizeOfChart = pie.width;
     isCircle1 = pie.ringNum == 1;
-    userChosenRadiusForText = pie.textRadius;
-    if (!Device.get().isPhone) spaceBetweenLines += 25;
-    if (Device.devicePixelRatio > 2) spaceBetweenLines += 5;
+    if (!Device.get().isPhone) spaceBetweenLines += 20;
+    if (Device.devicePixelRatio > 2) spaceBetweenLines += 2;
   }
 
   /// Creates a Container which holds the inner pie chart, the color of the container
@@ -87,17 +77,13 @@ class RotatingPieChart extends StatelessWidget {
             bounds: bounds,
             items: items,
             textStyle: pie.textStyle,
-            textHeightCoefficient: userChosenRadiusForText,
+            textHeightCoefficient: pie.textProportion,
             accellerationFactor: accellerationFactor,
             isCircle1: isCircle1,
-            userChosenRadiusForText: userChosenRadiusForText,
             spaceBetweenLines: spaceBetweenLines,
-            shouldHaveFluidTransition: shouldHaveFluidTransition,
-            shouldCenterTextVertically: shouldCenterTextVertically,
             overflowLineLimit: overflowLineLimit,
             overflowLimitProportion: chunkOverflowLimitProportion,
             linesColor: linesColor,
-            shoudFlipText: shouldFlipText,
             pie: pie,
             isOuterRing: isOuterRing,
           ),
@@ -114,17 +100,13 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final double textHeightCoefficient;
   final List<double> bounds;
   final bool isCircle1;
-  final double userChosenRadiusForText;
   final TextStyle textStyle;
   final double spaceBetweenLines;
   final PieInfo pie;
-  final bool shouldHaveFluidTransition;
-  final bool shouldCenterTextVertically;
   final int overflowLineLimit;
   final double overflowLimitProportion;
 
   final Color linesColor;
-  final bool shoudFlipText;
   final bool isOuterRing;
 
   const _RotatingPieChartInternal({
@@ -134,17 +116,13 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.textHeightCoefficient,
     required this.bounds,
     required this.isCircle1,
-    required this.userChosenRadiusForText,
     required this.textStyle,
     required this.spaceBetweenLines,
-    required this.shouldHaveFluidTransition,
-    required this.shouldCenterTextVertically,
     required this.pie,
     required this.isOuterRing,
     required this.overflowLineLimit,
     required this.linesColor,
     required this.overflowLimitProportion,
-    required this.shoudFlipText,
   }) : super(key: key);
 
   @override
@@ -165,7 +143,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool isCircle1;
   late TextStyle textStyle;
   late double textHeightCoefficient;
-  late double userChosenRadius;
   late PieChartItemToText toText;
   late double spaceBetweenLines;
   late PieInfo pie;
@@ -173,7 +150,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool shouldCenterTextVertically;
   late int overflowLineLimit;
   late List<double> ringBorders;
-  late bool shouldFlipText;
   late bool isOuterRing;
 
   /// Phrases as built for the upper quadrants
@@ -203,14 +179,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     isCircle1 = widget.isCircle1;
-    userChosenRadius = widget.userChosenRadiusForText;
     numChunks = widget.items.length;
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
-    shouldHaveFluidTransition = widget.shouldHaveFluidTransition;
-    shouldCenterTextVertically = widget.shouldCenterTextVertically;
     overflowLineLimit = widget.overflowLineLimit;
-    shouldFlipText = widget.shoudFlipText;
     isOuterRing = widget.isOuterRing;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
@@ -274,7 +246,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   List<String> getOverflowedPhrasePartsForChunk(String fullPhrase) {
     List<String> phrasesToReturn = List.empty(growable: true);
     String currPhrase = fullPhrase;
-    double radiusToMeasureAgainst = userChosenRadius;
+    double radiusToMeasureAgainst = getMiddleVerticalRadius();
 
     double phraseAlpha =
         getTotalPhraseAlpha(currPhrase, radiusToMeasureAgainst);
@@ -340,7 +312,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     //sense when we reverse everything back
     String currPhrase = fullPhrase.split('').reversed.join();
 
-    double radiusToMeasureAgainst = userChosenRadius -
+    double radiusToMeasureAgainst = getMiddleVerticalRadius() -
         (spaceBetweenLines * numLines) +
         (3 * spaceBetweenLines / 2);
 
@@ -450,12 +422,12 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   fillAlphaLists() {
     for (List<String> phrasesInAChunk in chunkPhraseList) {
       List<double> alphaList =
-          createAlphaListForward(phrasesInAChunk, userChosenRadius);
+          createAlphaListForward(phrasesInAChunk, getMiddleVerticalRadius());
       forwardAlphaList.add(alphaList);
     }
     for (List<String> reversePhrasesInAChunk in reversePhraseChunkList) {
-      List<double> alphaListReverse =
-          createAlphaListReverse(reversePhrasesInAChunk, userChosenRadius);
+      List<double> alphaListReverse = createAlphaListReverse(
+          reversePhrasesInAChunk, getMiddleVerticalRadius());
       reverseAlphaList.add(alphaListReverse);
     }
   }
@@ -473,7 +445,8 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     String subString = phraseToSplit;
     for (; index > 1; index--) {
       subString = phraseToSplit.substring(0, index);
-      double phraseAlpha = getTotalPhraseAlpha(subString, userChosenRadius);
+      double phraseAlpha =
+          getTotalPhraseAlpha(subString, getMiddleVerticalRadius());
       double alphaDifference = (2 * pi / numChunks) - phraseAlpha;
       shouldOverflow = checkIfShouldOverflow(alphaDifference);
       if (!shouldOverflow) {
@@ -535,6 +508,10 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return hasBreakpointChar;
   }
 
+  double getMiddleVerticalRadius() {
+    return (pie.ringBorders[1] + pie.ringBorders[0]) / 2;
+  }
+
   /// Closes the controller / disploses of it
   @override
   void dispose() {
@@ -559,11 +536,9 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 
   /// Sets the [isNotBeingRotated] variable and updates the chart's state
   void startStopWheelRotation() {
-    if (widget.shoudFlipText) {
-      setState(() {
-        isNotBeingRotated = !isNotBeingRotated;
-      });
-    }
+    setState(() {
+      isNotBeingRotated = !isNotBeingRotated;
+    });
   }
 
   CircularTextDirection getCurrTextDirection(double angleInDegrees) {
@@ -575,30 +550,57 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
         : CircularTextDirection.anticlockwise;
   }
 
-  List<TextItem> getTextItems() {
+  List<Text> makeListOfText(int currIndex, bool isForward) {
+    List<Text> listOfTexts = List.empty(growable: true);
+
+    List<String> textListToUse = List.empty(growable: true);
+
+    if (isForward) {
+      textListToUse.addAll(chunkPhraseList[currIndex]);
+    } else {
+      textListToUse.addAll(reversePhraseChunkList[currIndex].reversed.toList());
+    }
+
+    for (int j = 0; j < textListToUse.length; j++) {
+      assert(textListToUse.isNotEmpty);
+
+      listOfTexts.add(
+        Text(
+          textListToUse[j],
+          style: TextStyle(
+            fontSize: textStyle.fontSize,
+            color: textStyle.color,
+            fontWeight: textStyle.fontWeight,
+          ),
+        ),
+      );
+    }
+
+    return listOfTexts;
+  }
+
+  List<TextItem> getTextItemList() {
     List<TextItem> listOfItems = List.empty(growable: true);
 
     for (int i = 0; i < numChunks; i++) {
+      List<Text> forwardChunkLines = makeListOfText(i, true);
+      List<Text> reverseChunkLines = makeListOfText(i, false);
+
       double chunkDiff = (360 / numChunks);
       double currStartAngle = ((chunkDiff * i) - (chunkDiff / 2)) +
           radiansToDegrees(_animation.value);
       listOfItems.add(
         TextItem(
-          text: Text(
-            chunkPhraseList[i][0],
-            style: TextStyle(
-              fontSize: textStyle.fontSize,
-              color: textStyle.color,
-              fontWeight: textStyle.fontWeight,
-            ),
-          ),
-          space: 6,
+          forwardTexts: forwardChunkLines,
+          reverseTexts: reverseChunkLines,
+          space: 4.75,
           startAngle: currStartAngle,
           startAngleAlignment: StartAngleAlignment.center,
           direction: getCurrTextDirection(currStartAngle),
         ),
       );
     }
+
     return listOfItems;
   }
 
@@ -661,42 +663,31 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
               ),
               CustomPaint(
                 painter: (!isCircle1)
-                    ? _CircularTextPainter(
-                        textDirection: TextDirection.ltr,
-                        radius: pie.textRadius,
-                        isOuterRing: isOuterRing,
-                        children: [
-                          ...getTextItems(),
-                        ],
-                      )
-                    //  ArcTextPainter(
-                    //     userChosenRadius: userChosenRadius,
-                    //     shouldFlipText: shouldFlipText,
-                    //     shouldCenterText: shouldCenterTextVertically,
-                    //     textStyle: textStyle,
-                    //     initialAngle: _animation.value + 1.57079632679,
-                    //     listOfChunkPhrases: chunkPhraseList,
-                    //     forwardPhraseAlpha: forwardAlphaList,
-                    //     listOfReverseChunkPhrases: (shouldFlipText)
-                    //         ? reversePhraseChunkList
-                    //         : chunkPhraseList,
-                    //     reversePhraseAlpha: (shouldFlipText)
-                    //         ? reverseAlphaList
-                    //         : forwardAlphaList,
-                    //     numChunks: numChunks,
+                    ? // HM which to use
+                    // CircularTextPainter(
+                    //     textDirection: TextDirection.ltr,
+                    //     radius: pie.textProportion,
+                    //     ringNum: pie.ringNum,
                     //     spaceBetweenLines: spaceBetweenLines,
-                    //     isRing3: this.widget.pie.ringNum == 3,
-                    //     isRotating: !isNotBeingRotated,
-                    //     shouldHaveFluidTransition: shouldHaveFluidTransition,
-                    //     flipStatusArray: flipStatusArray,
-                    //     listOfCenterValues: [
-                    //       (pie.ringBorders[1] - pie.ringBorders[0]) / 2,
-                    //       0,
-                    //       0,
-                    //       0
+                    //     isOuterRing: isOuterRing,
+                    //     middleVerticalRadius: getMiddleVerticalRadius(),
+                    //     textItems: [
+                    //       ...getTextItemList(),
                     //     ],
                     //   )
-
+                    ArcTextPainter(
+                        userChosenRadius: getMiddleVerticalRadius(),
+                        textStyle: textStyle,
+                        initialAngle: _animation.value + 1.57079632679,
+                        listOfChunkPhrases: chunkPhraseList,
+                        forwardPhraseAlpha: forwardAlphaList,
+                        listOfReverseChunkPhrases: reversePhraseChunkList,
+                        reversePhraseAlpha: reverseAlphaList,
+                        numChunks: numChunks,
+                        spaceBetweenLines: spaceBetweenLines + 10,
+                        isRing3: this.widget.pie.ringNum == 3,
+                        isRotating: !isNotBeingRotated,
+                      )
                     : PieTextPainter(
                         items: this.widget.items,
                         rotation: _animation.value,
@@ -731,6 +722,16 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
 // 3. Implemented a new solution, ogtten it to actually rotate, gotten it to have the correct text
 // 4. Investigated how the function works / uses the canvas to manipulate spacing, cahnged spacing based on ring type (if it's the outer one or not)
 // 5. Allowed text radius to be used to depict spacing
+// 6. Vertically centered Text (FINALLY)
+// 7. Allowed multiple lines of text to be entered
+// 8. Centered multiple lines
+
+// What can I accomplish in the next hour
+// What's left
+// 1. DONE Some sort of centering that works on both top and bottom?
+// 2. DONE Testing to make sure it works on tablets and different sized screens
+// 3. ALMOST DONE Add in multi-line phrases
+// 4. Fix line cut-off
 
 enum CircularTextDirection { clockwise, anticlockwise }
 
@@ -740,7 +741,8 @@ enum StartAngleAlignment { start, center, end }
 
 class TextItem {
   /// Text
-  final Text text;
+  final List<Text> reverseTexts;
+  final List<Text> forwardTexts;
 
   /// Space between characters
   double space;
@@ -758,8 +760,9 @@ class TextItem {
   final CircularTextDirection direction;
 
   TextItem({
-    required this.text,
-    this.space = 10,
+    required this.forwardTexts,
+    required this.reverseTexts,
+    this.space = 5,
     this.startAngle = 0,
     this.startAngleAlignment = StartAngleAlignment.start,
     this.direction = CircularTextDirection.clockwise,
@@ -767,8 +770,8 @@ class TextItem {
 
   bool isChanged(TextItem oldTextItem) {
     bool isTextChanged() {
-      return oldTextItem.text.data != text.data ||
-          oldTextItem.text.style != text.style;
+      return oldTextItem.forwardTexts[0].data != forwardTexts[0].data ||
+          oldTextItem.forwardTexts[0].style != forwardTexts[0].style;
     }
 
     return isTextChanged() ||
@@ -779,18 +782,25 @@ class TextItem {
   }
 }
 
-class _CircularTextPainter extends CustomPainter {
-  final List<TextItem> children;
+class CircularTextPainter extends CustomPainter {
+  final List<TextItem> textItems;
+
   final CircularTextPosition position;
   final Paint backgroundPaint;
   final TextDirection textDirection;
 
   double radius = 0.0;
   bool isOuterRing;
+  int ringNum;
+  double middleVerticalRadius;
+  double spaceBetweenLines;
 
-  _CircularTextPainter({
-    required this.children,
+  CircularTextPainter({
+    required this.textItems,
     required this.radius,
+    required this.ringNum,
+    required this.middleVerticalRadius,
+    required this.spaceBetweenLines,
     this.isOuterRing = false,
     this.position = CircularTextPosition.inside,
     Paint? backgroundPaint,
@@ -798,41 +808,96 @@ class _CircularTextPainter extends CustomPainter {
   }) : this.backgroundPaint =
             backgroundPaint ?? (Paint()..color = Colors.transparent);
 
+  TextPainter getTextPainterForLetter(var letter, TextStyle? textStyle) {
+    return TextPainter(
+        text: TextSpan(text: letter, style: textStyle),
+        textDirection: textDirection)
+      ..layout();
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
-    //radius = min(size.width / 2, size.height / 2);
-    canvas.translate(size.width / 2, size.height / 2);
-    canvas.drawCircle(Offset.zero, radius, backgroundPaint);
-
-    for (TextItem textItem in children) {
-      if (isOuterRing) {
-        textItem.space -= 2;
-      }
-      canvas.save();
-      List<TextPainter> _charPainters = [];
-      Text text = textItem.text;
-      for (var char in text.data!.split("")) {
-        TextPainter charPainter = TextPainter(
-            text: TextSpan(text: char, style: text.style),
-            textDirection: textDirection)
-          ..layout();
-        _charPainters.add(charPainter);
-      }
-
-      if (textItem.direction == CircularTextDirection.clockwise) {
-        _paintTextClockwise(canvas, size, textItem, _charPainters);
-      } else {
-        _paintTextAntiClockwise(canvas, size, textItem, _charPainters);
-      }
-      canvas.restore();
-      if (isOuterRing) {
-        textItem.space += 2;
-      }
+    for (int i = 0; i < textItems.length; i++) {
+      drawChunkAllLines(canvas, size, i);
     }
   }
 
-  void _paintTextClockwise(Canvas canvas, Size size, TextItem textItem,
-      List<TextPainter> _charPainters) {
+  void drawChunkAllLines(Canvas canvas, Size size, int indexOfCurrItem) {
+    bool isForward = (textItems[indexOfCurrItem].direction ==
+        CircularTextDirection.clockwise);
+    TextItem currItem = textItems[indexOfCurrItem];
+
+    // Text Item is a whole chunk
+    if (isOuterRing) {
+      currItem.space -= 2;
+    }
+
+    List<Text> currTextToUse =
+        (isForward) ? currItem.forwardTexts : currItem.reverseTexts;
+
+    // Calculate total height
+    double letterHeight = getTextPainterForLetter(
+            currTextToUse[0].data.toString()[0], currTextToUse[0].style)
+        .height;
+    double totalHeightForThisChunk = currTextToUse.length * letterHeight +
+        (currTextToUse.length - 1) * spaceBetweenLines;
+
+    for (int j = 0; j < currTextToUse.length; j++) {
+      drawPhraseLine(canvas, size, currTextToUse[j], currItem, letterHeight,
+          totalHeightForThisChunk, j, currTextToUse, isForward);
+    }
+
+    if (isOuterRing) {
+      currItem.space += 2;
+    }
+  }
+
+  void drawPhraseLine(
+      Canvas canvas,
+      Size size,
+      Text phraseLineInTextWidget,
+      TextItem textItem,
+      double totalHeightForThisChunk,
+      double heightOfALetter,
+      int lineNum,
+      List<Text> listToUse,
+      bool isForward) {
+    canvas.save();
+    double offsetByLine = (lineNum == 0)
+        ? 0
+        : (lineNum * heightOfALetter + (lineNum - 1) * spaceBetweenLines) /
+            (listToUse.length + 1);
+    // If no overflow, no adjustment of spacing, just center
+    if (listToUse.length == 1) {
+      totalHeightForThisChunk = 0;
+    }
+
+    radius =
+        middleVerticalRadius + (totalHeightForThisChunk / 2) - offsetByLine;
+    canvas.translate(size.width / 2, size.height / 2);
+
+    List<TextPainter> _charPainters = [];
+    for (var char in phraseLineInTextWidget.data!.split("")) {
+      TextPainter charPainter =
+          getTextPainterForLetter(char, phraseLineInTextWidget.style);
+      _charPainters.add(charPainter);
+    }
+
+    if (isForward) {
+      _paintTextClockwise(canvas, size, textItem, _charPainters);
+    } else {
+      _paintTextAntiClockwise(canvas, size, textItem, _charPainters);
+    }
+
+    canvas.restore();
+  }
+
+  void _paintTextClockwise(
+    Canvas canvas,
+    Size size,
+    TextItem textItem,
+    List<TextPainter> _charPainters,
+  ) {
     bool hasStrokeStyle = backgroundPaint.style == PaintingStyle.stroke &&
         backgroundPaint.strokeWidth > 0.0;
     double angleShift = _calculateAngleShift(textItem, _charPainters.length);
@@ -892,11 +957,11 @@ class _CircularTextPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CircularTextPainter oldDelegate) {
+  bool shouldRepaint(CircularTextPainter oldDelegate) {
     bool isTextItemsChanged() {
       bool isChanged = false;
-      for (int i = 0; i < children.length; i++) {
-        if (children[i].isChanged(oldDelegate.children[i])) {
+      for (int i = 0; i < textItems.length; i++) {
+        if (textItems[i].isChanged(oldDelegate.textItems[i])) {
           isChanged = true;
           break;
         }

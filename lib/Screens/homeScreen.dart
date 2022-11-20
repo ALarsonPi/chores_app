@@ -15,32 +15,32 @@ class HomeScreen extends StatelessWidget {
       "Jamie",
       "Will",
       "Abby",
-      // "Johnny",
-      // "Jake",
-      // "Santa",
-      // "Abe"
+      "Johnny",
+      "Jake",
+      "Santa",
+      "Abe"
     ];
 
     List<String> circle2Text = [
-      "Will you",
-      "Sweep/Mop",
-      "Pots/Pans",
-      "Windows",
-      // "Mop",
-      // "Sweep",
-      // "Lawn",
-      // "Clean Window"
+      "Will you go",
+      "Sweep/Mop go to",
+      "Pots/Pans go to",
+      "Windows and window and also",
+      "Mop and sweep and mop",
+      "Sweep and mop and sweep",
+      "Lawn and mow and lawn",
+      "Clean Window and clean"
     ];
 
     List<String> circle3Text = [
-      "Vacuum",
-      "Mop + sweep",
+      "Windows and window and also",
+      "Mop + sweep and go",
       "Mow lawn each week",
-      "Babysit",
-      // "Travel to Russia",
-      // "Give coal to",
-      // "Beat the South",
-      // "Run",
+      "Babysit and go to the place",
+      "Travel to Russia my boi",
+      "Give coal to yessir",
+      "Beat the South yessir",
+      "Run run run away yessir",
     ];
 
     //In the future we'll grab any/all charts from system memory
@@ -54,31 +54,21 @@ class HomeScreen extends StatelessWidget {
 
     List<double> circle1Proportions = [];
     List<double> circle2Proportions = [];
-    List<double> circle2TextProportions = [];
     double circle3Proportion = 1.0;
-    double circle3TextProportion = 0.4;
 
     if (MediaQuery.of(context).size.width < 350 || Global.isPhone) {
       circle1Proportions = [0.4, 0.6];
       circle2Proportions = [0.7, 1.0];
       circle3Proportion = 1.0;
 
-      circle2TextProportions = [0.25, 0.4];
-      circle3TextProportion = 0.4;
-
       if (Global.isHighPixelRatio && Device.get().isAndroid) {
         circle1Proportions = [0.35, 0.6];
         circle2Proportions = [0.575, 1.0];
-        circle2TextProportions = [0.17, 0.4];
-        circle3TextProportion = 0.28;
       }
     } else {
       circle1Proportions = [0.35, 0.5];
       circle2Proportions = [0.6, 1.0];
       circle3Proportion = 1.0;
-
-      circle2TextProportions = [0.25, 0.35];
-      circle3TextProportion = 0.4;
     }
 
     return Scaffold(
@@ -99,14 +89,11 @@ class HomeScreen extends StatelessWidget {
             // Gen Info
             numberOfRings: currNumRingsToUse,
             width: MediaQuery.of(context).size.width,
-            spaceBetweenLines: 15,
+            spaceBetweenLines: 5,
             linesColors: const [Colors.blue, Colors.white, Colors.white],
             // Settings
-            shouldFlipText: true,
-            shouldTextCenterVertically: true,
-            shouldHaveFluidTextTransition: true,
             overflowLineLimit: 2,
-            chunkOverflowLimitProportion: 0.15,
+            chunkOverflowLimitProportion: 0.35,
             // Circle 1
             circleOneText: circle1Text,
             circleOneRadiusProportions: circle1Proportions,
@@ -118,19 +105,15 @@ class HomeScreen extends StatelessWidget {
             // Circle 2
             circleTwoText: circle2Text,
             circleTwoRadiusProportions: circle2Proportions,
-            circleTwoTextProportions: circle2TextProportions,
             circleTwoColor: Global.currentTheme.secondaryColor,
             circleTwoFontColor: Colors.black,
-            circleThreeTextPixelOffset: 0,
             circleTwoFontSize: 14.0,
             // Circle 3
             circleThreeText: circle3Text,
             circleThreeRadiusProportion: circle3Proportion,
-            circleThreeTextProportion: circle3TextProportion,
             circleThreeColor: Global.currentTheme.tertiaryColor,
             circleThreeFontColor: Colors.black,
             circleThreeFontSize: 14.0,
-            circleTwoTextPixelOffset: 0,
           ),
         ],
       ),
