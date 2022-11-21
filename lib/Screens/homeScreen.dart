@@ -1,6 +1,6 @@
+import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Widgets/ConcentricChart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 
 import '../Global.dart';
 
@@ -43,18 +43,14 @@ class HomeScreen extends StatelessWidget {
       // "Run run run away yessir",
     ];
 
-    //In the future we'll grab any/all charts from system memory
-    //or firebase (depending on updates and all that)
-    //For now it's all hard-coded and we currently only
-    //have one chart but in the future I'm thinking of giving the
-    //user up to 3, maybe
-    //Also use title of first chart as title here in the Scaffold
-
     int currNumRingsToUse = 3;
 
-    List<double> circle1Proportions = [0.4, 0.6];
-    List<double> circle2Proportions = [0.7, 1.0];
-    double circle3Proportion = 1.0;
+    CircleData exampleCircle = CircleData(
+        chartTitle: "Example Chart",
+        numberOfRings: currNumRingsToUse,
+        circleOneText: circle1Text,
+        circleTwoText: circle2Text,
+        circleThreeText: circle3Text);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -63,7 +59,7 @@ class HomeScreen extends StatelessWidget {
           toolbarHeight: Global.toolbarHeight,
           centerTitle: true,
           title: Text(
-            "Chart 1",
+            exampleCircle.chartTitle,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -71,34 +67,38 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ConcentricChart(
-            // Gen Info
-            numberOfRings: currNumRingsToUse,
-            width: MediaQuery.of(context).size.width,
-            spaceBetweenLines: 5,
-            linesColors: const [Colors.blue, Colors.white, Colors.white],
-            // Settings
-            overflowLineLimit: 2,
-            chunkOverflowLimitProportion: 0.35,
-            // Circle 1
-            circleOneText: circle1Text,
-            circleOneRadiusProportions: circle1Proportions,
-            circleOneColor: //Colors.transparent,
-                Global.currentTheme.primaryColor,
-            circleOneFontColor: Colors.black,
-            circleOneFontSize: 8.0,
-            circleOneTextRadiusProportion: 0.6,
-            // Circle 2
-            circleTwoText: circle2Text,
-            circleTwoRadiusProportions: circle2Proportions,
+            // Specific To each Circle
+            numberOfRings: exampleCircle.numberOfRings,
+            circleOneText: exampleCircle.circleOneText,
+            circleTwoText: exampleCircle.circleTwoText,
+            circleThreeText: exampleCircle.circleThreeText,
+
+            // Theme
+            linesColors: Global.currentTheme.lineColors,
+            circleOneColor: Global.currentTheme.primaryColor,
+            circleOneFontColor: Global.currentTheme.primaryTextColor,
             circleTwoColor: Global.currentTheme.secondaryColor,
-            circleTwoFontColor: Colors.black,
-            circleTwoFontSize: 14.0,
-            // Circle 3
-            circleThreeText: circle3Text,
-            circleThreeRadiusProportion: circle3Proportion,
+            circleTwoFontColor: Global.currentTheme.secondaryTextColor,
             circleThreeColor: Global.currentTheme.tertiaryColor,
-            circleThreeFontColor: Colors.black,
-            circleThreeFontSize: 14.0,
+            circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
+
+            // Const Programmer Decisions
+            width: MediaQuery.of(context).size.width,
+            spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
+            overflowLineLimit: Global.circleSettings.overflowLineLimit,
+            chunkOverflowLimitProportion:
+                Global.circleSettings.chunkOverflowLimitProportion,
+            circleOneRadiusProportions:
+                Global.circleSettings.circleOneRadiusProportions,
+            circleOneFontSize: Global.circleSettings.circleOneFontSize,
+            circleOneTextRadiusProportion:
+                Global.circleSettings.circleOneTextRadiusProportion,
+            circleTwoRadiusProportions:
+                Global.circleSettings.circleTwoRadiusProportions,
+            circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+            circleThreeRadiusProportion:
+                Global.circleSettings.circleThreeRadiusProportion,
+            circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
           ),
         ],
       ),

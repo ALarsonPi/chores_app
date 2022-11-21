@@ -25,41 +25,74 @@ class Global {
   // Make sure that this is defined before the chart is defined
   static ThemeColors currentTheme = blueTheme;
 
+  static CircleSettings circleSettings = CircleSettings();
+
   static ThemeColors blueTheme = ThemeColors(
     primaryColor: Colors.lightBlue[100] as Color,
     secondaryColor: Colors.lightBlue[500] as Color,
     tertiaryColor: Colors.lightBlue[700] as Color,
+    primaryTextColor: Colors.black,
+    secondaryTextColor: Colors.black,
+    tertiaryTextColor: Colors.black,
+    lineColors: const [Colors.blue, Colors.white, Colors.white],
   );
   static ThemeColors redTheme = ThemeColors(
     primaryColor: Colors.red[200] as Color,
     secondaryColor: Colors.red[400] as Color,
     tertiaryColor: Colors.red[700] as Color,
+    primaryTextColor: Colors.black,
+    secondaryTextColor: Colors.black,
+    tertiaryTextColor: Colors.black,
+    lineColors: const [Colors.white, Colors.white, Colors.white],
   );
   static ThemeColors purpleTheme = ThemeColors(
     primaryColor: Colors.purple[100] as Color,
     secondaryColor: Colors.purple[300] as Color,
     tertiaryColor: Colors.purple[400] as Color,
+    primaryTextColor: Colors.black,
+    secondaryTextColor: Colors.black,
+    tertiaryTextColor: Colors.black,
+    lineColors: const [Colors.white, Colors.white, Colors.white],
   );
   static ThemeColors greenTheme = ThemeColors(
     primaryColor: Colors.green[200] as Color,
     secondaryColor: Colors.green[500] as Color,
     tertiaryColor: Colors.green[700] as Color,
+    primaryTextColor: Colors.black,
+    secondaryTextColor: Colors.black,
+    tertiaryTextColor: Colors.black,
+    lineColors: const [Colors.white, Colors.white, Colors.white],
   );
   static ThemeColors orangeTheme = ThemeColors(
     primaryColor: Colors.orange[200] as Color,
     secondaryColor: Colors.orange[500] as Color,
     tertiaryColor: Colors.orange[700] as Color,
+    primaryTextColor: Colors.black,
+    secondaryTextColor: Colors.black,
+    tertiaryTextColor: Colors.black,
+    lineColors: const [Colors.white, Colors.white, Colors.white],
   );
 }
 
 class ThemeColors {
-  ThemeColors(
-      {required this.primaryColor,
-      required this.secondaryColor,
-      required this.tertiaryColor});
+  ThemeColors({
+    required this.primaryColor,
+    required this.secondaryColor,
+    required this.tertiaryColor,
+    required this.primaryTextColor,
+    required this.secondaryTextColor,
+    required this.tertiaryTextColor,
+    required this.lineColors,
+  });
   Color primaryColor;
   Color secondaryColor;
   Color tertiaryColor;
+
+  Color primaryTextColor;
+  Color secondaryTextColor;
+  Color tertiaryTextColor;
+
+  List<Color> lineColors;
 }
 
 class RingCharLimit {
@@ -72,4 +105,21 @@ class RingCharLimit {
   int numItems;
   int secondRingLimit;
   int thirdRingLimit;
+}
+
+class CircleSettings {
+  CircleSettings();
+
+  final int overflowLineLimit = 2;
+  final double chunkOverflowLimitProportion = 0.35;
+  final double circleOneTextRadiusProportion = 0.6;
+  final double spaceBetweenLines = 5;
+
+  final List<double> circleOneRadiusProportions = [0.4, 0.6];
+  final List<double> circleTwoRadiusProportions = [0.7, 1.0];
+  final double circleThreeRadiusProportion = 1.0;
+
+  final double circleOneFontSize = 8.0;
+  final double circleTwoFontSize = 14.0;
+  final double circleThreeFontSize = 14.0;
 }
