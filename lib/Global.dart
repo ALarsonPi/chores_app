@@ -1,5 +1,9 @@
+import 'package:chore_app/Models/ThemeColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+
+import 'ColorControl/AppColors.dart';
+import 'Providers/ThemeProvider.dart';
 
 /// @nodoc
 class Global {
@@ -23,88 +27,13 @@ class Global {
       RingCharLimit(numItems: 8, secondRingLimit: 12, thirdRingLimit: 20);
 
   // Make sure that this is defined before the chart is defined
-  static ThemeColors currentTheme = blueTheme;
+  static ThemeColors currentTheme = AppColors.blueTheme;
+
+  static ThemeProvider themeProvider = ThemeProvider();
+  static bool isDarkMode = false;
+  static int currPrimaryColorIndex = 0;
 
   static CircleSettings circleSettings = CircleSettings();
-
-  static ThemeColors blueTheme = ThemeColors(
-    primaryColor: Colors.lightBlue[100] as Color,
-    secondaryColor: Colors.lightBlue[500] as Color,
-    tertiaryColor: Colors.lightBlue[700] as Color,
-    primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
-    lineColors: const [Colors.blue, Colors.white, Colors.white],
-  );
-  static ThemeColors redTheme = ThemeColors(
-    primaryColor: Colors.red[200] as Color,
-    secondaryColor: Colors.red[400] as Color,
-    tertiaryColor: Colors.red[700] as Color,
-    primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
-    lineColors: const [Colors.white, Colors.white, Colors.white],
-  );
-  static ThemeColors purpleTheme = ThemeColors(
-    primaryColor: Colors.purple[100] as Color,
-    secondaryColor: Colors.purple[300] as Color,
-    tertiaryColor: Colors.purple[400] as Color,
-    primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
-    lineColors: const [Colors.white, Colors.white, Colors.white],
-  );
-  static ThemeColors greenTheme = ThemeColors(
-    primaryColor: Colors.green[200] as Color,
-    secondaryColor: Colors.green[500] as Color,
-    tertiaryColor: Colors.green[700] as Color,
-    primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
-    lineColors: const [Colors.white, Colors.white, Colors.white],
-  );
-  static ThemeColors orangeTheme = ThemeColors(
-    primaryColor: Colors.orange[200] as Color,
-    secondaryColor: Colors.orange[500] as Color,
-    tertiaryColor: Colors.orange[700] as Color,
-    primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
-    lineColors: const [Colors.white, Colors.white, Colors.white],
-  );
-}
-
-class ThemeColors {
-  ThemeColors({
-    required this.primaryColor,
-    required this.secondaryColor,
-    required this.tertiaryColor,
-    required this.primaryTextColor,
-    required this.secondaryTextColor,
-    required this.tertiaryTextColor,
-    required this.lineColors,
-  });
-  Color primaryColor;
-  Color secondaryColor;
-  Color tertiaryColor;
-
-  Color primaryTextColor;
-  Color secondaryTextColor;
-  Color tertiaryTextColor;
-
-  List<Color> lineColors;
-}
-
-class RingCharLimit {
-  RingCharLimit({
-    required this.numItems,
-    required this.secondRingLimit,
-    required this.thirdRingLimit,
-  });
-
-  int numItems;
-  int secondRingLimit;
-  int thirdRingLimit;
 }
 
 class CircleSettings {

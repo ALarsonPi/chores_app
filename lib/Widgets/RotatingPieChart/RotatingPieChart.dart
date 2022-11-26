@@ -71,7 +71,7 @@ class RotatingPieChart extends StatelessWidget {
           color: Colors.transparent,
           border: Border.all(color: Colors.transparent),
         ),
-        height: sizeOfChart,
+        width: sizeOfChart,
         child: AspectRatio(
           aspectRatio: 1.0,
           child: _RotatingPieChartInternal(

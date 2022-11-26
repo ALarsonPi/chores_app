@@ -233,23 +233,39 @@ class _ConcentricChartState extends State<ConcentricChart> {
   /// the number of rings all play a part in these slight tweaks to the numbers
   @override
   void didChangeDependencies() {
+    double circleOneProportionThreeRing = widget.circleOneRadiusProportions[0];
+    double circleOneProportionTwoRing = widget.circleOneRadiusProportions[1];
+
+    double circleTwoProportionThreeRing = widget.circleTwoRadiusProportions[0];
+    double circleTwoProportionTwoRing = widget.circleTwoRadiusProportions[1];
+
     // Tweaking based on pixel ratio, device type, and whether it's a phone or tablet
     if (MediaQuery.of(context).size.width < 350 || Device.get().isPhone) {
       if (Device.devicePixelRatio > 2 && Device.get().isAndroid) {
-        widget.circleOneRadiusProportions[0] -= 0.05;
-        widget.circleTwoRadiusProportions[0] -= 0.125;
+        circleOneProportionThreeRing -= 0.05;
+        circleOneProportionTwoRing -= 0.2;
+        circleTwoProportionThreeRing -= 0.125;
       }
     } else {
-      widget.circleOneRadiusProportions[0] -= 0.05;
-      widget.circleOneRadiusProportions[1] -= 0.1;
-      widget.circleTwoRadiusProportions[0] -= 0.1;
+      circleOneProportionThreeRing -= 0.05;
+      circleOneProportionTwoRing -= 0.1;
+      circleTwoProportionThreeRing -= 0.1;
     }
+
+    List<double> circleOneProportionsCopy = [
+      circleOneProportionThreeRing,
+      circleOneProportionTwoRing
+    ];
+    List<double> circleTwoProportionsCopy = [
+      circleTwoProportionThreeRing,
+      circleTwoProportionTwoRing,
+    ];
 
     int proportionIndex = (widget.numberOfRings == 3) ? 0 : 1;
     double circleOneProportion =
-        getProportionValue(widget.circleOneRadiusProportions[proportionIndex]);
+        getProportionValue(circleOneProportionsCopy[proportionIndex]);
     double circleTwoProportion =
-        getProportionValue(widget.circleTwoRadiusProportions[proportionIndex]);
+        getProportionValue(circleTwoProportionsCopy[proportionIndex]);
     double circleThreeProportion =
         getProportionValue(widget.circleThreeRadiusProportion);
 
