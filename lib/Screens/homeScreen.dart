@@ -1,10 +1,11 @@
 import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Widgets/ConcentricChart.dart';
+import 'package:chore_app/Widgets/SettingsTab.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../ColorControl/PrimaryColorSwitcher.dart';
-import '../ColorControl/ThemeSwitcher.dart';
 import '../Global.dart';
+import '../Providers/ThemeProvider.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {
@@ -24,7 +25,9 @@ class _HomeScreen extends State<HomeScreen> {
             blurRadius: 3,
           ),
         ],
-        color: Theme.of(context).primaryColor,
+        color: Provider.of<ThemeProvider>(context, listen: true).isDarkMode
+            ? Theme.of(context).backgroundColor
+            : Theme.of(context).primaryColor,
       ),
       child: TabBar(
         onTap: (index) => {
@@ -35,7 +38,7 @@ class _HomeScreen extends State<HomeScreen> {
         unselectedLabelColor: Colors.white54,
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: const EdgeInsets.all(5.0),
-        indicatorColor: Colors.blue,
+        indicatorColor: Theme.of(context).primaryColor,
         tabs: const [
           Tab(
             text: "Chart 1",
@@ -122,56 +125,6 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
-  void changeColorMode() {
-    setState(() {});
-  }
-
-  Widget getSettingsTab() {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                ),
-                color: Colors.grey.withOpacity(0.4),
-                child: ExpansionTile(
-                  initiallyExpanded: false,
-                  title: Text(
-                    "Change Theme Color",
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.displaySmall?.color,
-                      fontSize:
-                          Theme.of(context).textTheme.displaySmall?.fontSize,
-                    ),
-                  ),
-                  children: [
-                    // Padding(
-                    //   padding: const EdgeInsets.only(
-                    //     top: 8.0,
-                    //     bottom: 8.0,
-                    //     right: 15,
-                    //   ),
-                    //   child: ThemeSwitcher(75, changeColorMode),
-                    // ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: PrimaryColorSwitcher(75),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     List<String> circle1Text = [
@@ -248,7 +201,7 @@ class _HomeScreen extends State<HomeScreen> {
             getCircleChart(exampleCircle, screenWidth),
             getCircleChart(exampleCircle2, screenWidth),
             getCircleChart(exampleCircle, screenWidth),
-            getSettingsTab(),
+            const SettingsTab(),
           ],
         ),
       ),

@@ -29,10 +29,10 @@ class Global {
   // Make sure that this is defined before the chart is defined
   static ThemeColors currentTheme = AppColors.blueTheme;
 
-  static ThemeProvider themeProvider = ThemeProvider();
-  static bool isDarkMode = false;
+  // These will be changed / checked by file
   static int currPrimaryColorIndex = 0;
 
+  static ThemeProvider themeProvider = ThemeProvider();
   static CircleSettings circleSettings = CircleSettings();
 }
 

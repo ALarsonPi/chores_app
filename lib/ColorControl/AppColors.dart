@@ -19,15 +19,35 @@ class AppColors {
     tertiaryTextColor: Colors.black,
     lineColors: const [Colors.blue, Colors.white, Colors.white],
   );
+  static ThemeColors darkModeBlueTheme = ThemeColors(
+    primaryColor: Colors.lightBlue[400] as Color,
+    secondaryColor: Colors.lightBlue[500] as Color,
+    tertiaryColor: Colors.lightBlue[700] as Color,
+    primaryTextColor: Colors.white,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
+    lineColors: const [Colors.black, Colors.black, Colors.black],
+  );
+
   static ThemeColors redTheme = ThemeColors(
     primaryColor: Colors.red[200] as Color,
     secondaryColor: Colors.red[400] as Color,
-    tertiaryColor: Colors.red[700] as Color,
+    tertiaryColor: const Color.fromARGB(255, 245, 40, 40),
     primaryTextColor: Colors.black,
     secondaryTextColor: Colors.black,
     tertiaryTextColor: Colors.black,
     lineColors: const [Colors.white, Colors.white, Colors.white],
   );
+  static ThemeColors darkModeRedTheme = ThemeColors(
+    primaryColor: Colors.red[300] as Color,
+    secondaryColor: Colors.red[400] as Color,
+    tertiaryColor: Colors.red[500] as Color,
+    primaryTextColor: Colors.white,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
+    lineColors: const [Colors.black, Colors.black, Colors.black],
+  );
+
   static ThemeColors purpleTheme = ThemeColors(
     primaryColor: Colors.purple[100] as Color,
     secondaryColor: Colors.purple[300] as Color,
@@ -37,15 +57,35 @@ class AppColors {
     tertiaryTextColor: Colors.black,
     lineColors: const [Colors.white, Colors.white, Colors.white],
   );
+  static ThemeColors darkModePurpleTheme = ThemeColors(
+    primaryColor: Colors.purple[200] as Color,
+    secondaryColor: Colors.purple[300] as Color,
+    tertiaryColor: Colors.purple[400] as Color,
+    primaryTextColor: Colors.white,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
+    lineColors: const [Colors.black, Colors.black, Colors.black],
+  );
+
   static ThemeColors greenTheme = ThemeColors(
     primaryColor: Colors.green[200] as Color,
-    secondaryColor: Colors.green[500] as Color,
-    tertiaryColor: Colors.green[700] as Color,
+    secondaryColor: Colors.green[400] as Color,
+    tertiaryColor: Colors.green[500] as Color,
     primaryTextColor: Colors.black,
     secondaryTextColor: Colors.black,
     tertiaryTextColor: Colors.black,
     lineColors: const [Colors.white, Colors.white, Colors.white],
   );
+  static ThemeColors darkModeGreenTheme = ThemeColors(
+    primaryColor: Colors.green[400] as Color,
+    secondaryColor: Colors.green[600] as Color,
+    tertiaryColor: Colors.green[800] as Color,
+    primaryTextColor: Colors.white,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
+    lineColors: const [Colors.black, Colors.black, Colors.black],
+  );
+
   static ThemeColors orangeTheme = ThemeColors(
     primaryColor: Colors.orange[200] as Color,
     secondaryColor: Colors.orange[500] as Color,
@@ -55,13 +95,29 @@ class AppColors {
     tertiaryTextColor: Colors.black,
     lineColors: const [Colors.white, Colors.white, Colors.white],
   );
+  static ThemeColors darkModeOrangeTheme = ThemeColors(
+    primaryColor: Colors.orange[300] as Color,
+    secondaryColor: Colors.orange[500] as Color,
+    tertiaryColor: Colors.orange[700] as Color,
+    primaryTextColor: Colors.white,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
+    lineColors: const [Colors.black, Colors.black, Colors.black],
+  );
 
   static List<Color> primaryColorList = [
-    const Color(0xff16b9fd),
-    const Color(0xffd23156),
-    const Color(0xffb73d99),
-    const Color.fromARGB(255, 27, 200, 99),
-    const Color(0xffe5672f),
+    blueTheme.tertiaryColor,
+    redTheme.tertiaryColor,
+    purpleTheme.tertiaryColor,
+    greenTheme.tertiaryColor,
+    orangeTheme.tertiaryColor,
+  ];
+  static List<Color> darkModePrimaryColorList = [
+    darkModeBlueTheme.tertiaryColor,
+    darkModeRedTheme.tertiaryColor,
+    darkModePurpleTheme.tertiaryColor,
+    darkModeGreenTheme.tertiaryColor,
+    darkModeOrangeTheme.tertiaryColor,
   ];
 
   static List<ThemeColors> themeColorList = [
@@ -70,6 +126,13 @@ class AppColors {
     purpleTheme,
     greenTheme,
     orangeTheme,
+  ];
+  static List<ThemeColors> darkModeThemeColorList = [
+    darkModeBlueTheme,
+    darkModeRedTheme,
+    darkModePurpleTheme,
+    darkModeGreenTheme,
+    darkModeOrangeTheme,
   ];
 
   static Color getShade(Color color, {bool darker = false, double value = .1}) {

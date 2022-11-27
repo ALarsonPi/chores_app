@@ -39,17 +39,13 @@ class ThemeSwitcher extends StatelessWidget {
             appThemes.length,
             (i) {
               bool _isSelectedTheme =
-                  appThemes[i].mode == Global.themeProvider.selectedThemeMode;
+                  appThemes[i].mode == themeProvider.selectedThemeMode;
               return GestureDetector(
                 onTap: _isSelectedTheme
                     ? null
                     : () => {
                           themeProvider.setSelectedThemeMode(appThemes[i].mode),
-                          Global.isDarkMode = (i == 0),
                           // Global.writeDarkMode(),
-                          Global.themeProvider
-                              .setSelectedThemeMode(appThemes[i].mode),
-                          parentSetStateFunction(),
                         },
                 child: AnimatedContainer(
                   height: (Global.isPhone)

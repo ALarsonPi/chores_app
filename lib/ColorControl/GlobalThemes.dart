@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:flutter/material.dart';
 import '../Global.dart';
@@ -7,7 +5,8 @@ import '../Global.dart';
 class GlobalThemes {
   //Themes to add
 
-  static ThemeData getThemeData(int isDarkMode) {
+  static ThemeData getThemeData(bool isDarkMode) {
+    isDarkMode = !isDarkMode;
     return ThemeData(
       brightness: getBrightness(isDarkMode),
       primarySwatch: AppColors.getPrimaryColorSwatch(),
@@ -22,8 +21,8 @@ class GlobalThemes {
     );
   }
 
-  static ListTileThemeData getListTileThemeData(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static ListTileThemeData getListTileThemeData(bool isDarkMode) {
+    if (isDarkMode) {
       return const ListTileThemeData(
         textColor: Colors.black,
       );
@@ -35,7 +34,7 @@ class GlobalThemes {
   }
 
   //Text Theme has all the smaller text styles inside it
-  static TextTheme getTextTheme(int isDarkMode) {
+  static TextTheme getTextTheme(bool isDarkMode) {
     return TextTheme(
       displaySmall: getDisplaySmall(isDarkMode),
       displayMedium: getDisplayMedium(isDarkMode),
@@ -46,8 +45,8 @@ class GlobalThemes {
     );
   }
 
-  static IconThemeData getIconThemeData(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static IconThemeData getIconThemeData(bool isDarkMode) {
+    if (isDarkMode) {
       return IconThemeData(
         color: Colors.black,
         opacity: 70,
@@ -62,8 +61,8 @@ class GlobalThemes {
     }
   }
 
-  static FloatingActionButtonThemeData getFABThemeData(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static FloatingActionButtonThemeData getFABThemeData(bool isDarkMode) {
+    if (isDarkMode) {
       return FloatingActionButtonThemeData(
         backgroundColor: AppColors.getPrimaryColorSwatch().shade500,
         //foregroundColor:
@@ -76,8 +75,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getDisplaySmall(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getDisplaySmall(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontSize: (Global.isPhone) ? 14 : 24,
         color: Colors.black,
@@ -90,8 +89,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getDisplayMedium(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getDisplayMedium(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontSize: (Global.isPhone) ? 18 : 32,
         color: Colors.black,
@@ -104,8 +103,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getDisplayLarge(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getDisplayLarge(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontSize: (Global.isPhone) ? 18 : 32,
         color: Colors.black,
@@ -118,8 +117,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getTextStyleHeaderLarge(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getTextStyleHeaderLarge(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: (Global.isPhone) ? 22 : 36,
@@ -134,8 +133,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getTextStyleHeaderMedium(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getTextStyleHeaderMedium(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: (Global.isPhone) ? 18 : 24,
@@ -150,8 +149,8 @@ class GlobalThemes {
     }
   }
 
-  static TextStyle getTextStyleHeaderSmall(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static TextStyle getTextStyleHeaderSmall(bool isDarkMode) {
+    if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: (Global.isPhone) ? 12 : 18,
@@ -167,8 +166,8 @@ class GlobalThemes {
   }
 
   static ProgressIndicatorThemeData getProgressIndicatorThemeData(
-      int isDarkMode) {
-    if (isDarkMode == 0) {
+      bool isDarkMode) {
+    if (isDarkMode) {
       return ProgressIndicatorThemeData(
         color: AppColors.getPrimaryColorSwatch().shade700,
         circularTrackColor: Colors.white,
@@ -181,8 +180,8 @@ class GlobalThemes {
     }
   }
 
-  static ElevatedButtonThemeData getEvevatedButtonThemeData(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static ElevatedButtonThemeData getEvevatedButtonThemeData(bool isDarkMode) {
+    if (isDarkMode) {
       return ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.getPrimaryColorSwatch().shade400,
@@ -207,24 +206,24 @@ class GlobalThemes {
     }
   }
 
-  static Color getPrimaryColorForTheme(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static Color getPrimaryColorForTheme(bool isDarkMode) {
+    if (isDarkMode) {
       return AppColors.getPrimaryColorSwatch().shade500;
     } else {
       return AppColors.getPrimaryColorSwatch().shade400;
     }
   }
 
-  static Color getSecondaryColor(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static Color getSecondaryColor(bool isDarkMode) {
+    if (isDarkMode) {
       return Colors.white;
     } else {
       return Colors.black;
     }
   }
 
-  static Brightness getBrightness(int isDarkMode) {
-    if (isDarkMode == 0) {
+  static Brightness getBrightness(bool isDarkMode) {
+    if (isDarkMode) {
       return Brightness.light;
     } else {
       return Brightness.dark;

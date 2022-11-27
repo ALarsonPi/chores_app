@@ -6,8 +6,10 @@ import '../Providers/ThemeProvider.dart';
 import 'AppColors.dart';
 
 class PrimaryColorSwitcher extends StatelessWidget {
-  PrimaryColorSwitcher(this.desiredHeight, {Key? key}) : super(key: key);
+  PrimaryColorSwitcher(this.desiredHeight, this.notifyDoneParent, {Key? key})
+      : super(key: key);
   double desiredHeight;
+  Function notifyDoneParent;
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +24,22 @@ class PrimaryColorSwitcher extends StatelessWidget {
             AppColors.primaryColorList.length,
             (i) {
               bool isSelectedColor = AppColors.primaryColorList[i] ==
-                  Global.themeProvider.selectedPrimaryColor;
+                  themeProvider.selectedPrimaryColor;
               return GestureDetector(
                 onTap: isSelectedColor
                     ? null
                     : () => {
-                          themeProvider.setSelectedPrimaryColor(
-                              AppColors.primaryColorList[i]),
+                          Global.currPrimaryColorIndex = i,
+
+                          // Global call to themeProvider changes themeProvider
+                          // local seems to accurately change the chart colors
                           Global.themeProvider.setSelectedPrimaryColor(
                               AppColors.primaryColorList[i]),
-                          Global.currPrimaryColorIndex = i,
-                          Global.currentTheme = AppColors.themeColorList[i],
+
+                          themeProvider.setSelectedPrimaryColor(
+                              AppColors.primaryColorList[i]),
+
+                          notifyDoneParent(),
                           // Global.writePrimaryColor(),
                         },
                 child: Container(

@@ -18,12 +18,12 @@ class AppRouter extends StatelessWidget {
         ),
       ],
       child: Consumer<ThemeProvider>(
-        builder: (context, value, child) {
+        builder: (context, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            themeMode: Global.themeProvider.selectedThemeMode,
-            theme: GlobalThemes.getThemeData(Global.isDarkMode ? 1 : 0),
-            darkTheme: GlobalThemes.getThemeData(Global.isDarkMode ? 1 : 0),
+            themeMode: themeProvider.selectedThemeMode,
+            theme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
+            darkTheme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
             title: 'Custom Chore Chart',
             builder: (context, widget) => Navigator(
               onGenerateRoute: (RouteSettings settings) => MaterialPageRoute(
