@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieInfo.dart';
-import 'package:chore_app/Widgets/RotatingPieChart/PiePainter.dart';
-import 'package:chore_app/Widgets/RotatingPieChart/TextPainters/ArcText.dart';
-import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieChartItem.dart';
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieInfo.dart';
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/PiePainter.dart';
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/TextPainters/ArcText.dart';
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'Objects/TextItem.dart';

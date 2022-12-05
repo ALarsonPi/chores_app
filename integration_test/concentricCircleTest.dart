@@ -7,8 +7,8 @@
 
 import 'package:chore_app/AppRouter.dart';
 import 'package:chore_app/Global.dart';
-import 'package:chore_app/Widgets/ConcentricChart.dart';
-import 'package:chore_app/Widgets/RotatingPieChart/Objects/PieInfo.dart';
+import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,11 +1,11 @@
 import 'package:chore_app/Models/CircleData.dart';
-import 'package:chore_app/Widgets/ConcentricChart.dart';
-import 'package:chore_app/Widgets/SettingsTab.dart';
+import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
 import '../Providers/ThemeProvider.dart';
+import '../Widgets/Settings/SettingsContent.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {
@@ -17,6 +17,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
+  List<Tab> tabs = [
+    const Tab(
+      text: "Chart 1",
+      icon: Icon(Icons.looks_one),
+    ),
+    const Tab(
+      text: "Chart 2",
+      icon: Icon(Icons.looks_two),
+    ),
+    const Tab(
+      text: "Chart 3",
+      icon: Icon(Icons.looks_3),
+    ),
+    const Tab(
+      text: "Settings",
+      icon: Icon(Icons.settings),
+    ),
+  ];
+
   Widget getBottomNavigationBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -39,24 +58,7 @@ class _HomeScreen extends State<HomeScreen> {
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: const EdgeInsets.all(5.0),
         indicatorColor: Theme.of(context).primaryColor,
-        tabs: const [
-          Tab(
-            text: "Chart 1",
-            icon: Icon(Icons.looks_one),
-          ),
-          Tab(
-            text: "Chart 2",
-            icon: Icon(Icons.looks_two),
-          ),
-          Tab(
-            text: "Chart 3",
-            icon: Icon(Icons.looks_3),
-          ),
-          Tab(
-            text: "Settings",
-            icon: Icon(Icons.settings),
-          ),
-        ],
+        tabs: tabs,
       ),
     );
   }
@@ -132,29 +134,28 @@ class _HomeScreen extends State<HomeScreen> {
       "Jamie",
       "Will",
       "Abby",
-      // "Johnny",
       // "Jake",
+      // "Johnny",
       // "Santa",
       // "Abe"
     ];
 
     List<String> circle2Text = [
-      "Will you go",
-      "Sweep/Mop go to",
-      "Pots/Pans go to",
-      "Windows and window",
-      // "Mop and sweep and mop",
-      // "Sweep and mop and sweep",
+      "Clean/Clear Table",
+      "Pots/Pans",
+      "Dishwasher",
+      "Bathrooms",
+      // "Vaccuum (All carpet)",
       // "Lawn and mow and lawn",
       // "Clean Window and clean"
     ];
 
     List<String> circle3Text = [
-      "Windows and window and also",
-      "Mop + sweep and go",
-      "Mow lawn each week",
-      "Babysit and go to the place",
-      // "Travel to Russia my boi",
+      "Wash Windows and Blinds",
+      "Dust Baseboards and Blinds",
+      "Mow lawn",
+      "Babysit baby Kylie",
+      // "Mop floors",
       // "Give coal to yessir",
       // "Beat the South yessir",
       // "Run run run away yessir",
@@ -181,7 +182,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
 
     return DefaultTabController(
-      length: 4,
+      length: tabs.length,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(Global.toolbarHeight),
@@ -201,7 +202,7 @@ class _HomeScreen extends State<HomeScreen> {
             getCircleChart(exampleCircle, screenWidth),
             getCircleChart(exampleCircle2, screenWidth),
             getCircleChart(exampleCircle, screenWidth),
-            const SettingsTab(),
+            const SettingsContent(),
           ],
         ),
       ),

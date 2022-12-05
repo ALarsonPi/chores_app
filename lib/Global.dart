@@ -1,3 +1,4 @@
+import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Models/ThemeColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -32,8 +33,19 @@ class Global {
   // These will be changed / checked by file
   static int currPrimaryColorIndex = 0;
 
+  late UserCharts userCharts;
+
+  setUserCharts(List<CircleData> charts) {
+    userCharts = UserCharts(charts);
+  }
+
   static ThemeProvider themeProvider = ThemeProvider();
   static CircleSettings circleSettings = CircleSettings();
+}
+
+class UserCharts {
+  UserCharts(this.charts);
+  List<CircleData> charts;
 }
 
 class CircleSettings {

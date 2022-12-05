@@ -1,3 +1,4 @@
+import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,9 @@ class AppRouter extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => TabNumberProvider(),
+        )
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

@@ -138,7 +138,8 @@ class GlobalThemes {
       return TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: (Global.isPhone) ? 18 : 24,
-        color: Colors.black,
+        // NOTICE - Change from previous apps
+        color: Color.fromARGB(255, 230, 241, 246),
       );
     } else {
       return TextStyle(
