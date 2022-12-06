@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ColorControl/AppColors.dart';
 import '../Global.dart';
 
-import 'package:flutter/material.dart';
-
 class ThemeProvider with ChangeNotifier {
-  ThemeMode selectedThemeMode = ThemeMode.light;
-  Color selectedPrimaryColor = AppColors.primaryColorList[0];
-  bool isDarkMode = false;
+  bool isDarkMode = (Global.settings.darkModeIndex != 0);
+  ThemeMode selectedThemeMode =
+      (Global.settings.darkModeIndex == 0) ? ThemeMode.light : ThemeMode.dark;
+  Color selectedPrimaryColor =
+      AppColors.primaryColorList[Global.settings.primaryColorIndex];
 
-  setSelectedPrimaryColor(Color color) {
+  setSelectedPrimaryColor(Color color) async {
     selectedPrimaryColor = color;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(Settings.primaryColorString,
+        AppColors.primaryColorList.indexOf(selectedPrimaryColor));
     setCircleThemeColor();
 
     notifyListeners();
@@ -25,8 +29,11 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setIsDarkMode() {
+  setIsDarkMode() async {
     isDarkMode = (selectedThemeMode == ThemeMode.dark);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(Settings.darkModeString, (isDarkMode) ? 1 : 0);
   }
 
   setCircleThemeColor() {

@@ -1,9 +1,12 @@
+import 'package:chore_app/Global.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TabNumberProvider extends ChangeNotifier {
-  int numTabs = 2;
+  // Set in Main
+  int numTabs = Global.settings.numChartsToShow;
 
-  changeNumTabs(String tabType) {
+  changeNumTabs(String tabType) async {
     tabType = tabType.toLowerCase();
     if (tabType == "one") {
       numTabs = 1;
@@ -12,13 +15,15 @@ class TabNumberProvider extends ChangeNotifier {
     } else if (tabType == "three") {
       numTabs = 3;
     }
-    debugPrint(tabType);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(Settings.numChartsString, numTabs);
+
     notifyListeners();
   }
 
   changeNumTabsByInt(int desiredNumTabs) {
     numTabs = desiredNumTabs;
-    debugPrint(desiredNumTabs.toString());
     notifyListeners();
   }
 }

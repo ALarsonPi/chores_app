@@ -1,6 +1,5 @@
 import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Models/ThemeColors.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 
 import 'ColorControl/AppColors.dart';
@@ -12,6 +11,32 @@ class Global {
   static bool isHighPixelRatio = (Device.devicePixelRatio > 2);
   static double toolbarHeight = (isPhone) ? 65.0 : 85.0;
 
+  // Constants Decided by me that could change
+  static const int TABS_ALLOWED = 3;
+
+  // Make sure that this is defined before the chart is defined
+  static ThemeColors currentTheme = AppColors.blueTheme;
+
+  // These will be changed / checked by file
+  static int currPrimaryColorIndex = 0;
+
+  static ThemeProvider themeProvider = ThemeProvider();
+  static CircleSettings circleSettings = CircleSettings();
+  static RingCharLimits ringCharLimits = RingCharLimits();
+  static Settings settings = Settings();
+}
+
+class Settings {
+  static const String darkModeString = "DARK_MODE_INDEX";
+  static const String primaryColorString = "PRIMARY_COLOR_INDEX";
+  static const String numChartsString = "NUM_CHARTS_TO_SHOW";
+
+  late int darkModeIndex;
+  late int primaryColorIndex;
+  late int numChartsToShow;
+}
+
+class RingCharLimits {
   static RingCharLimit twoItemLimit =
       RingCharLimit(numItems: 2, secondRingLimit: 35, thirdRingLimit: 45);
   static RingCharLimit threeItemLimit =
@@ -26,26 +51,6 @@ class Global {
       RingCharLimit(numItems: 7, secondRingLimit: 12, thirdRingLimit: 20);
   static RingCharLimit eightItemLimit =
       RingCharLimit(numItems: 8, secondRingLimit: 12, thirdRingLimit: 20);
-
-  // Make sure that this is defined before the chart is defined
-  static ThemeColors currentTheme = AppColors.blueTheme;
-
-  // These will be changed / checked by file
-  static int currPrimaryColorIndex = 0;
-
-  late UserCharts userCharts;
-
-  setUserCharts(List<CircleData> charts) {
-    userCharts = UserCharts(charts);
-  }
-
-  static ThemeProvider themeProvider = ThemeProvider();
-  static CircleSettings circleSettings = CircleSettings();
-}
-
-class UserCharts {
-  UserCharts(this.charts);
-  List<CircleData> charts;
 }
 
 class CircleSettings {

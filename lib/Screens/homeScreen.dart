@@ -1,4 +1,6 @@
 import 'package:chore_app/Models/CircleData.dart';
+import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../Global.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
+import '../Widgets/TabContent.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {
@@ -17,24 +20,60 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  List<Tab> tabs = [
-    const Tab(
-      text: "Chart 1",
-      icon: Icon(Icons.looks_one),
-    ),
-    const Tab(
-      text: "Chart 2",
-      icon: Icon(Icons.looks_two),
-    ),
-    const Tab(
-      text: "Chart 3",
-      icon: Icon(Icons.looks_3),
-    ),
-    const Tab(
-      text: "Settings",
-      icon: Icon(Icons.settings),
-    ),
-  ];
+  late List<CircleData> circleDataList;
+  late List<Tab> tabs;
+  late List<Tab> tabsToUse;
+
+  @override
+  void initState() {
+    super.initState();
+    fillTitles();
+    setCurrTitle(0);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    int numTabs = Provider.of<TabNumberProvider>(context, listen: true).numTabs;
+    List<Tab> posssibletabs = [
+      const Tab(
+        text: "Chart 1",
+        icon: Icon(Icons.looks_one),
+      ),
+      const Tab(
+        text: "Chart 2",
+        icon: Icon(Icons.looks_two),
+      ),
+      const Tab(
+        text: "Chart 3",
+        icon: Icon(Icons.looks_3),
+      ),
+    ];
+    Tab settingsTab = const Tab(text: "Settings", icon: Icon(Icons.settings));
+
+    tabsToUse = List.empty(growable: true);
+    for (int i = 0; i < numTabs; i++) {
+      tabsToUse.add(posssibletabs.elementAt(i));
+    }
+    tabsToUse.add(settingsTab);
+  }
+
+  late String currTitle;
+  List<String> titleList = List.empty(growable: true);
+
+  fillTitles() {
+    titleList.add("Example Title");
+    titleList.add("Second Chart");
+    titleList.add("Third List");
+    titleList.add("Settings");
+  }
+
+  setCurrTitle(int index) {
+    setState(() {
+      currTitle = titleList.elementAt(index);
+    });
+  }
 
   Widget getBottomNavigationBar(BuildContext context) {
     return Container(
@@ -58,72 +97,8 @@ class _HomeScreen extends State<HomeScreen> {
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: const EdgeInsets.all(5.0),
         indicatorColor: Theme.of(context).primaryColor,
-        tabs: tabs,
+        tabs: tabsToUse,
       ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fillTitles();
-    setCurrTitle(0);
-  }
-
-  late String currTitle;
-  List<String> titleList = List.empty(growable: true);
-
-  fillTitles() {
-    titleList.add("Example Title");
-    titleList.add("Second Chart");
-    titleList.add("Third List");
-    titleList.add("Settings");
-  }
-
-  setCurrTitle(int index) {
-    setState(() {
-      currTitle = titleList.elementAt(index);
-    });
-  }
-
-  Widget getCircleChart(CircleData currCircleData, double screenWidth) {
-    return Stack(
-      children: [
-        ConcentricChart(
-          // Specific To each Circle
-          numberOfRings: currCircleData.numberOfRings,
-          circleOneText: currCircleData.circleOneText,
-          circleTwoText: currCircleData.circleTwoText,
-          circleThreeText: currCircleData.circleThreeText,
-
-          // Theme
-          linesColors: Global.currentTheme.lineColors,
-          circleOneColor: Global.currentTheme.primaryColor,
-          circleOneFontColor: Global.currentTheme.primaryTextColor,
-          circleTwoColor: Global.currentTheme.secondaryColor,
-          circleTwoFontColor: Global.currentTheme.secondaryTextColor,
-          circleThreeColor: Global.currentTheme.tertiaryColor,
-          circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
-
-          // Const Programmer Decisions
-          width: screenWidth,
-          spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
-          overflowLineLimit: Global.circleSettings.overflowLineLimit,
-          chunkOverflowLimitProportion:
-              Global.circleSettings.chunkOverflowLimitProportion,
-          circleOneRadiusProportions:
-              Global.circleSettings.circleOneRadiusProportions,
-          circleOneFontSize: Global.circleSettings.circleOneFontSize,
-          circleOneTextRadiusProportion:
-              Global.circleSettings.circleOneTextRadiusProportion,
-          circleTwoRadiusProportions:
-              Global.circleSettings.circleTwoRadiusProportions,
-          circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
-          circleThreeRadiusProportion:
-              Global.circleSettings.circleThreeRadiusProportion,
-          circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
-        ),
-      ],
     );
   }
 
@@ -182,7 +157,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
 
     return DefaultTabController(
-      length: tabs.length,
+      length: tabsToUse.length,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(Global.toolbarHeight),
@@ -199,9 +174,7 @@ class _HomeScreen extends State<HomeScreen> {
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            getCircleChart(exampleCircle, screenWidth),
-            getCircleChart(exampleCircle2, screenWidth),
-            getCircleChart(exampleCircle, screenWidth),
+            for (int i = 0; i < tabsToUse.length - 1; i++) TabContent(i),
             const SettingsContent(),
           ],
         ),

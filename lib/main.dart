@@ -2,14 +2,28 @@ import 'dart:math';
 import 'package:chore_app/AppRouter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Global.dart';
 
 /// @nodoc
-void main() {
+void main() async {
   // Setting the App as Vertical Only
   // Landscape is Disabled
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  final prefs = await SharedPreferences.getInstance();
+  int? darkModeIndex = prefs.getInt(Settings.darkModeString);
+  debugPrint(darkModeIndex.toString());
+  Global.settings.darkModeIndex = (darkModeIndex != null) ? darkModeIndex : 0;
+  int? primaryColorIndex = prefs.getInt(Settings.primaryColorString);
+  Global.settings.primaryColorIndex =
+      (primaryColorIndex != null) ? primaryColorIndex : 0;
+  int? numChartsToShow = prefs.getInt(Settings.numChartsString);
+  Global.settings.numChartsToShow =
+      (numChartsToShow != null) ? numChartsToShow : 2;
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.transparent, // navigation bar color

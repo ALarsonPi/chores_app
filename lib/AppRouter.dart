@@ -1,3 +1,4 @@
+import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,10 @@ class AppRouter extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => TabNumberProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CircleDataProvider(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

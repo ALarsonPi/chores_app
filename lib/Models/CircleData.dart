@@ -7,6 +7,39 @@ class CircleData {
     required this.circleThreeText,
   });
 
+  CircleData.empty()
+      : chartTitle = "Blank",
+        numberOfRings = 3,
+        circleOneText = [],
+        circleTwoText = [],
+        circleThreeText = [];
+
+  bool isEmpty() {
+    return (chartTitle == "Blank" &&
+        numberOfRings == 3 &&
+        circleOneText == [] &&
+        circleTwoText == [] &&
+        circleThreeText == []);
+  }
+
+  static void copy(CircleData objToCopyTo, CircleData objToCopyFrom) {
+    objToCopyTo.circleID = objToCopyFrom.circleID;
+    objToCopyTo.chartTitle = objToCopyFrom.chartTitle;
+    objToCopyTo.circleOneText = objToCopyFrom.circleOneText;
+    objToCopyTo.circleTwoText = objToCopyFrom.circleTwoText;
+    objToCopyTo.circleThreeText = objToCopyFrom.circleThreeText;
+  }
+
+  @override
+  String toString() {
+    String stringToReturn = "For Circle ($circleID\n";
+    stringToReturn += "Title: $chartTitle\n";
+    stringToReturn += "Circle 1 Text: $circleOneText\n";
+    stringToReturn += "Circle 2 Text: $circleTwoText\n";
+    stringToReturn += "Circle 3 Text: $circleThreeText\n";
+    return stringToReturn;
+  }
+
   String? circleID;
   String chartTitle;
   int numberOfRings;

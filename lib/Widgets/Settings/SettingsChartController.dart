@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SettingsChartController extends StatelessWidget {
+  const SettingsChartController({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -32,10 +34,13 @@ class DropdownButtonTool extends StatefulWidget {
 }
 
 class _DropdownButtonToolState extends State<DropdownButtonTool> {
-  String dropdownValue = list.first;
-
   @override
   Widget build(BuildContext context) {
+    int numTabs =
+        Provider.of<TabNumberProvider>(context, listen: false).numTabs;
+    // Starting Value
+    String dropdownValue = list.elementAt(numTabs - 1);
+
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
