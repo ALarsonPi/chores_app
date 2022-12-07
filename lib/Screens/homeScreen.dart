@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
@@ -21,24 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late List<CircleData> circleDataList;
-  late List<Tab> tabs = [
-    const Tab(
-      text: "Chart 1",
-      icon: Icon(Icons.looks_one),
-    ),
-    const Tab(
-      text: "Chart 2",
-      icon: Icon(Icons.looks_two),
-    ),
-    const Tab(
-      text: "Chart 3",
-      icon: Icon(Icons.looks_3),
-    ),
-    const Tab(
-      text: "Settings",
-      icon: Icon(Icons.settings),
-    ),
-  ];
+  late List<Tab> tabs;
   late List<Tab> tabsToUse;
   late TabController controller;
 
@@ -55,6 +39,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    setTabs();
+
     int numTabs = Provider.of<TabNumberProvider>(context, listen: true).numTabs;
     controller = TabController(length: numTabs + 1, vsync: this);
 
@@ -65,6 +51,75 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     // Settings Tab
     tabsToUse.add(tabs.last);
     setControllerToFinalTab();
+  }
+
+  void setTabs() {
+    // THESE WOULD BE GATHERED FROM THE CHARTS
+    String chartTitle1 = "Chart 1";
+    String chartTitle2 = "Chart 2";
+    String chartTitle3 = "Chart 3";
+
+    int chart1Changes = 0;
+    int chart2Changes = 0;
+    int chart3Changes = 0;
+
+    const Color badgeColor = Colors.red;
+    //Theme.of(context).primaryColor,
+
+    const String badgeText = ' ';
+    const Color textColor = Colors.white;
+
+    tabs = [
+      Tab(
+        text: chartTitle1,
+        icon: (chart1Changes != 0)
+            ? Badge(
+                badgeColor: badgeColor,
+                badgeContent: const Text(
+                  badgeText,
+                  style: TextStyle(
+                    color: textColor,
+                  ),
+                ),
+                child: const Icon(Icons.looks_one),
+              )
+            : const Icon(Icons.looks_one),
+      ),
+      Tab(
+        text: chartTitle2,
+        icon: (chart2Changes != 0)
+            ? Badge(
+                badgeColor: badgeColor,
+                badgeContent: const Text(
+                  badgeText,
+                  style: TextStyle(
+                    color: textColor,
+                  ),
+                ),
+                child: const Icon(Icons.looks_two),
+              )
+            : const Icon(Icons.looks_two),
+      ),
+      Tab(
+        text: chartTitle3,
+        icon: (chart3Changes != 0)
+            ? Badge(
+                badgeColor: badgeColor,
+                badgeContent: const Text(
+                  badgeText,
+                  style: TextStyle(
+                    color: textColor,
+                  ),
+                ),
+                child: const Icon(Icons.looks_3),
+              )
+            : const Icon(Icons.looks_3),
+      ),
+      const Tab(
+        text: "Settings",
+        icon: Icon(Icons.settings),
+      ),
+    ];
   }
 
   Widget getBottomNavigationBar(BuildContext context) {
