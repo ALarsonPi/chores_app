@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:chore_app/AppRouter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +15,6 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   int? darkModeIndex = prefs.getInt(Settings.darkModeString);
-  debugPrint(darkModeIndex.toString());
   Global.settings.darkModeIndex = (darkModeIndex != null) ? darkModeIndex : 0;
   int? primaryColorIndex = prefs.getInt(Settings.primaryColorString);
   Global.settings.primaryColorIndex =

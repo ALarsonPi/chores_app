@@ -19,16 +19,36 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreen extends State<HomeScreen> {
+class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late List<CircleData> circleDataList;
-  late List<Tab> tabs;
+  late List<Tab> tabs = [
+    const Tab(
+      text: "Chart 1",
+      icon: Icon(Icons.looks_one),
+    ),
+    const Tab(
+      text: "Chart 2",
+      icon: Icon(Icons.looks_two),
+    ),
+    const Tab(
+      text: "Chart 3",
+      icon: Icon(Icons.looks_3),
+    ),
+    const Tab(
+      text: "Settings",
+      icon: Icon(Icons.settings),
+    ),
+  ];
   late List<Tab> tabsToUse;
+  late TabController controller;
 
   @override
   void initState() {
     super.initState();
-    fillTitles();
-    setCurrTitle(0);
+  }
+
+  void setControllerToFinalTab() {
+    controller.index = tabsToUse.length - 1;
   }
 
   @override
@@ -36,43 +56,15 @@ class _HomeScreen extends State<HomeScreen> {
     super.didChangeDependencies();
 
     int numTabs = Provider.of<TabNumberProvider>(context, listen: true).numTabs;
-    List<Tab> posssibletabs = [
-      const Tab(
-        text: "Chart 1",
-        icon: Icon(Icons.looks_one),
-      ),
-      const Tab(
-        text: "Chart 2",
-        icon: Icon(Icons.looks_two),
-      ),
-      const Tab(
-        text: "Chart 3",
-        icon: Icon(Icons.looks_3),
-      ),
-    ];
-    Tab settingsTab = const Tab(text: "Settings", icon: Icon(Icons.settings));
+    controller = TabController(length: numTabs + 1, vsync: this);
 
     tabsToUse = List.empty(growable: true);
     for (int i = 0; i < numTabs; i++) {
-      tabsToUse.add(posssibletabs.elementAt(i));
+      tabsToUse.add(tabs.elementAt(i));
     }
-    tabsToUse.add(settingsTab);
-  }
-
-  late String currTitle;
-  List<String> titleList = List.empty(growable: true);
-
-  fillTitles() {
-    titleList.add("Example Title");
-    titleList.add("Second Chart");
-    titleList.add("Third List");
-    titleList.add("Settings");
-  }
-
-  setCurrTitle(int index) {
-    setState(() {
-      currTitle = titleList.elementAt(index);
-    });
+    // Settings Tab
+    tabsToUse.add(tabs.last);
+    setControllerToFinalTab();
   }
 
   Widget getBottomNavigationBar(BuildContext context) {
@@ -80,7 +72,7 @@ class _HomeScreen extends State<HomeScreen> {
       decoration: BoxDecoration(
         boxShadow: const [
           BoxShadow(
-            blurRadius: 3,
+            blurRadius: 2,
           ),
         ],
         color: Provider.of<ThemeProvider>(context, listen: true).isDarkMode
@@ -88,8 +80,11 @@ class _HomeScreen extends State<HomeScreen> {
             : Theme.of(context).primaryColor,
       ),
       child: TabBar(
+        controller: controller,
         onTap: (index) => {
-          setCurrTitle(index),
+          setState(() {
+            controller.index = index;
+          }),
         },
         isScrollable: false,
         labelColor: Colors.white,
@@ -136,13 +131,9 @@ class _HomeScreen extends State<HomeScreen> {
       // "Run run run away yessir",
     ];
 
-    int currNumRingsToUse = 3;
-
-    double screenWidth = MediaQuery.of(context).size.width;
-
     CircleData exampleCircle = CircleData(
       chartTitle: "Example Chart",
-      numberOfRings: currNumRingsToUse,
+      numberOfRings: 3,
       circleOneText: circle1Text,
       circleTwoText: circle2Text,
       circleThreeText: circle3Text,
@@ -165,13 +156,14 @@ class _HomeScreen extends State<HomeScreen> {
             toolbarHeight: Global.toolbarHeight,
             centerTitle: true,
             title: Text(
-              currTitle,
+              tabsToUse.elementAt(controller.index).text as String,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
         ),
         bottomNavigationBar: getBottomNavigationBar(context),
         body: TabBarView(
+          controller: controller,
           physics: const NeverScrollableScrollPhysics(),
           children: [
             for (int i = 0; i < tabsToUse.length - 1; i++) TabContent(i),

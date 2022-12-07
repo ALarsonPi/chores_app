@@ -15,7 +15,7 @@ class SettingsContent extends StatefulWidget {
 }
 
 class _SettingsContent extends State<SettingsContent> {
-  updateParent() {
+  updateThemeColorParent() {
     setState(() {});
   }
 
@@ -31,7 +31,7 @@ class _SettingsContent extends State<SettingsContent> {
             left: 8.0,
             right: 8.0,
           ),
-          child: SettingsColorSwitch(updateParent),
+          child: SettingsColorSwitch(updateThemeColorParent),
         ),
         SettingsChartController(),
         Padding(

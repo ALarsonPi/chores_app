@@ -1,6 +1,7 @@
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
+import 'package:chore_app/Screens/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'ColorControl/GlobalThemes.dart';
@@ -46,6 +47,7 @@ class AppRouter extends StatelessWidget {
             routes: {
               //Global
               '/': (context) => const SplashScreen(),
+              'Settings': (context) => SettingsScreen(),
             },
           );
         },
