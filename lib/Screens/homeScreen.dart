@@ -26,6 +26,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late List<Tab> tabsToUse;
   late TabController controller;
 
+  bool shouldChangeTab = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +52,12 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     }
     // Settings Tab
     tabsToUse.add(tabs.last);
-    setControllerToFinalTab();
+    if (shouldChangeTab) {
+      setControllerToFinalTab();
+    } else {
+      controller.index = 0;
+      shouldChangeTab = true;
+    }
   }
 
   void setTabs() {
@@ -58,7 +65,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     String chartTitle1 = "Chart 1";
     String chartTitle2 = "Chart 2";
     String chartTitle3 = "Chart 3";
-
     int chart1Changes = 0;
     int chart2Changes = 0;
     int chart3Changes = 0;

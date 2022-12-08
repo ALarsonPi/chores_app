@@ -4,11 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../Global.dart';
 import '../Models/CircleData.dart';
-import '../Providers/TabNumberProvider.dart';
 import 'ConcentricChart/ConcentricChart.dart';
 
 class TabContent extends StatelessWidget {
-  TabContent(this.circleDataIndex);
+  TabContent(this.circleDataIndex, {super.key});
   int circleDataIndex;
 
   @override
@@ -57,7 +56,52 @@ class TabContent extends StatelessWidget {
         ],
       );
     } else {
-      return Text("EMPTY");
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 24.0),
+            child: // Unsure which one to use
+                //Image.asset('assets/images/grayscaledTransparent.png'),
+                Image.asset('assets/images/resizedTransparent.png'),
+          ),
+          Card(
+            elevation: 5.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      "Press button below to \ncreate new chore chart!",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => {},
+                    child: Text(
+                      "Create New",
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.bodyMedium?.fontSize,
+                        color:
+                            Theme.of(context).textTheme.headlineMedium?.color,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
     }
   }
 }
