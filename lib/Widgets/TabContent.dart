@@ -1,3 +1,4 @@
+import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,7 @@ class TabContent extends StatelessWidget {
                 //Image.asset('assets/images/grayscaledTransparent.png'),
                 Image.asset('assets/images/resizedTransparent.png'),
           ),
+          // getGradientCircle(context),
           Card(
             elevation: 5.0,
             shape: RoundedRectangleBorder(
@@ -103,5 +105,31 @@ class TabContent extends StatelessWidget {
         ],
       );
     }
+  }
+
+  Widget getGradientCircle(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
+      decoration: BoxDecoration(
+        color: Colors.orange,
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [
+            Color(Theme.of(context).primaryColor.value),
+            AppColors.getPrimaryColorSwatch().shade200,
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          stops: const [0.25, 0.90],
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFF101012),
+            offset: Offset(-8, 8),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+    );
   }
 }
