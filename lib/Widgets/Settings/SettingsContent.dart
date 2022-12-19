@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../UserLoginLogout/CurrUserDisplay.dart';
 import 'ContactCreatorButton.dart';
 import 'LogoutButton.dart';
 import 'SettingsChartController.dart';
@@ -33,7 +34,7 @@ class _SettingsContent extends State<SettingsContent> {
           ),
           child: SettingsColorSwitch(updateThemeColorParent),
         ),
-        SettingsChartController(),
+        const SettingsChartController(),
         Padding(
           padding: const EdgeInsets.only(
             top: 16.0,
@@ -41,6 +42,13 @@ class _SettingsContent extends State<SettingsContent> {
             right: 8.0,
           ),
           child: ContactCreatorButton(),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(
+            top: 16.0,
+            bottom: 8.0,
+          ),
+          child: CurrUserDisplay(),
         ),
         Padding(
           padding: const EdgeInsets.only(

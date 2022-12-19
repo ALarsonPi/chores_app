@@ -1,4 +1,6 @@
 import 'package:chore_app/AppRouter.dart';
+import 'package:chore_app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,5 +29,10 @@ void main() async {
     systemNavigationBarColor: Colors.transparent, // navigation bar color
     statusBarColor: Colors.transparent, // status bar color
   ));
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const AppRouter());
 }

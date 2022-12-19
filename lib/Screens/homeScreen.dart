@@ -3,6 +3,8 @@ import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
+import 'package:chore_app/Widgets/UserLoginLogout/LoginWidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -208,6 +210,33 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       circleThreeText: [],
     );
 
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return HomePageWidget();
+        } else {
+          return Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(Global.toolbarHeight),
+              child: AppBar(
+                toolbarHeight: Global.toolbarHeight,
+                centerTitle: true,
+                title: Text(
+                  "Sign-In",
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
+            ),
+            body: const LoginWidget(),
+          );
+        }
+      },
+    );
+  }
+
+  // ignore: non_constant_identifier_names
+  Widget HomePageWidget() {
     return DefaultTabController(
       length: tabsToUse.length,
       child: Scaffold(
