@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Global.dart';
+import 'app/app.dart';
+import 'app/app.locator.dart';
 
 /// @nodoc
 void main() async {
@@ -34,5 +36,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const AppRouter());
+  await setupLocator();
+  runApp(
+      //
+      const TheApp()
+      // const AppRouter()
+      );
 }

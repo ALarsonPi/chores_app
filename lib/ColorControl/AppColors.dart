@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Global.dart';
-import '../Models/ThemeColors.dart';
+import '../Models/constant/ThemeColors.dart';
 
 class AppColors {
   static MaterialColor getPrimaryColorSwatch() {

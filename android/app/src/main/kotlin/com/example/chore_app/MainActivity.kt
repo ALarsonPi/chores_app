@@ -1,4 +1,4 @@
-package com.example.chore_app
+package com.creator.chore_app
 
 import io.flutter.embedding.android.FlutterActivity
 

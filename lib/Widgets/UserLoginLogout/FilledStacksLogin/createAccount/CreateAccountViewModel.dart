@@ -1,9 +1,9 @@
 import 'package:chore_app/Widgets/UserLoginLogout/FilledStacksLogin/base/AuthenticationViewModel.dart';
 import 'package:stacked_firebase_auth/stacked_firebase_auth.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../../app/app.locator.dart';
 import '../../../../app/app.router.dart';
-import '../services/navigationService.dart';
 import 'CreateAccountView.form.dart';
 
 class CreateAccountViewModel extends AuthenticationViewModel {
@@ -20,5 +20,5 @@ class CreateAccountViewModel extends AuthenticationViewModel {
         password: passwordValue!,
       );
 
-  void navigateBack() => _navigationService.goBack();
+  void navigateBack() => _navigationService.back();
 }

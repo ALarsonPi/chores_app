@@ -6,7 +6,9 @@ import 'package:stacked_firebase_auth/stacked_firebase_auth.dart';
 import '../Widgets/UserLoginLogout/AddressSelection/AddressSelectionView.dart';
 import '../Widgets/UserLoginLogout/FilledStacksLogin/createAccount/CreateAccountView.dart';
 import '../Widgets/UserLoginLogout/FilledStacksLogin/login/LoginView.dart';
+import '../Widgets/UserLoginLogout/FilledStacksLogin/services/userService.dart';
 import '../Widgets/UserLoginLogout/startup/StartupView.dart';
+import '../api/firestore_api.dart';
 import 'app.router.dart';
 
 @StackedApp(
@@ -18,10 +20,14 @@ import 'app.router.dart';
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
+    LazySingleton(classType: UserService),
+    LazySingleton(classType: FirestoreApi),
     Singleton(classType: FirebaseAuthenticationService)
   ],
 )
-class App {
+class TheApp extends StatelessWidget {
+  const TheApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,7 +38,7 @@ class App {
       ),
       navigatorKey: StackedService.navigatorKey,
       onGenerateRoute: StackedRouter().onGenerateRoute,
-      //home: LoginView(),
+      home: LoginView(),
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
-import '../FilledStacksLogin/services/navigationService.dart';
 import '../FilledStacksLogin/services/userService.dart';
 
 class StartUpViewModel extends BaseViewModel {
