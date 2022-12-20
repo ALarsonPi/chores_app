@@ -1,9 +1,9 @@
 import 'package:chore_app/Models/CircleData.dart';
-import 'package:chore_app/Models/ThemeColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 
 import 'ColorControl/AppColors.dart';
+import 'Models/constant/ThemeColors.dart';
 import 'Providers/ThemeProvider.dart';
 
 /// @nodoc

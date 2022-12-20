@@ -45,12 +45,23 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.4.0
   firebase_auth: ^4.2.1
+  stacked: ^3.0.1
+  stacked_services: ^0.9.8
+  stacked_firebase_auth: ^0.2.18
+  cloud_firestore: ^4.2.0
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.7.0
+
 
 dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_test:
     sdk: flutter
+  build_runner: ^2.3.3
+  stacked_generator: ^0.8.1
+  freezed: ^2.3.2
+  json_serializable: ^6.5.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

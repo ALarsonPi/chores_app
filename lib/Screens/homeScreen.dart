@@ -3,6 +3,7 @@ import 'package:chore_app/Models/CircleData.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
+import 'package:chore_app/Widgets/UserLoginLogout/FilledStacksLogin/AuthenticationLayout.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import '../Global.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/TabContent.dart';
+import '../Widgets/UserLoginLogout/FilledStacksLogin/login/LoginView.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {
@@ -216,23 +218,29 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         if (snapshot.hasData) {
           return HomePageWidget();
         } else {
-          return Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(Global.toolbarHeight),
-              child: AppBar(
-                toolbarHeight: Global.toolbarHeight,
-                centerTitle: true,
-                title: Text(
-                  "Sign-In",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ),
-            ),
-            body: const LoginWidget(),
-          );
+          return LoginSignUpWidget();
         }
       },
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  Widget LoginSignUpWidget() {
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(Global.toolbarHeight),
+          child: AppBar(
+            toolbarHeight: Global.toolbarHeight,
+            centerTitle: true,
+            title: Text(
+              "Sign-In",
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+        ),
+        body: LoginView()
+        //const LoginWidget(),
+        );
   }
 
   // ignore: non_constant_identifier_names

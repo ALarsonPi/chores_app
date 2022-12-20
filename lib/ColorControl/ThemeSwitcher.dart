@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Models/AppTheme.dart';
+import '../Models/constant/AppTheme.dart';
 import '../global.dart';
 import '../Providers/ThemeProvider.dart';
 
