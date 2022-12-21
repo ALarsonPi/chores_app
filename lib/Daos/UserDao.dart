@@ -1,8 +1,5 @@
-import 'package:chore_app/Global.dart';
 import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:flutter/widgets.dart';
 
 class UserDao {
   static final CollectionReference currUserCollection =

@@ -60,13 +60,7 @@ class TabContent extends StatelessWidget {
       return Stack(
         alignment: Alignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 24.0),
-            child: // Unsure which one to use
-                //Image.asset('assets/images/grayscaledTransparent.png'),
-                Image.asset('assets/images/resizedTransparent.png'),
-          ),
-          // getGradientCircle(context),
+          getGradientCircle(context),
           Card(
             elevation: 5.0,
             shape: RoundedRectangleBorder(
