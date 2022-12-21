@@ -1,6 +1,9 @@
 import 'package:badges/badges.dart';
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/CircleData.dart';
+import 'package:chore_app/Models/frozen/User.dart' as model;
 import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
@@ -26,17 +29,14 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late List<CircleData> circleDataList;
   late List<Tab> tabs;
   late List<Tab> tabsToUse;
-  late TabController controller;
+  late TabController controller = TabController(length: 3, vsync: this);
 
   bool shouldChangeTab = false;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void setControllerToFinalTab() {
-    controller.index = tabsToUse.length - 1;
+    controller.index = 0;
   }
 
   @override
@@ -54,12 +54,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     }
     // Settings Tab
     tabsToUse.add(tabs.last);
-    if (shouldChangeTab) {
-      setControllerToFinalTab();
-    } else {
-      controller.index = 0;
-      shouldChangeTab = true;
-    }
   }
 
   void setTabs() {
@@ -131,6 +125,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget getBottomNavigationBar(BuildContext context) {
+    controller.index =
+        Provider.of<TabNumberProvider>(context, listen: true).currTab;
     return Container(
       decoration: BoxDecoration(
         boxShadow: const [
@@ -146,7 +142,9 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         controller: controller,
         onTap: (index) => {
           setState(() {
-            controller.index = index;
+            Provider.of<TabNumberProvider>(context, listen: false)
+                .changeCurrTabNum(index);
+            // controller.index = index;
           }),
         },
         isScrollable: false,
@@ -162,6 +160,14 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<CurrUserProvider>(context, listen: false).currUser.id ==
+        "ID") {
+      final user = FirebaseAuth.instance.currentUser;
+      Global.currUserID = user!.uid;
+      Provider.of<CurrUserProvider>(context, listen: false)
+          .getCurrUser(user.email!);
+    }
+
     List<String> circle1Text = [
       "John",
       "Jamie",
@@ -224,21 +230,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 
   // ignore: non_constant_identifier_names
   Widget LoginSignUpWidget() {
-    return Scaffold(
-      // appBar: PreferredSize(
-      //   preferredSize: Size.fromHeight(Global.toolbarHeight),
-      //   child: AppBar(
-      //     toolbarHeight: Global.toolbarHeight,
-      //     centerTitle: true,
-      //     title: Text(
-      //       "Sign-In",
-      //       style: Theme.of(context).textTheme.headlineMedium,
-      //     ),
-      //   ),
-      // ),
-      body:
-          //LoginView()
-          LoginRegisterWidget(),
+    return const Scaffold(
+      body: LoginRegisterWidget(),
     );
   }
 

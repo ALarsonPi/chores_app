@@ -11,6 +11,9 @@ class Global {
   static bool isHighPixelRatio = (Device.devicePixelRatio > 2);
   static double toolbarHeight = (isPhone) ? 65.0 : 85.0;
 
+  static String currUserID = "ID";
+  static bool justRegistered = false;
+
   // Constants Decided by me that could change
   static const int TABS_ALLOWED = 3;
 

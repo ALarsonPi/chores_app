@@ -1,4 +1,5 @@
 import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/SettingsScreen.dart';
@@ -25,6 +26,9 @@ class AppRouter extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => CircleDataProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => CurrUserProvider(),
+        )
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

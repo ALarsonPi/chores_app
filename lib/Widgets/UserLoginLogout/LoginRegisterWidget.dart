@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:auth_buttons/auth_buttons.dart';
-import 'package:chore_app/Daos/FirebaseDao.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chore_app/Models/frozen/User.dart' as model;
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../shared/UI_Helpers.dart';
 
 class LoginRegisterWidget extends StatefulWidget {
@@ -35,6 +35,8 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
+    model.User user = model.User(id: "ID");
+    String id;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(
         horizontal: 25,
@@ -150,17 +152,26 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
             ),
           ),
           verticalSpaceRegular,
-          GestureDetector(
-            onTap: () => {
-              (isInLoginMode) ? signIn() : register(),
-            },
-            child: Container(
-              width: double.infinity,
-              height: 50,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: loginPrimaryColor,
-                borderRadius: BorderRadius.circular(8),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () => {
+                (isInLoginMode)
+                    ? Provider.of<CurrUserProvider>(context, listen: false)
+                        .login(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      )
+                    : Provider.of<CurrUserProvider>(context, listen: false)
+                        .register(
+                        fullNameController.text.trim(),
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      ),
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(loginPrimaryColor),
               ),
               child: Text(
                 (isInLoginMode) ? "SIGN IN" : "SIGN UP",
@@ -212,6 +223,21 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
           ),
           verticalSpaceRegular,
           verticalSpaceTiny,
+          if (Platform.isIOS)
+            AppleAuthButton(
+              onPressed: () => {},
+              // darkMode: true,
+              text: '   CONTINUE WITH APPLE    ',
+              style: const AuthButtonStyle(
+                buttonColor: Color(0xffffffff),
+                iconSize: 24,
+                height: 55,
+                width: double.infinity,
+                textStyle: TextStyle(color: Colors.black),
+                buttonType: AuthButtonType.secondary,
+              ),
+            ),
+          if (Platform.isIOS) verticalSpaceRegular,
           FacebookAuthButton(
             onPressed: () => {},
             text: 'CONTINUE WITH FACEBOOK',
@@ -225,20 +251,6 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
               textStyle: TextStyle(color: Colors.white),
             ),
           ),
-          if (Platform.isIOS) verticalSpaceRegular,
-          if (Platform.isIOS)
-            AppleAuthButton(
-              onPressed: () => {},
-              // darkMode: true,
-              text: 'CONTINUE WITH APPLE',
-              style: const AuthButtonStyle(
-                iconSize: 24,
-                height: 55,
-                textStyle: TextStyle(color: Colors.white),
-                buttonType: AuthButtonType.secondary,
-                buttonColor: loginPrimaryColor,
-              ),
-            ),
           verticalSpaceRegular,
           GoogleAuthButton(
             onPressed: () => {},
@@ -255,21 +267,6 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
           ),
         ],
       ),
-    );
-  }
-
-  signIn() {
-    FirebaseDao.signIn(
-      emailController.text.trim(),
-      passwordController.text.trim(),
-    );
-  }
-
-  register() {
-    FirebaseDao.register(
-      fullNameController.text.trim(),
-      emailController.text.trim(),
-      passwordController.text.trim(),
     );
   }
 }

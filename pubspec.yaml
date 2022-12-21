@@ -102,6 +102,9 @@ flutter:
       - assets/images/TheAlpsCreations.png
       - assets/images/resizedTransparent.png
       - assets/images/grayscaledTransparent.png
+      - assets/images/AlpsLogo.png
+      - assets/images/AlpsLogoBlue.png
+
   fonts:
      - family: Nunito
        fonts:

@@ -1,5 +1,8 @@
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Widgets/Settings/SettingsContent.dart';
+import 'package:chore_app/Widgets/UserLoginLogout/CurrUserDisplay.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../Global.dart';
 

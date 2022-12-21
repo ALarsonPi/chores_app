@@ -1,13 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CurrUserDisplay extends StatelessWidget {
   const CurrUserDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-
     return ListView(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
@@ -20,8 +19,24 @@ class CurrUserDisplay extends StatelessWidget {
             color: Theme.of(context).textTheme.displayMedium?.color,
           ),
         ),
+        if ((Provider.of<CurrUserProvider>(context, listen: true)
+                .currUser
+                .name !=
+            null))
+          Text(
+            Provider.of<CurrUserProvider>(context, listen: true)
+                    .currUser
+                    .name ??
+                "No name",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+              color: Theme.of(context).textTheme.displayMedium?.color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         Text(
-          user.email!,
+          "(${Provider.of<CurrUserProvider>(context, listen: true).currUser.email})",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
