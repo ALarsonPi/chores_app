@@ -163,9 +163,11 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     if (Provider.of<CurrUserProvider>(context, listen: false).currUser.id ==
         "ID") {
       final user = FirebaseAuth.instance.currentUser;
-      Global.currUserID = user!.uid;
-      Provider.of<CurrUserProvider>(context, listen: false)
-          .getCurrUser(user.email!);
+      if (user != null) {
+        Global.currUserID = user.uid;
+        Provider.of<CurrUserProvider>(context, listen: false)
+            .getCurrUser(user.email!);
+      }
     }
 
     List<String> circle1Text = [

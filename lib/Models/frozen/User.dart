@@ -20,7 +20,6 @@ class User with _$User {
 
   factory User.fromSnapshot(DocumentSnapshot snapshot) {
     User newUser = User.fromJson(snapshot.data() as Map<String, dynamic>);
-    newUser = newUser.copyWith(id: snapshot.reference.id);
     return newUser;
   }
 }
