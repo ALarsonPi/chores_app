@@ -1,7 +1,7 @@
 import 'package:chore_app/Global.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../Models/CircleData.dart';
+import '../Models/frozen/CircleData.dart';
 
 class CircleDataProvider extends ChangeNotifier {
   var circleDataList = List<CircleData>.filled(

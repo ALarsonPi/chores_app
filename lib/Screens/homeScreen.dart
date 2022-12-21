@@ -1,10 +1,9 @@
 import 'package:badges/badges.dart';
-import 'package:chore_app/Models/CircleData.dart';
+import 'package:chore_app/Models/frozen/CircleData.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
-import 'package:chore_app/Widgets/UserLoginLogout/FilledStacksLogin/AuthenticationLayout.dart';
-import 'package:chore_app/Widgets/UserLoginLogout/LoginWidget.dart';
+import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,6 @@ import '../Global.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/TabContent.dart';
-import '../Widgets/UserLoginLogout/FilledStacksLogin/login/LoginView.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {
@@ -227,20 +225,21 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   // ignore: non_constant_identifier_names
   Widget LoginSignUpWidget() {
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(Global.toolbarHeight),
-          child: AppBar(
-            toolbarHeight: Global.toolbarHeight,
-            centerTitle: true,
-            title: Text(
-              "Sign-In",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-        ),
-        body: LoginView()
-        //const LoginWidget(),
-        );
+      // appBar: PreferredSize(
+      //   preferredSize: Size.fromHeight(Global.toolbarHeight),
+      //   child: AppBar(
+      //     toolbarHeight: Global.toolbarHeight,
+      //     centerTitle: true,
+      //     title: Text(
+      //       "Sign-In",
+      //       style: Theme.of(context).textTheme.headlineMedium,
+      //     ),
+      //   ),
+      // ),
+      body:
+          //LoginView()
+          LoginRegisterWidget(),
+    );
   }
 
   // ignore: non_constant_identifier_names

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
-import '../Models/CircleData.dart';
+import '../Models/frozen/CircleData.dart';
 import 'ConcentricChart/ConcentricChart.dart';
 
 class TabContent extends StatelessWidget {

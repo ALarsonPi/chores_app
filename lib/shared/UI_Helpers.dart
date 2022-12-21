@@ -18,12 +18,17 @@ const Widget verticalSpaceMassive = SizedBox(height: 120.0);
 // colors
 const Color kcPrimaryColor = Color(0xff22A45D);
 const Color kcMediumGreyColor = Color(0xff868686);
+const Color kcDarkGreyColor = Color.fromARGB(255, 113, 112, 112);
 
 // Text Style
 
 /// The style used for all body text in the app
 const TextStyle ktsMediumGreyBodyText = TextStyle(
   color: kcMediumGreyColor,
+  fontSize: kBodyTextSize,
+);
+const TextStyle ktsDarkGreyBodyText = TextStyle(
+  color: kcDarkGreyColor,
   fontSize: kBodyTextSize,
 );
 
