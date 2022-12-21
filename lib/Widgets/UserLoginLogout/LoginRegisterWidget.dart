@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:auth_buttons/auth_buttons.dart';
+import 'package:chore_app/Daos/FirebaseDao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -257,17 +258,18 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
     );
   }
 
-  Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
+  signIn() {
+    FirebaseDao.signIn(
+      emailController.text.trim(),
+      passwordController.text.trim(),
     );
   }
 
-  Future register() async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
+  register() {
+    FirebaseDao.register(
+      fullNameController.text.trim(),
+      emailController.text.trim(),
+      passwordController.text.trim(),
     );
   }
 }
