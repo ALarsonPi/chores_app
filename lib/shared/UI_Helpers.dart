@@ -16,19 +16,19 @@ const Widget verticalSpaceLarge = SizedBox(height: 50.0);
 const Widget verticalSpaceMassive = SizedBox(height: 120.0);
 
 // colors
-const Color kcPrimaryColor = Color(0xff22A45D);
-const Color kcMediumGreyColor = Color(0xff868686);
-const Color kcDarkGreyColor = Color.fromARGB(255, 113, 112, 112);
+const Color loginPrimaryColor = Color(0xff22A45D);
+const Color loginMediumGreyColor = Color(0xff868686);
+const Color loginDarkGreyColor = Color.fromARGB(255, 113, 112, 112);
 
 // Text Style
 
 /// The style used for all body text in the app
-const TextStyle ktsMediumGreyBodyText = TextStyle(
-  color: kcMediumGreyColor,
+const TextStyle loginMediumGreyBodyTextStyle = TextStyle(
+  color: loginMediumGreyColor,
   fontSize: kBodyTextSize,
 );
-const TextStyle ktsDarkGreyBodyText = TextStyle(
-  color: kcDarkGreyColor,
+const TextStyle loginDarkGreyBodyTextStyle = TextStyle(
+  color: loginDarkGreyColor,
   fontSize: kBodyTextSize,
 );
 

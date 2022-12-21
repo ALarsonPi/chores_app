@@ -58,7 +58,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                   (isInLoginMode)
                       ? "Enter your email address to sign in"
                       : "Enter your name, email, and password to sign up",
-                  style: ktsMediumGreyBodyText,
+                  style: loginMediumGreyBodyTextStyle,
                 )),
           ),
           if (!isInLoginMode) verticalSpaceTiny,
@@ -73,33 +73,66 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Already have account?",
-                  style: ktsMediumGreyBodyText.copyWith(
-                    color: kcPrimaryColor,
+                  style: loginMediumGreyBodyTextStyle.copyWith(
+                    color: loginPrimaryColor,
                   ),
                 ),
               ),
             ),
-          verticalSpaceSmall,
+          verticalSpaceMedium,
           if (!isInLoginMode)
-            TextField(
+            TextFormField(
               controller: fullNameController,
-              cursorColor: Colors.white,
+              keyboardType: TextInputType.name,
+              autofocus: false,
+              cursorColor: loginPrimaryColor,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(labelText: 'Full Name'),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                labelText: 'Full Name',
+                labelStyle: TextStyle(
+                  color: loginMediumGreyColor,
+                ),
+                filled: true,
+                fillColor: Color.fromARGB(255, 241, 241, 242),
+              ),
             ),
-          verticalSpaceSmall,
-          TextField(
+          (isInLoginMode) ? verticalSpaceSmall : verticalSpaceRegular,
+          TextFormField(
             controller: emailController,
-            cursorColor: Colors.white,
+            keyboardType: TextInputType.emailAddress,
+            autofocus: false,
+            cursorColor: loginPrimaryColor,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(labelText: 'Email'),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              labelText: 'Email',
+              labelStyle: TextStyle(
+                color: loginMediumGreyColor,
+              ),
+              filled: true,
+              fillColor: Color.fromARGB(255, 241, 241, 242),
+            ),
           ),
-          verticalSpaceTiny,
-          TextField(
+          verticalSpaceRegular,
+          TextFormField(
             controller: passwordController,
-            cursorColor: Colors.white,
+            obscureText: true,
+            autofocus: false,
+            cursorColor: loginPrimaryColor,
             textInputAction: TextInputAction.done,
-            decoration: const InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              labelText: 'Password',
+              labelStyle: TextStyle(
+                color: loginMediumGreyColor,
+              ),
+              filled: true,
+              fillColor: Color.fromARGB(255, 241, 241, 242),
+            ),
           ),
           verticalSpaceTiny,
           verticalSpaceRegular,
@@ -109,7 +142,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
               onTap: () => {},
               child: Text(
                 'Forgot Password',
-                style: ktsMediumGreyBodyText.copyWith(
+                style: loginMediumGreyBodyTextStyle.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -125,7 +158,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
               height: 50,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: kcPrimaryColor,
+                color: loginPrimaryColor,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -153,13 +186,13 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                     children: const [
                       Text(
                         "Don't have an account?",
-                        style: ktsMediumGreyBodyText,
+                        style: loginMediumGreyBodyTextStyle,
                       ),
                       horizontalSpaceTiny,
                       Text(
                         'Create an account',
                         style: TextStyle(
-                          color: kcPrimaryColor,
+                          color: loginPrimaryColor,
                         ),
                       ),
                     ],
@@ -167,16 +200,17 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 )
               : const Text(
                   "By signing up you agree to your terms, conditions and Privacy Policy",
-                  style: ktsMediumGreyBodyText,
+                  style: loginMediumGreyBodyTextStyle,
                   textAlign: TextAlign.center,
                 ),
           verticalSpaceMedium,
           const Text(
             "Or",
-            style: ktsDarkGreyBodyText,
+            style: loginDarkGreyBodyTextStyle,
             textAlign: TextAlign.center,
           ),
           verticalSpaceRegular,
+          verticalSpaceTiny,
           FacebookAuthButton(
             onPressed: () => {},
             text: 'CONTINUE WITH FACEBOOK',
@@ -201,7 +235,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 height: 55,
                 textStyle: TextStyle(color: Colors.white),
                 buttonType: AuthButtonType.secondary,
-                buttonColor: kcPrimaryColor,
+                buttonColor: loginPrimaryColor,
               ),
             ),
           verticalSpaceRegular,

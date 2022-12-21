@@ -1,4 +1,5 @@
 import 'package:chore_app/ColorControl/AppColors.dart';
+import 'package:chore_app/shared/UI_Helpers.dart';
 import 'package:flutter/material.dart';
 import '../Global.dart';
 
@@ -18,6 +19,15 @@ class GlobalThemes {
       iconTheme: getIconThemeData(isDarkMode),
       secondaryHeaderColor: getSecondaryColor(isDarkMode),
       listTileTheme: getListTileThemeData(isDarkMode),
+      inputDecorationTheme: const InputDecorationTheme(
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(width: 1, color: Color.fromARGB(255, 231, 231, 231)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: loginPrimaryColor),
+        ),
+      ),
     );
   }
 
