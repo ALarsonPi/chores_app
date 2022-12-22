@@ -35,7 +35,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 20.0),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: forgotPasswordPrimaryColor,
+            ),
             onPressed: () => widget.setStateBackToLoginScreen(),
           ),
         ),
@@ -60,11 +63,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 widget.setStateBackToLoginScreen,
                 returnToForgotPasswordScreen,
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            : ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  verticalSpaceLarge,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: MediaQuery.of(context).size.width * 0.5,
+                    child: Image.asset("assets/images/forgotPassword.png"),
+                  ),
                   verticalSpaceLarge,
                   const Padding(
                     padding: EdgeInsets.only(bottom: 8.0),
@@ -87,52 +94,62 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       ),
                     ),
                   ),
-                  verticalSpaceMedium,
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: TextFormField(
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       autofocus: false,
-                      cursorColor: loginPrimaryColor,
+                      cursorColor: forgotPasswordPrimaryColor,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        labelText: 'Email Address',
-                        labelStyle: TextStyle(
-                          color: loginMediumGreyColor,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 1,
+                            color: Colors.grey,
+                          ),
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 2,
+                            color: forgotPasswordPrimaryColor,
+                          ),
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 2,
+                            color: Colors.redAccent,
+                          ),
+                          borderRadius: BorderRadius.circular(50.0),
                         ),
                         filled: true,
-                        fillColor: Color.fromARGB(255, 241, 241, 242),
+                        fillColor: const Color.fromARGB(255, 241, 241, 242),
                       ),
                     ),
                   ),
-                  verticalSpaceLarge,
-                  verticalSpaceSmall,
-                  Padding(
-                    padding: const EdgeInsets.only(top: 32.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () => {
-                          setState(() => {
-                                isEmailSent = true,
-                              }),
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(loginPrimaryColor),
-                        ),
-                        child: const Text(
-                          "Send Instructions",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+                  verticalSpaceMedium,
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () => {
+                        setState(() => {
+                              isEmailSent = true,
+                            }),
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: forgotPasswordPrimaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          )),
+                      child: const Text(
+                        "Send Instructions",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
                       ),
                     ),

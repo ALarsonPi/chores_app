@@ -17,9 +17,9 @@ const Widget verticalSpaceMassive = SizedBox(height: 120.0);
 
 // colors
 const Color loginPrimaryColor = Color(0xff22A45D);
+const Color forgotPasswordPrimaryColor = Color(0xff09A7FD);
 const Color loginMediumGreyColor = Color(0xff868686);
 const Color loginDarkGreyColor = Color.fromARGB(255, 113, 112, 112);
-
 // Text Style
 
 /// The style used for all body text in the app

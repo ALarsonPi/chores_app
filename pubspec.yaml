@@ -104,6 +104,7 @@ flutter:
       - assets/images/AlpsLogo.png
       - assets/images/AlpsLogoBlue.png
       - assets/images/mailboxTransparent.png
+      - assets/images/forgotPassword.png
 
   fonts:
      - family: Nunito

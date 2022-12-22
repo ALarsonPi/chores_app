@@ -36,24 +36,6 @@ class CheckEmail extends StatelessWidget {
             ),
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.only(top: 8.0),
-        //   child: GestureDetector(
-        //     onTap: () => {
-        //       returnToLogin(),
-        //     },
-        //     child: Align(
-        //       alignment: Alignment.center,
-        //       child: Text(
-        //         "Return to Login",
-        //         style: loginMediumGreyBodyTextStyle.copyWith(
-        //           color: loginPrimaryColor,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
-
         verticalSpaceMedium,
         Image.asset("assets/images/mailboxTransparent.png"),
         verticalSpaceMedium,
@@ -72,7 +54,7 @@ class CheckEmail extends StatelessWidget {
                   child: Text(
                     "try another email address",
                     style: loginMediumGreyBodyTextStyle.copyWith(
-                      color: loginPrimaryColor,
+                      color: forgotPasswordPrimaryColor,
                     ),
                   ),
                 ),
