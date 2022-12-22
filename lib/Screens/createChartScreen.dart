@@ -53,8 +53,12 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double sizeOfChart = MediaQuery.of(context).size.width * 0.75;
+
     return Scaffold(
       appBar: AppBar(
+        title: const Text("Customize New Chart"),
+        centerTitle: true,
         automaticallyImplyLeading: true,
       ),
       body: Column(
@@ -65,55 +69,57 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
               bottom: 8.0,
             ),
             child: SizedBox(
-              height: MediaQuery.of(context).size.width * 0.75,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ConcentricChart(
-                    numberOfRings: currNumRings,
-                    circleOneText: List.filled(currNumSections, ""),
-                    circleTwoText: List.filled(currNumSections, ""),
-                    circleThreeText: List.filled(currNumSections, ""),
+              height: sizeOfChart,
+              child: ConcentricChart(
+                numberOfRings: currNumRings,
+                circleOneText: List.filled(currNumSections, ""),
+                circleTwoText: List.filled(currNumSections, ""),
+                circleThreeText: List.filled(currNumSections, ""),
 
-                    // Theme
-                    linesColors: Global.currentTheme.lineColors,
-                    circleOneColor: Global.currentTheme.primaryColor,
-                    circleOneFontColor: Global.currentTheme.primaryTextColor,
-                    circleTwoColor: Global.currentTheme.secondaryColor,
-                    circleTwoFontColor: Global.currentTheme.secondaryTextColor,
-                    circleThreeColor: Global.currentTheme.tertiaryColor,
-                    circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
+                // Theme
+                linesColors: Global.currentTheme.lineColors,
+                circleOneColor: Global.currentTheme.primaryColor,
+                circleOneFontColor: Global.currentTheme.primaryTextColor,
+                circleTwoColor: Global.currentTheme.secondaryColor,
+                circleTwoFontColor: Global.currentTheme.secondaryTextColor,
+                circleThreeColor: Global.currentTheme.tertiaryColor,
+                circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
 
-                    // Const Programmer Decisions
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
-                    overflowLineLimit: Global.circleSettings.overflowLineLimit,
-                    chunkOverflowLimitProportion:
-                        Global.circleSettings.chunkOverflowLimitProportion,
-                    circleOneRadiusProportions:
-                        Global.circleSettings.circleOneRadiusProportions,
-                    circleOneFontSize: Global.circleSettings.circleOneFontSize,
-                    circleOneTextRadiusProportion:
-                        Global.circleSettings.circleOneTextRadiusProportion,
-                    circleTwoRadiusProportions:
-                        Global.circleSettings.circleTwoRadiusProportions,
-                    circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
-                    circleThreeRadiusProportion:
-                        Global.circleSettings.circleThreeRadiusProportion,
-                    circleThreeFontSize:
-                        Global.circleSettings.circleThreeFontSize,
-                  ),
-                ],
+                // Const Programmer Decisions
+                width: sizeOfChart,
+                spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
+                overflowLineLimit: Global.circleSettings.overflowLineLimit,
+                chunkOverflowLimitProportion:
+                    Global.circleSettings.chunkOverflowLimitProportion,
+                circleOneRadiusProportions:
+                    Global.circleSettings.circleOneRadiusProportions,
+                circleOneFontSize: Global.circleSettings.circleOneFontSize,
+                circleOneTextRadiusProportion:
+                    Global.circleSettings.circleOneTextRadiusProportion,
+                circleTwoRadiusProportions:
+                    Global.circleSettings.circleTwoRadiusProportions,
+                circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+                circleThreeRadiusProportion:
+                    Global.circleSettings.circleThreeRadiusProportion,
+                circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
               ),
             ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Dropdown(ringNumOptions, updateCurrRingNum),
+              Dropdown(
+                ringNumOptions,
+                updateCurrRingNum,
+                initialIndex: 1,
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 32.0),
-                child: Dropdown(numSectionsOptions, updateNumSections),
+                child: Dropdown(
+                  numSectionsOptions,
+                  updateNumSections,
+                  initialIndex: 2,
+                ),
               ),
             ],
           ),
@@ -128,7 +134,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
 // ignore: must_be_immutable
 class Dropdown extends StatefulWidget {
-  Dropdown(this.list, this.setStateFunction, {super.key});
+  Dropdown(this.list, this.setStateFunction,
+      {this.initialIndex = 0, super.key});
+  int initialIndex;
   List<String> list;
   Function setStateFunction;
 
@@ -137,7 +145,7 @@ class Dropdown extends StatefulWidget {
 }
 
 class _DropdownState extends State<Dropdown> {
-  late String dropdownValue = widget.list.elementAt(0);
+  late String dropdownValue = widget.list.elementAt(widget.initialIndex);
 
   @override
   Widget build(BuildContext context) {

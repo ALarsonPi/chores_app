@@ -19,11 +19,7 @@ class TabContent extends StatelessWidget {
     Chart currCircleData = Provider.of<ChartProvider>(context, listen: true)
         .circleDataList[circleDataIndex];
     if (!currCircleData.isEmpty()) {
-      return
-          // Stack(
-          // alignment: Alignment.center,
-          // children: [
-          ConcentricChart(
+      return ConcentricChart(
         // Specific To each Circle
         numberOfRings: currCircleData.numberOfRings,
         circleOneText: currCircleData.circleOneText,
@@ -57,8 +53,6 @@ class TabContent extends StatelessWidget {
             Global.circleSettings.circleThreeRadiusProportion,
         circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
       );
-      // ],
-      //);
     } else {
       return Stack(
         alignment: Alignment.center,
