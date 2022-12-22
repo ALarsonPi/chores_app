@@ -1,11 +1,8 @@
 import 'package:badges/badges.dart';
-import 'package:chore_app/Daos/UserDao.dart';
-import 'package:chore_app/Models/frozen/CircleData.dart';
-import 'package:chore_app/Models/frozen/User.dart' as model;
-import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Models/frozen/Chart.dart';
+import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
-import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
-  late List<CircleData> circleDataList;
+  late List<Chart> circleDataList;
   late List<Tab> tabs;
   late List<Tab> tabsToUse;
   late TabController controller = TabController(length: 3, vsync: this);
@@ -144,7 +141,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
           setState(() {
             Provider.of<TabNumberProvider>(context, listen: false)
                 .changeCurrTabNum(index);
-            // controller.index = index;
           }),
         },
         isScrollable: false,
@@ -169,54 +165,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             .getCurrUser(user.email!);
       }
     }
-
-    List<String> circle1Text = [
-      "John",
-      "Jamie",
-      "Will",
-      "Abby",
-      // "Jake",
-      // "Johnny",
-      // "Santa",
-      // "Abe"
-    ];
-
-    List<String> circle2Text = [
-      "Clean/Clear Table",
-      "Pots/Pans",
-      "Dishwasher",
-      "Bathrooms",
-      // "Vaccuum (All carpet)",
-      // "Lawn and mow and lawn",
-      // "Clean Window and clean"
-    ];
-
-    List<String> circle3Text = [
-      "Wash Windows and Blinds",
-      "Dust Baseboards and Blinds",
-      "Mow lawn",
-      "Babysit baby Kylie",
-      // "Mop floors",
-      // "Give coal to yessir",
-      // "Beat the South yessir",
-      // "Run run run away yessir",
-    ];
-
-    CircleData exampleCircle = CircleData(
-      chartTitle: "Example Chart",
-      numberOfRings: 3,
-      circleOneText: circle1Text,
-      circleTwoText: circle2Text,
-      circleThreeText: circle3Text,
-    );
-
-    CircleData exampleCircle2 = CircleData(
-      chartTitle: "Second Chart",
-      numberOfRings: 2,
-      circleOneText: circle1Text,
-      circleTwoText: circle2Text,
-      circleThreeText: [],
-    );
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),

@@ -1,5 +1,5 @@
-class CircleData {
-  CircleData({
+class Chart {
+  Chart({
     required this.chartTitle,
     required this.numberOfRings,
     required this.circleOneText,
@@ -7,7 +7,7 @@ class CircleData {
     required this.circleThreeText,
   });
 
-  CircleData.empty()
+  Chart.empty()
       : chartTitle = "Blank",
         numberOfRings = 3,
         circleOneText = [],
@@ -17,12 +17,12 @@ class CircleData {
   bool isEmpty() {
     return (chartTitle == "Blank" &&
         numberOfRings == 3 &&
-        circleOneText == [] &&
-        circleTwoText == [] &&
-        circleThreeText == []);
+        circleOneText.isEmpty &&
+        circleTwoText.isEmpty &&
+        circleThreeText.isEmpty);
   }
 
-  static void copy(CircleData objToCopyTo, CircleData objToCopyFrom) {
+  static void copy(Chart objToCopyTo, Chart objToCopyFrom) {
     objToCopyTo.circleID = objToCopyFrom.circleID;
     objToCopyTo.chartTitle = objToCopyFrom.chartTitle;
     objToCopyTo.circleOneText = objToCopyFrom.circleOneText;
@@ -49,7 +49,7 @@ class CircleData {
 
   Map<String, dynamic> toJson() => _circleDataToJson(this);
 
-  factory CircleData.fromJson(Map<String, dynamic> json) =>
+  factory Chart.fromJson(Map<String, dynamic> json) =>
       _circleDataFromJson(json);
 
   // factory CircleData.fromSnapshot(DocumentSnapshot snapshot) {
@@ -60,8 +60,8 @@ class CircleData {
   // }
 }
 
-CircleData _circleDataFromJson(Map<String, dynamic> json) {
-  return CircleData(
+Chart _circleDataFromJson(Map<String, dynamic> json) {
+  return Chart(
     numberOfRings: json['numberOfRings'] as int,
     chartTitle: json['chartTitle'] as String,
     circleOneText: json['circleOneText'] as List<String>,
@@ -70,8 +70,7 @@ CircleData _circleDataFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _circleDataToJson(CircleData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _circleDataToJson(Chart instance) => <String, dynamic>{
       'numberOfRings': instance.numberOfRings,
       'chartTitle': instance.chartTitle,
       'circleOneText': instance.circleOneText,

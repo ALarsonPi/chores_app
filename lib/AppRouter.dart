@@ -1,4 +1,4 @@
-import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
@@ -27,7 +27,7 @@ class AppRouter extends StatelessWidget {
           create: (_) => TabNumberProvider(),
         ),
         ChangeNotifierProvider(
-          create: (_) => CircleDataProvider(),
+          create: (_) => ChartProvider(),
         ),
         ChangeNotifierProvider(
           create: (_) => CurrUserProvider(),
@@ -53,7 +53,6 @@ class AppRouter extends StatelessWidget {
             ),
             initialRoute: '/',
             routes: {
-              //Global
               '/': (context) => const SplashScreen(),
               'Settings': (context) => const SettingsScreen(),
               CreateChartScreen.routeName: (context) =>

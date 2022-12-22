@@ -15,7 +15,8 @@ class SettingsChartController extends StatelessWidget {
           child: Text(
             "How many Charts should show? ",
             style: TextStyle(
-                fontSize: Theme.of(context).textTheme.displayLarge?.fontSize),
+              fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+            ),
           ),
         ),
         const DropdownButtonTool(),

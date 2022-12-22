@@ -1,11 +1,11 @@
 import 'package:chore_app/ColorControl/AppColors.dart';
-import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Screens/createChartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
-import '../Models/frozen/CircleData.dart';
+import '../Models/frozen/Chart.dart';
 import '../Screens/ScreenArguments/newChartArguments.dart';
 import 'ConcentricChart/ConcentricChart.dart';
 
@@ -16,48 +16,49 @@ class TabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    CircleData currCircleData =
-        Provider.of<CircleDataProvider>(context, listen: false)
-            .circleDataList[circleDataIndex];
-    if (currCircleData.isEmpty()) {
-      return Stack(
-        children: [
+    Chart currCircleData = Provider.of<ChartProvider>(context, listen: true)
+        .circleDataList[circleDataIndex];
+    if (!currCircleData.isEmpty()) {
+      return
+          // Stack(
+          // alignment: Alignment.center,
+          // children: [
           ConcentricChart(
-            // Specific To each Circle
-            numberOfRings: currCircleData.numberOfRings,
-            circleOneText: currCircleData.circleOneText,
-            circleTwoText: currCircleData.circleTwoText,
-            circleThreeText: currCircleData.circleThreeText,
+        // Specific To each Circle
+        numberOfRings: currCircleData.numberOfRings,
+        circleOneText: currCircleData.circleOneText,
+        circleTwoText: currCircleData.circleTwoText,
+        circleThreeText: currCircleData.circleThreeText,
 
-            // Theme
-            linesColors: Global.currentTheme.lineColors,
-            circleOneColor: Global.currentTheme.primaryColor,
-            circleOneFontColor: Global.currentTheme.primaryTextColor,
-            circleTwoColor: Global.currentTheme.secondaryColor,
-            circleTwoFontColor: Global.currentTheme.secondaryTextColor,
-            circleThreeColor: Global.currentTheme.tertiaryColor,
-            circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
+        // Theme
+        linesColors: Global.currentTheme.lineColors,
+        circleOneColor: Global.currentTheme.primaryColor,
+        circleOneFontColor: Global.currentTheme.primaryTextColor,
+        circleTwoColor: Global.currentTheme.secondaryColor,
+        circleTwoFontColor: Global.currentTheme.secondaryTextColor,
+        circleThreeColor: Global.currentTheme.tertiaryColor,
+        circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
 
-            // Const Programmer Decisions
-            width: screenWidth,
-            spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
-            overflowLineLimit: Global.circleSettings.overflowLineLimit,
-            chunkOverflowLimitProportion:
-                Global.circleSettings.chunkOverflowLimitProportion,
-            circleOneRadiusProportions:
-                Global.circleSettings.circleOneRadiusProportions,
-            circleOneFontSize: Global.circleSettings.circleOneFontSize,
-            circleOneTextRadiusProportion:
-                Global.circleSettings.circleOneTextRadiusProportion,
-            circleTwoRadiusProportions:
-                Global.circleSettings.circleTwoRadiusProportions,
-            circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
-            circleThreeRadiusProportion:
-                Global.circleSettings.circleThreeRadiusProportion,
-            circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
-          ),
-        ],
+        // Const Programmer Decisions
+        width: screenWidth,
+        spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
+        overflowLineLimit: Global.circleSettings.overflowLineLimit,
+        chunkOverflowLimitProportion:
+            Global.circleSettings.chunkOverflowLimitProportion,
+        circleOneRadiusProportions:
+            Global.circleSettings.circleOneRadiusProportions,
+        circleOneFontSize: Global.circleSettings.circleOneFontSize,
+        circleOneTextRadiusProportion:
+            Global.circleSettings.circleOneTextRadiusProportion,
+        circleTwoRadiusProportions:
+            Global.circleSettings.circleTwoRadiusProportions,
+        circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+        circleThreeRadiusProportion:
+            Global.circleSettings.circleThreeRadiusProportion,
+        circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
       );
+      // ],
+      //);
     } else {
       return Stack(
         alignment: Alignment.center,
