@@ -2,7 +2,9 @@ import 'package:chore_app/Providers/CircleDataProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
+import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Screens/SettingsScreen.dart';
+import 'package:chore_app/Screens/createChartScreen.dart';
 import 'package:chore_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +55,9 @@ class AppRouter extends StatelessWidget {
             routes: {
               //Global
               '/': (context) => const SplashScreen(),
-              'Settings': (context) => SettingsScreen(),
+              'Settings': (context) => const SettingsScreen(),
+              CreateChartScreen.routeName: (context) =>
+                  const CreateChartScreen()
             },
           );
         },

@@ -1,10 +1,12 @@
 import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:chore_app/Providers/CircleDataProvider.dart';
+import 'package:chore_app/Screens/createChartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
 import '../Models/frozen/CircleData.dart';
+import '../Screens/ScreenArguments/newChartArguments.dart';
 import 'ConcentricChart/ConcentricChart.dart';
 
 class TabContent extends StatelessWidget {
@@ -81,7 +83,10 @@ class TabContent extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      Navigator.pushNamed(context, CreateChartScreen.routeName,
+                          arguments: CreateChartArguments(circleDataIndex)),
+                    },
                     child: Text(
                       "Create New",
                       style: TextStyle(
