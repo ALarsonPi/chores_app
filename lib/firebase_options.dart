@@ -67,8 +67,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '445665968305',
     projectId: 'chorechart-e8fe3',
     storageBucket: 'chorechart-e8fe3.appspot.com',
-    iosClientId: '445665968305-mget9arcmkkeectep9eos7lmcshnbjmi.apps.googleusercontent.com',
-    iosBundleId: 'com.example.choreApp',
+    iosClientId:
+        '445665968305-mget9arcmkkeectep9eos7lmcshnbjmi.apps.googleusercontent.com',
+    iosBundleId: 'com.creator.choreApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '445665968305',
     projectId: 'chorechart-e8fe3',
     storageBucket: 'chorechart-e8fe3.appspot.com',
-    iosClientId: '445665968305-mget9arcmkkeectep9eos7lmcshnbjmi.apps.googleusercontent.com',
-    iosBundleId: 'com.example.choreApp',
+    iosClientId:
+        '445665968305-mget9arcmkkeectep9eos7lmcshnbjmi.apps.googleusercontent.com',
+    iosBundleId: 'com.creator.choreApp',
   );
 }

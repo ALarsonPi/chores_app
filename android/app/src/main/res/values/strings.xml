@@ -1,0 +1,6 @@
+<resources>   
+    <string name="app_name">Chore Sync</string>
+    <string name="facebook_app_id">698997371801157</string>
+    <string name="fb_login_protocol_scheme">fb698997371801157</string>
+    <string name="facebook_client_token">b578db7e32027ba3558fcb8cd5231713</string>
+</resources>

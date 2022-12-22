@@ -5,11 +5,15 @@ class UserDao {
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
 
-  static Future<DocumentReference> addUser(User currUser) {
+  static Future<void> addUser(User currUser) async {
     currUser = currUser.copyWith(
       email: currUser.email!.toLowerCase(),
     );
-    return currUserCollection.add(currUser.toJson());
+    await currUserCollection.doc(currUser.id).set(
+        currUser.toJson(),
+        SetOptions(
+          merge: true,
+        ));
   }
 
   static void updateUser(User currUser) async {
