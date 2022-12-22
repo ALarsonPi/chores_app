@@ -5,7 +5,7 @@ import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/ForgotPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../shared/UI_Helpers.dart';
+import 'UI_Helpers.dart';
 
 class LoginRegisterWidget extends StatefulWidget {
   const LoginRegisterWidget({

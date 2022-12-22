@@ -158,6 +158,22 @@ class CurrUserProvider extends ChangeNotifier {
         currUser.user?.displayName, currUser.user?.email?.toLowerCase(), null);
   }
 
+  Future<bool> passwordReset(String email) async {
+    try {
+      await auth.FirebaseAuth.instance
+          .sendPasswordResetEmail(email: email.toLowerCase());
+      return true;
+    } on auth.FirebaseAuthException catch (e) {
+      debugPrint(e.toString());
+      Global.rootScaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text(e.message.toString()),
+        ),
+      );
+      return false;
+    }
+  }
+
   _addUser(String id, String? fullName, String? email, String? password) async {
     User newUser = User(
       id: id,

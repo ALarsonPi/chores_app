@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../shared/UI_Helpers.dart';
+import 'UI_Helpers.dart';
 
 class CheckEmail extends StatelessWidget {
   Function returnToLogin;
@@ -9,9 +9,10 @@ class CheckEmail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         verticalSpaceLarge,
         verticalSpaceMedium,

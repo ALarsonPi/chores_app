@@ -1,6 +1,8 @@
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../shared/UI_Helpers.dart';
+import 'UI_Helpers.dart';
 import 'CheckEmail.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -30,6 +32,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
+    bool didResetCorrectly = false;
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -134,9 +137,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () => {
+                      onPressed: () async => {
+                        didResetCorrectly = await Provider.of<CurrUserProvider>(
+                                context,
+                                listen: false)
+                            .passwordReset(emailController.text.trim()),
                         setState(() => {
-                              isEmailSent = true,
+                              isEmailSent = didResetCorrectly,
                             }),
                       },
                       style: ElevatedButton.styleFrom(

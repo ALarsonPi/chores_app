@@ -26,6 +26,8 @@ class Global {
   static CircleSettings circleSettings = CircleSettings();
   static RingCharLimits ringCharLimits = RingCharLimits();
   static Settings settings = Settings();
+  static GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 }
 
 class Settings {
