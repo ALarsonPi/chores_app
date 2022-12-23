@@ -21,12 +21,25 @@ class GlobalThemes {
       listTileTheme: getListTileThemeData(isDarkMode),
       inputDecorationTheme: const InputDecorationTheme(
         enabledBorder: OutlineInputBorder(
-          borderSide:
-              BorderSide(width: 1, color: Color.fromARGB(255, 231, 231, 231)),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(
+            width: 1,
+            color: Color.fromARGB(255, 231, 231, 231),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(width: 1, color: loginPrimaryColor),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(
+            width: 1,
+            color: loginPrimaryColor,
+          ),
         ),
+        errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            borderSide: BorderSide(
+              width: 1,
+              color: Colors.red,
+            )),
       ),
     );
   }

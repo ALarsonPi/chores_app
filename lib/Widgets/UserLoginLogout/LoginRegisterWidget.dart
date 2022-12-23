@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:auth_buttons/auth_buttons.dart';
-import 'package:chore_app/Models/frozen/User.dart' as model;
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/ForgotPassword.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'UI_Helpers.dart';
@@ -25,6 +25,8 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
 
   bool isInLoginMode = true;
   bool isInForgotPasswordMode = false;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -90,114 +92,137 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                     ),
                   ),
                 verticalSpaceMedium,
-                if (!isInLoginMode)
-                  TextFormField(
-                    controller: fullNameController,
-                    keyboardType: TextInputType.name,
-                    autofocus: false,
-                    cursorColor: loginPrimaryColor,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      labelText: 'Full Name',
-                      labelStyle: TextStyle(
-                        color: loginMediumGreyColor,
-                      ),
-                      filled: true,
-                      fillColor: Color.fromARGB(255, 241, 241, 242),
-                    ),
-                  ),
-                (isInLoginMode) ? verticalSpaceSmall : verticalSpaceRegular,
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  autofocus: false,
-                  cursorColor: loginPrimaryColor,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                      color: loginMediumGreyColor,
-                    ),
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 241, 241, 242),
-                  ),
-                ),
-                verticalSpaceRegular,
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  autofocus: false,
-                  cursorColor: loginPrimaryColor,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    labelText: 'Password',
-                    labelStyle: TextStyle(
-                      color: loginMediumGreyColor,
-                    ),
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 241, 241, 242),
-                  ),
-                ),
-                verticalSpaceTiny,
-                verticalSpaceRegular,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => {
-                      setState(() => {
-                            isInForgotPasswordMode = true,
-                          }),
-                    },
-                    child: Text(
-                      'Forgot Password',
-                      style: loginMediumGreyBodyTextStyle.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                verticalSpaceRegular,
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => {
-                      (isInLoginMode)
-                          ? Provider.of<CurrUserProvider>(context,
-                                  listen: false)
-                              .login(
-                              emailController.text.trim(),
-                              passwordController.text.trim(),
-                            )
-                          : Provider.of<CurrUserProvider>(context,
-                                  listen: false)
-                              .register(
-                              fullNameController.text.trim(),
-                              emailController.text.trim(),
-                              passwordController.text.trim(),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!isInLoginMode)
+                        TextFormField(
+                          controller: fullNameController,
+                          keyboardType: TextInputType.name,
+                          autofocus: false,
+                          cursorColor: loginPrimaryColor,
+                          textInputAction: TextInputAction.next,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            labelText: 'Full Name',
+                            labelStyle: TextStyle(
+                              color: loginMediumGreyColor,
                             ),
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(loginPrimaryColor),
-                    ),
-                    child: Text(
-                      (isInLoginMode) ? "SIGN IN" : "SIGN UP",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 241, 241, 242),
+                          ),
+                        ),
+                      (isInLoginMode)
+                          ? verticalSpaceSmall
+                          : verticalSpaceRegular,
+                      TextFormField(
+                        controller: emailController,
+                        validator: (String? email) {
+                          return (email != null &&
+                                  !EmailValidator.validate(email))
+                              ? 'Invalid Email'
+                              : null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        cursorColor: loginPrimaryColor,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(
+                            color: loginMediumGreyColor,
+                          ),
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 241, 241, 242),
+                        ),
                       ),
-                    ),
+                      verticalSpaceRegular,
+                      TextFormField(
+                        controller: passwordController,
+                        validator: (String? password) {
+                          return (password != null && !(password.length > 5))
+                              ? 'Password must be longer than 5 characters'
+                              : null;
+                        },
+                        obscureText: true,
+                        autofocus: false,
+                        cursorColor: loginPrimaryColor,
+                        textInputAction: TextInputAction.done,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            color: loginMediumGreyColor,
+                          ),
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 241, 241, 242),
+                        ),
+                      ),
+                      verticalSpaceTiny,
+                      verticalSpaceRegular,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () => {
+                            setState(() => {
+                                  isInForgotPasswordMode = true,
+                                }),
+                          },
+                          child: Text(
+                            'Forgot Password',
+                            style: loginMediumGreyBodyTextStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      verticalSpaceRegular,
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () => {
+                            if (_formKey.currentState!.validate())
+                              {
+                                (isInLoginMode)
+                                    ? Provider.of<CurrUserProvider>(context,
+                                            listen: false)
+                                        .login(
+                                        emailController.text.trim(),
+                                        passwordController.text.trim(),
+                                      )
+                                    : Provider.of<CurrUserProvider>(context,
+                                            listen: false)
+                                        .register(
+                                        fullNameController.text.trim(),
+                                        emailController.text.trim(),
+                                        passwordController.text.trim(),
+                                      ),
+                              },
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(loginPrimaryColor),
+                          ),
+                          child: Text(
+                            (isInLoginMode) ? "SIGN IN" : "SIGN UP",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      verticalSpaceMedium,
+                    ],
                   ),
                 ),
-                verticalSpaceMedium,
                 (isInLoginMode)
                     ? GestureDetector(
                         onTap: () => {

@@ -1,4 +1,5 @@
 import 'package:chore_app/Providers/CurrUserProvider.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       isEmailSent = false;
     });
   }
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -97,71 +100,91 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autofocus: false,
-                      cursorColor: forgotPasswordPrimaryColor,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Colors.grey,
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: TextFormField(
+                            controller: emailController,
+                            validator: (String? email) {
+                              return (email != null &&
+                                      !EmailValidator.validate(email))
+                                  ? 'Invalid Email'
+                                  : null;
+                            },
+                            keyboardType: TextInputType.emailAddress,
+                            autofocus: false,
+                            cursorColor: forgotPasswordPrimaryColor,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Colors.grey,
+                                ),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  width: 2,
+                                  color: forgotPasswordPrimaryColor,
+                                ),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  width: 2,
+                                  color: Colors.redAccent,
+                                ),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(255, 241, 241, 242),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(50.0),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            width: 2,
-                            color: forgotPasswordPrimaryColor,
+                        verticalSpaceMedium,
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async => {
+                              if (_formKey.currentState!.validate())
+                                {
+                                  didResetCorrectly =
+                                      await Provider.of<CurrUserProvider>(
+                                              context,
+                                              listen: false)
+                                          .passwordReset(
+                                              emailController.text.trim()),
+                                  setState(() => {
+                                        isEmailSent = didResetCorrectly,
+                                      }),
+                                },
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: forgotPasswordPrimaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                )),
+                            child: const Text(
+                              "Send Instructions",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(50.0),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            width: 2,
-                            color: Colors.redAccent,
-                          ),
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(255, 241, 241, 242),
-                      ),
+                        verticalSpaceRegular,
+                      ],
                     ),
                   ),
-                  verticalSpaceMedium,
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () async => {
-                        didResetCorrectly = await Provider.of<CurrUserProvider>(
-                                context,
-                                listen: false)
-                            .passwordReset(emailController.text.trim()),
-                        setState(() => {
-                              isEmailSent = didResetCorrectly,
-                            }),
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: forgotPasswordPrimaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          )),
-                      child: const Text(
-                        "Send Instructions",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                  verticalSpaceRegular,
                 ],
               ),
       ),
