@@ -31,3 +31,5 @@ shared_preferences_linux=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-ca
 shared_preferences_macos=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_macos-2.0.4/
 shared_preferences_web=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_web-2.0.4/
 shared_preferences_windows=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_windows-2.1.1/
+sign_in_with_apple=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/sign_in_with_apple-4.3.0/
+sign_in_with_apple_web=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/sign_in_with_apple_web-1.0.1/

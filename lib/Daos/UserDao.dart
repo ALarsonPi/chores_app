@@ -17,7 +17,9 @@ class UserDao {
   }
 
   static void updateUser(User currUser) async {
-    await currUserCollection.doc(currUser.id).update(currUser.toJson());
+    await currUserCollection.doc(currUser.id).update(
+          currUser.toJson(),
+        );
   }
 
   static void deleteUser(User currUser) async {

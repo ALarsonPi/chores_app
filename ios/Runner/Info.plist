@@ -10,16 +10,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.445665968305-5l3f2t36paadjrqr6lb70m36srctfgcj</string>
+				<string>fb698997371801157</string>
 			</array>
-		</dict>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>fb698997371801157</string>
-		</array>
 		</dict>
 	</array>
 	<key>FacebookAppID</key>

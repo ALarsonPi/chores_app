@@ -243,14 +243,14 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                       Provider.of<CurrUserProvider>(context, listen: false)
                           .signInWithApple(),
                     },
-                    // darkMode: true,
+                    themeMode: ThemeMode.light,
                     text: '   CONTINUE WITH APPLE    ',
                     style: const AuthButtonStyle(
-                      buttonColor: Color(0xffffffff),
+                      buttonColor: Color(0xff000000),
                       iconSize: 24,
                       height: 55,
                       width: double.infinity,
-                      textStyle: TextStyle(color: Colors.black),
+                      textStyle: TextStyle(color: Colors.white),
                       buttonType: AuthButtonType.secondary,
                     ),
                   ),

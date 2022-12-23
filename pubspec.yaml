@@ -51,6 +51,7 @@ dependencies:
   auth_buttons: ^3.0.0
   flutter_facebook_auth: ^5.0.6
   google_sign_in: ^5.4.2
+  sign_in_with_apple: ^4.3.0
 
 dev_dependencies:
   integration_test:
