@@ -580,7 +580,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     isCircle1 = widget.isCircle1;
-    numChunks = widget.items.length;
     textStyle = widget.textStyle;
     textHeightCoefficient = widget.textHeightCoefficient;
     overflowLineLimit = widget.overflowLineLimit;
@@ -598,6 +597,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   /// and [PieChartPainter] to actaully draw out the background color of the charts
   @override
   Widget build(BuildContext context) {
+    numChunks = widget.items.length;
     toText = (item, _) => TextPainter(
           textAlign: TextAlign.center,
           text: TextSpan(

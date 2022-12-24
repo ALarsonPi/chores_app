@@ -22,6 +22,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   int currNumRings = 3;
   int currNumSections = 4;
 
+  List<String> nameStrings = List.filled(4, "", growable: true);
+  List<String> ring2Strings = List.filled(4, "", growable: true);
+  List<String> ring3Strings = List.filled(4, "", growable: true);
+
   final List<String> ringNumOptions = <String>[
     'Two Ring',
     'Three Ring',
@@ -35,6 +39,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     'Seven Sections',
     'Eight Sections',
   ];
+  final int MAX_SECTIONS = 8;
 
   updateCurrRingNum(String value) {
     setState(() {
@@ -48,14 +53,28 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
   updateNumSections(String value) {
     setState(() {
+      // Copy to compare to
+      int oldNumSections = currNumSections;
+
       // +1 for indexes starting at 0, and +1 for sections starting at 2
       currNumSections = numSectionsOptions.indexOf(value) + 1 + 1;
+      int newNumSections = currNumSections;
+
+      if (newNumSections < oldNumSections) {
+        nameStrings = nameStrings.sublist(0, currNumSections);
+        ring2Strings = ring2Strings.sublist(0, currNumSections);
+        ring3Strings = ring3Strings.sublist(0, currNumSections);
+      } else if (currNumSections > oldNumSections) {
+        for (int i = 0; i < newNumSections - oldNumSections; i++) {
+          nameStrings.add("");
+          ring2Strings.add("");
+          ring3Strings.add("");
+        }
+      }
     });
   }
 
   updateParentText(int index, String newString, String type) {
-    // debugPrint("Receiving " + newString);
-    // debugPrint((type == "CHORE 2").toString());
     setState(() {
       if (type == "NAME") {
         nameStrings[index] = newString;
@@ -63,16 +82,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         ring2Strings[index] = newString;
       } else if (type == "CHORE 2") {
         ring3Strings[index] = newString;
-        debugPrint(ring3Strings[index]);
       } else {
         debugPrint("Invalid type");
       }
     });
   }
-
-  List<String> nameStrings = List.filled(4, "");
-  List<String> ring2Strings = List.filled(4, "");
-  List<String> ring3Strings = List.filled(4, "");
 
   @override
   Widget build(BuildContext context) {
