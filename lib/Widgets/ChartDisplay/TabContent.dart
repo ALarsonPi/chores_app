@@ -4,10 +4,10 @@ import 'package:chore_app/Screens/createChartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Global.dart';
-import '../Models/frozen/Chart.dart';
-import '../Screens/ScreenArguments/newChartArguments.dart';
-import 'ConcentricChart/ConcentricChart.dart';
+import '../../Global.dart';
+import '../../Models/frozen/Chart.dart';
+import '../../Screens/ScreenArguments/newChartArguments.dart';
+import '../ConcentricChart/ConcentricChart.dart';
 
 class TabContent extends StatelessWidget {
   TabContent(this.circleDataIndex, {super.key});

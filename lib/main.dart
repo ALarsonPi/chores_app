@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Global.dart';
+import 'Models/constant/Settings.dart';
 
 /// @nodoc
 void main() async {

@@ -2,6 +2,8 @@ import 'package:chore_app/Global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Models/constant/Settings.dart';
+
 class TabNumberProvider extends ChangeNotifier {
   // Set in Main
   int numTabs = Global.settings.numChartsToShow;

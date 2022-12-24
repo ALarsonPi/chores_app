@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../Global.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
-import '../Widgets/TabContent.dart';
+import '../Widgets/ChartDisplay/TabContent.dart';
 
 /// @nodoc
 class HomeScreen extends StatefulWidget {

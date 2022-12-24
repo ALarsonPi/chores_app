@@ -29,27 +29,27 @@ class CurrUserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  register(String fullName, String email, String password) async {
-    bool emailIsInUse = await isEmailAlreadyInUse(email);
-
+  isEmailBeingUsedByOtherProvider(String proposedEmail) async {
+    bool emailIsInUse = await isEmailAlreadyInUse(proposedEmail);
     if (emailIsInUse) {
-      List availableTypes = await getListOfAvailableSignInTypes(email);
+      List availableTypes = await getListOfAvailableSignInTypes(proposedEmail);
       makeSnackBarWithText(
           "Account already made with that email. Try signing in with ${availableTypes.first}");
-    } else {
-      try {
-        await firebase.FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.toLowerCase(),
-          password: password,
-        );
-        await _addUser(
-            firebase.FirebaseAuth.instance.currentUser?.uid as String,
-            fullName,
-            email.toLowerCase(),
-            password);
-      } on auth.FirebaseAuthException catch (e) {
-        makeSnackBarWithText(e.message.toString());
-      }
+    }
+    return emailIsInUse;
+  }
+
+  register(String fullName, String email, String password) async {
+    if (await isEmailBeingUsedByOtherProvider(email)) return;
+    try {
+      await firebase.FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.toLowerCase(),
+        password: password,
+      );
+      await _addUser(firebase.FirebaseAuth.instance.currentUser?.uid as String,
+          fullName, email.toLowerCase(), password);
+    } on auth.FirebaseAuthException catch (e) {
+      makeSnackBarWithText(e.message.toString());
     }
   }
 
@@ -96,6 +96,7 @@ class CurrUserProvider extends ChangeNotifier {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
       // Once signed in, return the UserCredential
       auth.UserCredential currUser =
           await auth.FirebaseAuth.instance.signInWithCredential(credential);

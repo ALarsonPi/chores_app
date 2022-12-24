@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ColorControl/AppColors.dart';
 import '../Global.dart';
+import '../Models/constant/Settings.dart';
 
 class ThemeProvider with ChangeNotifier {
   bool isDarkMode = (Global.settings.darkModeIndex != 0);

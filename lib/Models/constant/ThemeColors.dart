@@ -20,15 +20,3 @@ class ThemeColors {
 
   List<Color> lineColors;
 }
-
-class RingCharLimit {
-  RingCharLimit({
-    required this.numItems,
-    required this.secondRingLimit,
-    required this.thirdRingLimit,
-  });
-
-  int numItems;
-  int secondRingLimit;
-  int thirdRingLimit;
-}
