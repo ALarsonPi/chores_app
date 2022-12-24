@@ -53,40 +53,30 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     });
   }
 
-  int currentStep = 0;
-
-  List<Step> getSteps() {
-    return <Step>[
-      Step(
-        state: currentStep > 0 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 0,
-        title: const Text(""),
-        content: Column(
-          children: [],
-        ),
-      ),
-      Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: const Text(""),
-        content: Column(
-          children: [],
-        ),
-      ),
-      Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: const Text(""),
-        content: Column(
-          children: [],
-        ),
-      ),
-    ];
+  updateParentText(int index, String newString, String type) {
+    // debugPrint("Receiving " + newString);
+    // debugPrint((type == "CHORE 2").toString());
+    setState(() {
+      if (type == "NAME") {
+        nameStrings[index] = newString;
+      } else if (type == "CHORE 1") {
+        ring2Strings[index] = newString;
+      } else if (type == "CHORE 2") {
+        ring3Strings[index] = newString;
+        debugPrint(ring3Strings[index]);
+      } else {
+        debugPrint("Invalid type");
+      }
+    });
   }
+
+  List<String> nameStrings = List.filled(4, "");
+  List<String> ring2Strings = List.filled(4, "");
+  List<String> ring3Strings = List.filled(4, "");
 
   @override
   Widget build(BuildContext context) {
-    double sizeOfChart = MediaQuery.of(context).size.width * 0.75;
+    double sizeOfChart = MediaQuery.of(context).size.height * 0.4;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,6 +88,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             Padding(
               padding: const EdgeInsets.only(
@@ -108,9 +99,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                 height: sizeOfChart,
                 child: ConcentricChart(
                   numberOfRings: currNumRings,
-                  circleOneText: List.filled(currNumSections, ""),
-                  circleTwoText: List.filled(currNumSections, ""),
-                  circleThreeText: List.filled(currNumSections, ""),
+                  circleOneText: nameStrings,
+                  circleTwoText: ring2Strings,
+                  circleThreeText: ring3Strings,
 
                   // Theme
                   linesColors: Global.currentTheme.lineColors,
@@ -169,7 +160,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  ChartItemInput(),
+                  ChartItemInput(
+                    numRings: currNumRings,
+                    chunkIndex: 0,
+                    updateParentChunkText: updateParentText,
+                  ),
                   // TextFormField(),
                   // TextFormField(),
                   // TextFormField(),
@@ -181,35 +176,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                 ],
               ),
             )
-
-            // SizedBox(
-            //   width: MediaQuery.of(context).size.width * 0.8,
-            //   height: MediaQuery.of(context).size.height * 0.3,
-            //   child:
-            //       // Text("HI"),
-            //       Stepper(
-            //     type: StepperType.horizontal,
-            //     currentStep: currentStep,
-            //     onStepCancel: () => currentStep == 0
-            //         ? null
-            //         : setState(() {
-            //             currentStep -= 1;
-            //           }),
-            //     onStepContinue: () async {
-            //       bool isLastStep = (currentStep == getSteps().length - 1);
-            //       if (isLastStep) {
-            //       } else {
-            //         setState(() {
-            //           currentStep += 1;
-            //         });
-            //       }
-            //     },
-            //     onStepTapped: (step) => setState(() {
-            //       currentStep = step;
-            //     }),
-            //     steps: getSteps(),
-            //   ),
-            // ),
           ],
         ),
       ),

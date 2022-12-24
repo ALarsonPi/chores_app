@@ -172,39 +172,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   /// be one chunk / segment)
   late int numChunks;
 
-  /// All variables are initialized, animation is prepared and performed
-  /// Call to [setUpPhraseChunks] is made if it applies
-  @override
-  void initState() {
-    _controller = AnimationController(vsync: this);
-    _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
-    _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
-    isCircle1 = widget.isCircle1;
-    numChunks = widget.items.length;
-    textStyle = widget.textStyle;
-    textHeightCoefficient = widget.textHeightCoefficient;
-    overflowLineLimit = widget.overflowLineLimit;
-    isOuterRing = widget.isOuterRing;
-    toText = (item, _) => TextPainter(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: textStyle,
-            text: item.name,
-          ),
-          textDirection: TextDirection.ltr,
-        );
-    pie = widget.pie;
-    ringBorders = pie.ringBorders;
-
-    spaceBetweenLines = widget.spaceBetweenLines;
-    for (int i = 0; i < numChunks; i++) {
-      flipStatusArray.add(false);
-    }
-    if (!isCircle1) setUpPhraseChunks();
-
-    super.initState();
-  }
-
   double radiansToDegrees(double radians) {
     return radians * 180 / pi;
   }
@@ -605,6 +572,22 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     return listOfItems;
   }
 
+  /// All variables are initialized, animation is prepared and performed
+  /// Call to [setUpPhraseChunks] is made if it applies
+  @override
+  void initState() {
+    _controller = AnimationController(vsync: this);
+    _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
+    _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
+    isCircle1 = widget.isCircle1;
+    numChunks = widget.items.length;
+    textStyle = widget.textStyle;
+    textHeightCoefficient = widget.textHeightCoefficient;
+    overflowLineLimit = widget.overflowLineLimit;
+    isOuterRing = widget.isOuterRing;
+    super.initState();
+  }
+
   /// Using a gesture detector, the chart detects when someone starts spinning
   /// the chart. The chart is animated with a [RotationEndSimulation] which
   /// just applies friction until the wheel stops. When it finally stops, it
@@ -615,6 +598,28 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   /// and [PieChartPainter] to actaully draw out the background color of the charts
   @override
   Widget build(BuildContext context) {
+    toText = (item, _) => TextPainter(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: textStyle,
+            text: item.name,
+          ),
+          textDirection: TextDirection.ltr,
+        );
+    pie = widget.pie;
+    ringBorders = pie.ringBorders;
+
+    // Clear all lists each build
+    chunkPhraseList.clear();
+    reversePhraseChunkList.clear();
+    forwardAlphaList.clear();
+    reverseAlphaList.clear();
+
+    spaceBetweenLines = widget.spaceBetweenLines;
+    for (int i = 0; i < numChunks; i++) {
+      flipStatusArray.add(false);
+    }
+    if (!isCircle1) setUpPhraseChunks();
     return GestureDetector(
       onPanDown: (details) {
         lastDirection = getDirection(details.globalPosition);
@@ -664,19 +669,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
               ),
               CustomPaint(
                 painter: (!isCircle1)
-                    ? // HM which to use
-                    // CircularTextPainter(
-                    //     textDirection: TextDirection.ltr,
-                    //     radius: pie.textProportion,
-                    //     ringNum: pie.ringNum,
-                    //     spaceBetweenLines: spaceBetweenLines,
-                    //     isOuterRing: isOuterRing,
-                    //     middleVerticalRadius: getMiddleVerticalRadius(),
-                    //     textItems: [
-                    //       ...getTextItemList(),
-                    //     ],
-                    //   )
-                    ArcTextPainter(
+                    ? ArcTextPainter(
                         userChosenRadius: getMiddleVerticalRadius(),
                         textStyle: textStyle,
                         initialAngle: _animation.value + 1.57079632679,

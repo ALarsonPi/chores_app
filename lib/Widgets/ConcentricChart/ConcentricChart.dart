@@ -251,6 +251,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
       );
     }
 
+    debugPrint("Two: " + widget.circleTwoText.toString());
+
     for (String circleThreeItem in widget.circleThreeText) {
       circleThreeItems.add(
         PieChartItem(
@@ -259,6 +261,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
         ),
       );
     }
+
+    debugPrint("Three: " + widget.circleThreeText.toString());
 
     circleOneBounds = populateBounds(circleOneItems.length);
     circleTwoBounds = populateBounds(circleTwoItems.length);
@@ -340,6 +344,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       ],
     );
 
+    rotatablePies.clear();
     bool isOuterRing = true;
     if (widget.numberOfRings == 3) {
       circleThreePie = PieInfo(
