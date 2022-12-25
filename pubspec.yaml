@@ -54,6 +54,7 @@ dependencies:
   # sign_in_with_apple: ^4.3.0
   email_validator: ^2.1.17
   sign_in_with_apple: ^4.3.0
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   integration_test:

@@ -5,9 +5,11 @@ class ChartItemInput extends StatefulWidget {
       {required this.chunkIndex,
       required this.numRings,
       required this.updateParentChunkText,
+      required this.currStrings,
       super.key});
   int chunkIndex;
   int numRings;
+  List<String> currStrings;
   Function updateParentChunkText;
 
   @override
@@ -34,6 +36,8 @@ class _ChartItemInputState extends State<ChartItemInput> {
   @override
   void initState() {
     super.initState();
+
+    nameController.text = widget.currStrings[0];
     nameController.addListener(() {
       widget.updateParentChunkText(
         widget.chunkIndex,
@@ -41,6 +45,8 @@ class _ChartItemInputState extends State<ChartItemInput> {
         nameType,
       );
     });
+
+    chore1Controller.text = widget.currStrings[1];
     chore1Controller.addListener(() {
       widget.updateParentChunkText(
         widget.chunkIndex,
@@ -48,6 +54,8 @@ class _ChartItemInputState extends State<ChartItemInput> {
         chore1Type,
       );
     });
+
+    chore2Controller.text = widget.currStrings[2];
     chore2Controller.addListener(() {
       widget.updateParentChunkText(
         widget.chunkIndex,
@@ -60,15 +68,26 @@ class _ChartItemInputState extends State<ChartItemInput> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
+        Text(
+          "Position ${widget.chunkIndex + 1}",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.center,
+        ),
         Row(
           children: [
             const Flexible(
               flex: 2,
               child: Padding(
                 padding: EdgeInsets.only(left: 16.0),
-                child: Text("  NAME:     "),
+                child: Text(
+                  "  NAME:     ",
+                  textAlign: TextAlign.left,
+                ),
               ),
             ),
             Flexible(
@@ -85,7 +104,10 @@ class _ChartItemInputState extends State<ChartItemInput> {
               flex: 2,
               child: Padding(
                 padding: EdgeInsets.only(left: 16.0),
-                child: Text("CHORE 1:  "),
+                child: Text(
+                  "CHORE 1:  ",
+                  textAlign: TextAlign.left,
+                ),
               ),
             ),
             Flexible(
@@ -103,7 +125,10 @@ class _ChartItemInputState extends State<ChartItemInput> {
                 flex: 2,
                 child: Padding(
                   padding: EdgeInsets.only(left: 16.0),
-                  child: Text("CHORE 2:  "),
+                  child: Text(
+                    "CHORE 2:  ",
+                    textAlign: TextAlign.left,
+                  ),
                 ),
               ),
               Flexible(

@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
@@ -88,6 +89,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     });
   }
 
+  CarouselController carouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     double sizeOfChart = MediaQuery.of(context).size.height * 0.4;
@@ -99,6 +102,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         child: ListView(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -174,22 +178,76 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  ChartItemInput(
-                    numRings: currNumRings,
-                    chunkIndex: 0,
-                    updateParentChunkText: updateParentText,
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CarouselSlider.builder(
+                        carouselController: carouselController,
+                        itemCount: currNumSections,
+                        itemBuilder: (BuildContext context, int itemIndex,
+                                int pageViewIndex) =>
+                            Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                          ),
+                          child: ChartItemInput(
+                            currStrings: [
+                              nameStrings[itemIndex],
+                              ring2Strings[itemIndex],
+                              ring3Strings[itemIndex],
+                            ],
+                            numRings: currNumRings,
+                            chunkIndex: itemIndex,
+                            updateParentChunkText: updateParentText,
+                          ),
+                        ),
+                        options: CarouselOptions(
+                          scrollPhysics: const BouncingScrollPhysics(),
+                          aspectRatio: 16 / 9,
+                          viewportFraction: 0.9,
+                          initialPage: 0,
+                          enableInfiniteScroll: false,
+                          reverse: false,
+                          autoPlay: false,
+                          enlargeCenterPage: false,
+                          onPageChanged: (index, reason) {},
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          onPressed: () {
+                            carouselController.previousPage();
+                          },
+                          icon: const Icon(Icons.arrow_back),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          onPressed: () {
+                            carouselController.nextPage();
+                          },
+                          icon: const Icon(Icons.arrow_forward),
+                        ),
+                      ),
+                    ],
                   ),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
-                  // TextFormField(),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.3,
+                      right: MediaQuery.of(context).size.width * 0.3,
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => {},
+                      child: Text("Continue"),
+                    ),
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
