@@ -6,6 +6,7 @@ import 'ColorControl/AppColors.dart';
 import 'Models/constant/CircleSettings.dart';
 import 'Models/constant/RingCharLimit.dart';
 import 'Models/constant/ThemeColors.dart';
+import 'Models/frozen/Chart.dart';
 import 'Providers/ThemeProvider.dart';
 
 /// @nodoc

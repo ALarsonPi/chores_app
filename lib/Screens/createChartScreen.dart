@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
@@ -22,6 +25,15 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   // Defaults
   int currNumRings = 3;
   int currNumSections = 4;
+
+  late RingCharLimit currCharLimit;
+
+  @override
+  void initState() {
+    super.initState();
+    // -1 for indexes starting at 0, -1 for there not being an option for 1 section
+    currCharLimit = RingCharLimits.limits[currNumSections - 1 - 1];
+  }
 
   List<String> nameStrings = List.filled(4, "", growable: true);
   List<String> ring2Strings = List.filled(4, "", growable: true);
@@ -59,20 +71,45 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
       // +1 for indexes starting at 0, and +1 for sections starting at 2
       currNumSections = numSectionsOptions.indexOf(value) + 1 + 1;
-      int newNumSections = currNumSections;
+      currCharLimit = RingCharLimits.limits.elementAt(currNumSections - 2);
+      updateStringListSize(currNumSections, oldNumSections);
+      updateStringsLength();
 
-      if (newNumSections < oldNumSections) {
-        nameStrings = nameStrings.sublist(0, currNumSections);
-        ring2Strings = ring2Strings.sublist(0, currNumSections);
-        ring3Strings = ring3Strings.sublist(0, currNumSections);
-      } else if (currNumSections > oldNumSections) {
-        for (int i = 0; i < newNumSections - oldNumSections; i++) {
-          nameStrings.add("");
-          ring2Strings.add("");
-          ring3Strings.add("");
+      for (int i = 0; i < MAX_SECTIONS - 1; i++) {
+        if (chartItemKeys[i].currentState != null) {
+          chartItemKeys[i].currentState!.updateChild();
         }
       }
     });
+  }
+
+  updateStringListSize(int newNumSections, int oldNumSections) {
+    if (newNumSections < oldNumSections) {
+      nameStrings = nameStrings.sublist(0, currNumSections);
+      ring2Strings = ring2Strings.sublist(0, currNumSections);
+      ring3Strings = ring3Strings.sublist(0, currNumSections);
+    } else if (currNumSections > oldNumSections) {
+      for (int i = 0; i < newNumSections - oldNumSections; i++) {
+        nameStrings.add("");
+        ring2Strings.add("");
+        ring3Strings.add("");
+      }
+    }
+  }
+
+  updateStringsLength() {
+    for (int i = 0; i < ring2Strings.length; i++) {
+      ring2Strings[i] = ring2Strings.elementAt(i).substring(
+          0,
+          min(ring2Strings.elementAt(i).characters.length,
+              currCharLimit.secondRingLimit));
+    }
+    for (int i = 0; i < ring3Strings.length; i++) {
+      ring3Strings[i] = ring3Strings.elementAt(i).substring(
+          0,
+          min(ring3Strings.elementAt(i).characters.length,
+              currCharLimit.thirdRingLimit));
+    }
   }
 
   updateParentText(int index, String newString, String type) {
@@ -90,6 +127,16 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   }
 
   CarouselController carouselController = CarouselController();
+  List<GlobalKey<ChartItemInputState>> chartItemKeys = [
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +144,16 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Customize New Chart"),
+        title: Text(
+          "Customize New Chart",
+          style: TextStyle(
+            color: Theme.of(context).textTheme.headlineSmall?.color as Color,
+          ),
+        ),
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
@@ -192,13 +247,15 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             right: 8.0,
                           ),
                           child: ChartItemInput(
+                            key: chartItemKeys[itemIndex],
                             currStrings: [
-                              nameStrings[itemIndex],
-                              ring2Strings[itemIndex],
-                              ring3Strings[itemIndex],
+                              nameStrings.elementAt(itemIndex),
+                              ring2Strings.elementAt(itemIndex),
+                              ring3Strings.elementAt(itemIndex),
                             ],
                             numRings: currNumRings,
                             chunkIndex: itemIndex,
+                            currRingCharLimit: currCharLimit,
                             updateParentChunkText: updateParentText,
                           ),
                         ),
@@ -242,7 +299,12 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     ),
                     child: ElevatedButton(
                       onPressed: () => {},
-                      child: Text("Continue"),
+                      child: Text("Continue",
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.color as Color)),
                     ),
                   ),
                 ],

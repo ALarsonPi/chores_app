@@ -178,7 +178,7 @@ class GlobalThemes {
       return TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: (Global.isPhone) ? 12 : 18,
-        color: Colors.black,
+        color: Colors.white,
       );
     } else {
       return TextStyle(

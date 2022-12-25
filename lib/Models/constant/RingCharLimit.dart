@@ -13,6 +13,15 @@ class RingCharLimits {
       RingCharLimit(numItems: 7, secondRingLimit: 12, thirdRingLimit: 20);
   static RingCharLimit eightItemLimit =
       RingCharLimit(numItems: 8, secondRingLimit: 12, thirdRingLimit: 20);
+  static List<RingCharLimit> limits = [
+    twoItemLimit,
+    threeItemLimit,
+    fourItemLimit,
+    fiveItemLimit,
+    sixItemLimit,
+    sevenItemLimit,
+    eightItemLimit,
+  ];
 }
 
 class RingCharLimit {

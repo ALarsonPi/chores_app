@@ -16,15 +16,15 @@ class TabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    Chart currCircleData = Provider.of<ChartProvider>(context, listen: true)
+    Chart chartData = Provider.of<ChartProvider>(context, listen: true)
         .circleDataList[circleDataIndex];
-    if (!currCircleData.isEmpty()) {
+    if (!(chartData == Chart.emptyChart)) {
       return ConcentricChart(
         // Specific To each Circle
-        numberOfRings: currCircleData.numberOfRings,
-        circleOneText: currCircleData.circleOneText,
-        circleTwoText: currCircleData.circleTwoText,
-        circleThreeText: currCircleData.circleThreeText,
+        numberOfRings: chartData.numberOfRings,
+        circleOneText: chartData.circleOneText,
+        circleTwoText: chartData.circleTwoText,
+        circleThreeText: chartData.circleThreeText ?? [],
 
         // Theme
         linesColors: Global.currentTheme.lineColors,

@@ -37,6 +37,7 @@ class ChartProvider extends ChangeNotifier {
   ];
 
   late Chart exampleCircle = Chart(
+    id: "example1",
     chartTitle: "Example Chart",
     numberOfRings: 3,
     circleOneText: circle1Text,
@@ -45,6 +46,7 @@ class ChartProvider extends ChangeNotifier {
   );
 
   late Chart exampleCircle2 = Chart(
+    id: "example2",
     chartTitle: "Second Chart",
     numberOfRings: 2,
     circleOneText: circle1Text,
@@ -61,11 +63,19 @@ class ChartProvider extends ChangeNotifier {
   late var circleDataList = [
     exampleCircle,
     exampleCircle2,
-    Chart.empty(),
+    Chart.emptyChart,
   ];
 
   setCircleDataElement(Chart newCircleData, int index) {
-    Chart.copy(circleDataList[index], newCircleData);
+    circleDataList[index] = circleDataList[index].copyWith(
+      id: newCircleData.id,
+      chartTitle: newCircleData.chartTitle,
+      numberOfRings: newCircleData.numberOfRings,
+      circleOneText: newCircleData.circleOneText,
+      circleTwoText: newCircleData.circleTwoText,
+      circleThreeText: newCircleData.circleThreeText,
+      chartColorIndex: newCircleData.chartColorIndex,
+    );
     notifyListeners();
   }
 }

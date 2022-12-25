@@ -144,7 +144,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   late bool isCircle1;
   late TextStyle textStyle;
   late double textHeightCoefficient;
-  late PieChartItemToText toText;
   late double spaceBetweenLines;
   late PieInfo pie;
   late bool shouldHaveFluidTransition;
@@ -579,11 +578,6 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
-    isCircle1 = widget.isCircle1;
-    textStyle = widget.textStyle;
-    textHeightCoefficient = widget.textHeightCoefficient;
-    overflowLineLimit = widget.overflowLineLimit;
-    isOuterRing = widget.isOuterRing;
     super.initState();
   }
 
@@ -598,14 +592,11 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
   @override
   Widget build(BuildContext context) {
     numChunks = widget.items.length;
-    toText = (item, _) => TextPainter(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: textStyle,
-            text: item.name,
-          ),
-          textDirection: TextDirection.ltr,
-        );
+    isCircle1 = widget.isCircle1;
+    isOuterRing = widget.isOuterRing;
+    overflowLineLimit = widget.overflowLineLimit;
+    textStyle = widget.textStyle;
+    textHeightCoefficient = widget.textHeightCoefficient;
     pie = widget.pie;
     ringBorders = pie.ringBorders;
 
@@ -614,6 +605,7 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
     reversePhraseChunkList.clear();
     forwardAlphaList.clear();
     reverseAlphaList.clear();
+    flipStatusArray.clear();
 
     spaceBetweenLines = widget.spaceBetweenLines;
     for (int i = 0; i < numChunks; i++) {
@@ -685,14 +677,14 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
                     : PieTextPainter(
                         items: this.widget.items,
                         rotation: _animation.value,
-                        toText: toText = (item, _) => TextPainter(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: textStyle,
-                                text: item.name,
-                              ),
-                              textDirection: TextDirection.ltr,
-                            ),
+                        toText: (item, _) => TextPainter(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: textStyle,
+                            text: item.name,
+                          ),
+                          textDirection: TextDirection.ltr,
+                        ),
                         textRadiusCoefficient: textHeightCoefficient,
                       ),
               )
