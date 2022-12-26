@@ -11,6 +11,9 @@ _$_User _$$_UserFromJson(Map<String, dynamic> json) => _$_User(
       name: json['name'] as String?,
       email: json['email'] as String?,
       password: json['password'] as String?,
+      correlatedUserIDs: (json['correlatedUserIDs'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$_UserToJson(_$_User instance) => <String, dynamic>{
@@ -18,4 +21,5 @@ Map<String, dynamic> _$$_UserToJson(_$_User instance) => <String, dynamic>{
       'name': instance.name,
       'email': instance.email,
       'password': instance.password,
+      'correlatedUserIDs': instance.correlatedUserIDs,
     };

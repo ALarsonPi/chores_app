@@ -1,4 +1,5 @@
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
+import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/CreateChartUI_Helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -112,29 +113,7 @@ class ChartItemInputState extends State<ChartItemInput> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    subtleUnderlineTheme = InputDecorationTheme(
-      enabledBorder: const UnderlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        borderSide: BorderSide(
-          width: 1,
-          color: Color.fromARGB(255, 231, 231, 231),
-        ),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
-        borderSide: BorderSide(
-          width: 1,
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
-      errorBorder: const UnderlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        borderSide: BorderSide(
-          width: 1,
-          color: Colors.red,
-        ),
-      ),
-    );
+    subtleUnderlineTheme = getSubtleUnderlineTheme(context);
   }
 
   @override

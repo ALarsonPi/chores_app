@@ -74,7 +74,6 @@ class ChartProvider extends ChangeNotifier {
       circleOneText: newCircleData.circleOneText,
       circleTwoText: newCircleData.circleTwoText,
       circleThreeText: newCircleData.circleThreeText,
-      chartColorIndex: newCircleData.chartColorIndex,
     );
     notifyListeners();
   }

@@ -14,6 +14,7 @@ class User with _$User {
     String? name,
     String? email,
     String? password,
+    List<String>? correlatedUserIDs,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

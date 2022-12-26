@@ -17,7 +17,6 @@ class Chart with _$Chart {
     required List<String> circleOneText,
     required List<String> circleTwoText,
     List<String>? circleThreeText,
-    int? chartColorIndex,
   }) = _Chart;
 
   static Chart emptyChart = Chart(

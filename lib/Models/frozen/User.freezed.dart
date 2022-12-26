@@ -24,6 +24,7 @@ mixin _$User {
   String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
+  List<String>? get correlatedUserIDs => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,12 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call({String id, String? name, String? email, String? password});
+  $Res call(
+      {String id,
+      String? name,
+      String? email,
+      String? password,
+      List<String>? correlatedUserIDs});
 }
 
 /// @nodoc
@@ -55,6 +61,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
+    Object? correlatedUserIDs = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -73,6 +80,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String?,
+      correlatedUserIDs: freezed == correlatedUserIDs
+          ? _value.correlatedUserIDs
+          : correlatedUserIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ) as $Val);
   }
 }
@@ -83,7 +94,12 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
       __$$_UserCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? name, String? email, String? password});
+  $Res call(
+      {String id,
+      String? name,
+      String? email,
+      String? password,
+      List<String>? correlatedUserIDs});
 }
 
 /// @nodoc
@@ -99,6 +115,7 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
+    Object? correlatedUserIDs = freezed,
   }) {
     return _then(_$_User(
       id: null == id
@@ -117,6 +134,10 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String?,
+      correlatedUserIDs: freezed == correlatedUserIDs
+          ? _value._correlatedUserIDs
+          : correlatedUserIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -125,7 +146,14 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
 
 @JsonSerializable(explicitToJson: true)
 class _$_User extends _User {
-  _$_User({required this.id, this.name, this.email, this.password}) : super._();
+  _$_User(
+      {required this.id,
+      this.name,
+      this.email,
+      this.password,
+      final List<String>? correlatedUserIDs})
+      : _correlatedUserIDs = correlatedUserIDs,
+        super._();
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
@@ -137,10 +165,20 @@ class _$_User extends _User {
   final String? email;
   @override
   final String? password;
+  final List<String>? _correlatedUserIDs;
+  @override
+  List<String>? get correlatedUserIDs {
+    final value = _correlatedUserIDs;
+    if (value == null) return null;
+    if (_correlatedUserIDs is EqualUnmodifiableListView)
+      return _correlatedUserIDs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, correlatedUserIDs: $correlatedUserIDs)';
   }
 
   @override
@@ -152,12 +190,15 @@ class _$_User extends _User {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
-                other.password == password));
+                other.password == password) &&
+            const DeepCollectionEquality()
+                .equals(other._correlatedUserIDs, _correlatedUserIDs));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, password);
+  int get hashCode => Object.hash(runtimeType, id, name, email, password,
+      const DeepCollectionEquality().hash(_correlatedUserIDs));
 
   @JsonKey(ignore: true)
   @override
@@ -178,7 +219,8 @@ abstract class _User extends User {
       {required final String id,
       final String? name,
       final String? email,
-      final String? password}) = _$_User;
+      final String? password,
+      final List<String>? correlatedUserIDs}) = _$_User;
   _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
@@ -191,6 +233,8 @@ abstract class _User extends User {
   String? get email;
   @override
   String? get password;
+  @override
+  List<String>? get correlatedUserIDs;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;

@@ -26,7 +26,6 @@ mixin _$Chart {
   List<String> get circleOneText => throw _privateConstructorUsedError;
   List<String> get circleTwoText => throw _privateConstructorUsedError;
   List<String>? get circleThreeText => throw _privateConstructorUsedError;
-  int? get chartColorIndex => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,8 +43,7 @@ abstract class $ChartCopyWith<$Res> {
       int numberOfRings,
       List<String> circleOneText,
       List<String> circleTwoText,
-      List<String>? circleThreeText,
-      int? chartColorIndex});
+      List<String>? circleThreeText});
 }
 
 /// @nodoc
@@ -67,7 +65,6 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
     Object? circleOneText = null,
     Object? circleTwoText = null,
     Object? circleThreeText = freezed,
-    Object? chartColorIndex = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -94,10 +91,6 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
           ? _value.circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      chartColorIndex: freezed == chartColorIndex
-          ? _value.chartColorIndex
-          : chartColorIndex // ignore: cast_nullable_to_non_nullable
-              as int?,
     ) as $Val);
   }
 }
@@ -114,8 +107,7 @@ abstract class _$$_ChartCopyWith<$Res> implements $ChartCopyWith<$Res> {
       int numberOfRings,
       List<String> circleOneText,
       List<String> circleTwoText,
-      List<String>? circleThreeText,
-      int? chartColorIndex});
+      List<String>? circleThreeText});
 }
 
 /// @nodoc
@@ -133,7 +125,6 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
     Object? circleOneText = null,
     Object? circleTwoText = null,
     Object? circleThreeText = freezed,
-    Object? chartColorIndex = freezed,
   }) {
     return _then(_$_Chart(
       id: null == id
@@ -160,10 +151,6 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
           ? _value._circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      chartColorIndex: freezed == chartColorIndex
-          ? _value.chartColorIndex
-          : chartColorIndex // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
@@ -177,8 +164,7 @@ class _$_Chart extends _Chart {
       required this.numberOfRings,
       required final List<String> circleOneText,
       required final List<String> circleTwoText,
-      final List<String>? circleThreeText,
-      this.chartColorIndex})
+      final List<String>? circleThreeText})
       : _circleOneText = circleOneText,
         _circleTwoText = circleTwoText,
         _circleThreeText = circleThreeText,
@@ -220,11 +206,8 @@ class _$_Chart extends _Chart {
   }
 
   @override
-  final int? chartColorIndex;
-
-  @override
   String toString() {
-    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, circleThreeText: $circleThreeText, chartColorIndex: $chartColorIndex)';
+    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, circleThreeText: $circleThreeText)';
   }
 
   @override
@@ -242,9 +225,7 @@ class _$_Chart extends _Chart {
             const DeepCollectionEquality()
                 .equals(other._circleTwoText, _circleTwoText) &&
             const DeepCollectionEquality()
-                .equals(other._circleThreeText, _circleThreeText) &&
-            (identical(other.chartColorIndex, chartColorIndex) ||
-                other.chartColorIndex == chartColorIndex));
+                .equals(other._circleThreeText, _circleThreeText));
   }
 
   @JsonKey(ignore: true)
@@ -256,8 +237,7 @@ class _$_Chart extends _Chart {
       numberOfRings,
       const DeepCollectionEquality().hash(_circleOneText),
       const DeepCollectionEquality().hash(_circleTwoText),
-      const DeepCollectionEquality().hash(_circleThreeText),
-      chartColorIndex);
+      const DeepCollectionEquality().hash(_circleThreeText));
 
   @JsonKey(ignore: true)
   @override
@@ -280,8 +260,7 @@ abstract class _Chart extends Chart {
       required final int numberOfRings,
       required final List<String> circleOneText,
       required final List<String> circleTwoText,
-      final List<String>? circleThreeText,
-      final int? chartColorIndex}) = _$_Chart;
+      final List<String>? circleThreeText}) = _$_Chart;
   _Chart._() : super._();
 
   factory _Chart.fromJson(Map<String, dynamic> json) = _$_Chart.fromJson;
@@ -298,8 +277,6 @@ abstract class _Chart extends Chart {
   List<String> get circleTwoText;
   @override
   List<String>? get circleThreeText;
-  @override
-  int? get chartColorIndex;
   @override
   @JsonKey(ignore: true)
   _$$_ChartCopyWith<_$_Chart> get copyWith =>

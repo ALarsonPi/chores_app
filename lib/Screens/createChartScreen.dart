@@ -3,11 +3,14 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
-import 'package:chore_app/Widgets/ChartDisplay/ChartItemInput.dart';
+import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../Global.dart';
+import '../Widgets/ChartDisplay/CorrelatedUserDisplay.dart';
+import '../Widgets/ChartDisplay/ChangeChart/CreateChartUI_Helpers.dart';
 
 class CreateChartScreen extends StatefulWidget {
   const CreateChartScreen({super.key});
@@ -26,6 +29,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   int currNumSections = 4;
 
   late RingCharLimit currCharLimit;
+  bool hasValidatedText = false;
 
   @override
   void initState() {
@@ -148,6 +152,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     return -1;
   }
 
+  // ignore: non_constant_identifier_names
+  int MAX_CHARS_CHART_TITLE = 20;
+  TextEditingController chartTitleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double sizeOfChart = MediaQuery.of(context).size.height * 0.4;
@@ -167,183 +175,249 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         ),
         automaticallyImplyLeading: true,
       ),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 8.0,
-                bottom: 8.0,
+      body: (hasValidatedText)
+          ? Padding(
+              padding: const EdgeInsets.all(
+                16.0,
               ),
-              child: SizedBox(
-                height: sizeOfChart,
-                child: ConcentricChart(
-                  numberOfRings: currNumRings,
-                  circleOneText: nameStrings,
-                  circleTwoText: ring2Strings,
-                  circleThreeText: ring3Strings,
-                  shouldIgnoreTouch: true,
-
-                  // Theme
-                  linesColors: Global.currentTheme.lineColors,
-                  circleOneColor: Global.currentTheme.primaryColor,
-                  circleOneFontColor: Global.currentTheme.primaryTextColor,
-                  circleTwoColor: Global.currentTheme.secondaryColor,
-                  circleTwoFontColor: Global.currentTheme.secondaryTextColor,
-                  circleThreeColor: Global.currentTheme.tertiaryColor,
-                  circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
-
-                  // Const Programmer Decisions
-                  width: sizeOfChart,
-                  spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
-                  overflowLineLimit: Global.circleSettings.overflowLineLimit,
-                  chunkOverflowLimitProportion:
-                      Global.circleSettings.chunkOverflowLimitProportion,
-                  circleOneRadiusProportions:
-                      Global.circleSettings.circleOneRadiusProportions,
-                  circleOneFontSize: Global.circleSettings.circleOneFontSize,
-                  circleOneTextRadiusProportion:
-                      Global.circleSettings.circleOneTextRadiusProportion,
-                  circleTwoRadiusProportions:
-                      Global.circleSettings.circleTwoRadiusProportions,
-                  circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
-                  circleThreeRadiusProportion:
-                      Global.circleSettings.circleThreeRadiusProportion,
-                  circleThreeFontSize:
-                      Global.circleSettings.circleThreeFontSize,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Dropdown(
-                  ringNumOptions,
-                  updateCurrRingNum,
-                  initialIndex: 1,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 32.0),
-                  child: Dropdown(
-                    numSectionsOptions,
-                    updateNumSections,
-                    initialIndex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      bottom: 8.0,
+                    ),
+                    child: Text("Chart Title:",
+                        style: Theme.of(context).textTheme.displayMedium),
                   ),
-                ),
-              ],
-            ),
-            const Divider(
-              thickness: 2,
-            ),
-            ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CarouselSlider.builder(
-                      carouselController: carouselController,
-                      itemCount: currNumSections,
-                      itemBuilder: (BuildContext context, int itemIndex,
-                              int pageViewIndex) =>
-                          Padding(
-                        padding: const EdgeInsets.only(
-                          left: 8.0,
-                          right: 8.0,
+                  Theme(
+                    data: ThemeData(
+                      inputDecorationTheme: getSubtleUnderlineTheme(context),
+                    ),
+                    child: TextFormField(
+                      controller: chartTitleController,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(
+                          MAX_CHARS_CHART_TITLE,
                         ),
-                        child: ChartItemInput(
-                          key: chartItemKeys[itemIndex],
-                          currStrings: [
-                            nameStrings.elementAt(itemIndex),
-                            ring2Strings.elementAt(itemIndex),
-                            ring3Strings.elementAt(itemIndex),
-                          ],
-                          numRings: currNumRings,
-                          chunkIndex: itemIndex,
-                          currRingCharLimit: currCharLimit,
-                          updateParentChunkText: updateParentText,
+                      ],
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.headlineLarge?.color
+                            as Color,
+                      ),
+                      decoration: InputDecoration(
+                        fillColor: (chartTitleController.text.length ==
+                                MAX_CHARS_CHART_TITLE + 1)
+                            ? const Color(0xFFF4C7C2)
+                            : null,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: const CorrelatedUserDisplay(),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => {},
+                    child: Text(
+                      "CREATE",
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.headlineSmall?.color
+                            as Color,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      bottom: 8.0,
+                    ),
+                    child: SizedBox(
+                      height: sizeOfChart,
+                      child: ConcentricChart(
+                        numberOfRings: currNumRings,
+                        circleOneText: nameStrings,
+                        circleTwoText: ring2Strings,
+                        circleThreeText: ring3Strings,
+                        shouldIgnoreTouch: true,
+
+                        // Theme
+                        linesColors: Global.currentTheme.lineColors,
+                        circleOneColor: Global.currentTheme.primaryColor,
+                        circleOneFontColor:
+                            Global.currentTheme.primaryTextColor,
+                        circleTwoColor: Global.currentTheme.secondaryColor,
+                        circleTwoFontColor:
+                            Global.currentTheme.secondaryTextColor,
+                        circleThreeColor: Global.currentTheme.tertiaryColor,
+                        circleThreeFontColor:
+                            Global.currentTheme.tertiaryTextColor,
+
+                        // Const Programmer Decisions
+                        width: sizeOfChart,
+                        spaceBetweenLines:
+                            Global.circleSettings.spaceBetweenLines,
+                        overflowLineLimit:
+                            Global.circleSettings.overflowLineLimit,
+                        chunkOverflowLimitProportion:
+                            Global.circleSettings.chunkOverflowLimitProportion,
+                        circleOneRadiusProportions:
+                            Global.circleSettings.circleOneRadiusProportions,
+                        circleOneFontSize:
+                            Global.circleSettings.circleOneFontSize,
+                        circleOneTextRadiusProportion:
+                            Global.circleSettings.circleOneTextRadiusProportion,
+                        circleTwoRadiusProportions:
+                            Global.circleSettings.circleTwoRadiusProportions,
+                        circleTwoFontSize:
+                            Global.circleSettings.circleTwoFontSize,
+                        circleThreeRadiusProportion:
+                            Global.circleSettings.circleThreeRadiusProportion,
+                        circleThreeFontSize:
+                            Global.circleSettings.circleThreeFontSize,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Dropdown(
+                        ringNumOptions,
+                        updateCurrRingNum,
+                        initialIndex: 1,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 32.0),
+                        child: Dropdown(
+                          numSectionsOptions,
+                          updateNumSections,
+                          initialIndex: 2,
                         ),
                       ),
-                      options: CarouselOptions(
-                        scrollPhysics: const BouncingScrollPhysics(),
-                        viewportFraction: 0.9,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: false,
-                        enlargeCenterPage: false,
-                        onPageChanged: (index, reason) {},
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          carouselController.previousPage();
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        onPressed: () {
-                          carouselController.nextPage();
-                        },
-                        icon: const Icon(Icons.arrow_forward),
-                      ),
-                    ),
-                  ],
-                ),
-                Visibility(
-                  visible: MediaQuery.of(context).viewInsets.bottom == 0,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.3,
-                      right: MediaQuery.of(context).size.width * 0.3,
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () => {
-                        // I'll have to validate stuff for myself, as
-                        // the form will try to validate ALL the sections
-                        // even the ones not active
-                        validationNum = validateAllActiveFields(),
-                        if (validationNum == -1)
-                          {
-                            debugPrint("VALID"),
-                          }
-                        else
-                          {
-                            Global.rootScaffoldMessengerKey.currentState
-                                ?.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Section ${validationNum + 1} is incomplete."
-                                  "\nPlease complete all fields to continue",
-                                  textAlign: TextAlign.center,
-                                ),
+                    ],
+                  ),
+                  const Divider(
+                    thickness: 2,
+                  ),
+                  ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CarouselSlider.builder(
+                            carouselController: carouselController,
+                            itemCount: currNumSections,
+                            itemBuilder: (BuildContext context, int itemIndex,
+                                    int pageViewIndex) =>
+                                Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                                right: 8.0,
+                              ),
+                              child: ChartItemInput(
+                                key: chartItemKeys[itemIndex],
+                                currStrings: [
+                                  nameStrings.elementAt(itemIndex),
+                                  ring2Strings.elementAt(itemIndex),
+                                  ring3Strings.elementAt(itemIndex),
+                                ],
+                                numRings: currNumRings,
+                                chunkIndex: itemIndex,
+                                currRingCharLimit: currCharLimit,
+                                updateParentChunkText: updateParentText,
                               ),
                             ),
-                          },
-                      },
-                      child: Text("Continue",
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall
-                                  ?.color as Color)),
-                    ),
+                            options: CarouselOptions(
+                              scrollPhysics: const BouncingScrollPhysics(),
+                              viewportFraction: 0.9,
+                              initialPage: 0,
+                              enableInfiniteScroll: false,
+                              reverse: false,
+                              autoPlay: false,
+                              enlargeCenterPage: false,
+                              onPageChanged: (index, reason) {},
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton(
+                              onPressed: () {
+                                carouselController.previousPage();
+                              },
+                              icon: const Icon(Icons.arrow_back),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                carouselController.nextPage();
+                              },
+                              icon: const Icon(Icons.arrow_forward),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Visibility(
+                        visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.3,
+                            right: MediaQuery.of(context).size.width * 0.3,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () => {
+                              // I'll have to validate stuff for myself, as
+                              // the form will try to validate ALL the sections
+                              // even the ones not active
+                              validationNum = validateAllActiveFields(),
+                              if (validationNum == -1)
+                                {
+                                  setState(() {
+                                    hasValidatedText = true;
+                                  }),
+                                }
+                              else
+                                {
+                                  Global.rootScaffoldMessengerKey.currentState
+                                      ?.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "Section ${validationNum + 1} is incomplete."
+                                        "\nPlease complete all fields to continue",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                },
+                            },
+                            child: Text("Continue",
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.color as Color)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

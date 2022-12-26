@@ -19,7 +19,6 @@ _$_Chart _$$_ChartFromJson(Map<String, dynamic> json) => _$_Chart(
       circleThreeText: (json['circleThreeText'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      chartColorIndex: json['chartColorIndex'] as int?,
     );
 
 Map<String, dynamic> _$$_ChartToJson(_$_Chart instance) => <String, dynamic>{
@@ -29,5 +28,4 @@ Map<String, dynamic> _$$_ChartToJson(_$_Chart instance) => <String, dynamic>{
       'circleOneText': instance.circleOneText,
       'circleTwoText': instance.circleTwoText,
       'circleThreeText': instance.circleThreeText,
-      'chartColorIndex': instance.chartColorIndex,
     };
