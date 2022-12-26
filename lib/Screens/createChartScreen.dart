@@ -154,7 +154,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     int validationNum = 0;
 
     return Scaffold(
-      // resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           "Customize New Chart",
@@ -237,7 +236,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
             const Divider(
               thickness: 2,
             ),
-            Column(
+            ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 Stack(
                   alignment: Alignment.center,
@@ -267,7 +269,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                       ),
                       options: CarouselOptions(
                         scrollPhysics: const BouncingScrollPhysics(),
-                        aspectRatio: 16 / 9,
                         viewportFraction: 0.9,
                         initialPage: 0,
                         enableInfiniteScroll: false,

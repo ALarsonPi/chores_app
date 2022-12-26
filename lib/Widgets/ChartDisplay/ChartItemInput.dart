@@ -78,13 +78,13 @@ class ChartItemInputState extends State<ChartItemInput> {
 
   bool checkIfValid() {
     return (nameController.text.isNotEmpty &&
-            nameController.text.length < nameChartLimit) &&
+            nameController.text.length <= nameChartLimit) &&
         (chore1Controller.text.isNotEmpty &&
-            chore1Controller.text.length <
+            chore1Controller.text.length <=
                 widget.currRingCharLimit.secondRingLimit) &&
         ((widget.numRings == 2) ||
             (chore2Controller.text.isNotEmpty &&
-                chore2Controller.text.length <
+                chore2Controller.text.length <=
                     widget.currRingCharLimit.thirdRingLimit));
   }
 
@@ -139,8 +139,10 @@ class ChartItemInputState extends State<ChartItemInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         Padding(
           padding: const EdgeInsets.only(
@@ -161,7 +163,9 @@ class ChartItemInputState extends State<ChartItemInput> {
             const Flexible(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.only(left: 16.0),
+                padding: EdgeInsets.only(
+                  left: 16.0,
+                ),
                 child: Text(
                   "  NAME:     ",
                   textAlign: TextAlign.left,
@@ -178,17 +182,18 @@ class ChartItemInputState extends State<ChartItemInput> {
                   controller: nameController,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(
-                      nameChartLimit,
+                      nameChartLimit + 1,
                     ),
                   ],
                   style: TextStyle(
                     color: Theme.of(context).textTheme.headlineLarge?.color
                         as Color,
                   ),
-                  decoration: const InputDecoration(
-                    hintStyle: TextStyle(
-                      fontStyle: FontStyle.italic,
-                    ),
+                  decoration: InputDecoration(
+                    fillColor:
+                        (nameController.text.length == nameChartLimit + 1)
+                            ? const Color(0xFFF4C7C2)
+                            : null,
                     filled: true,
                   ),
                 ),
@@ -203,7 +208,9 @@ class ChartItemInputState extends State<ChartItemInput> {
               const Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 16.0),
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                  ),
                   child: Text(
                     "CHORE 1:  ",
                     textAlign: TextAlign.left,
@@ -218,20 +225,22 @@ class ChartItemInputState extends State<ChartItemInput> {
                   ),
                   child: TextFormField(
                     controller: chore1Controller,
+                    minLines: 1,
                     maxLines: (widget.numRings == 3) ? 1 : 2,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(
-                        widget.currRingCharLimit.secondRingLimit,
+                        widget.currRingCharLimit.secondRingLimit + 1,
                       ),
                     ],
                     style: TextStyle(
                       color: Theme.of(context).textTheme.headlineLarge?.color
                           as Color,
                     ),
-                    decoration: const InputDecoration(
-                      hintStyle: TextStyle(
-                        fontStyle: FontStyle.italic,
-                      ),
+                    decoration: InputDecoration(
+                      fillColor: (chore1Controller.text.length ==
+                              widget.currRingCharLimit.secondRingLimit + 1)
+                          ? const Color(0xFFF4C7C2)
+                          : null,
                       filled: true,
                     ),
                   ),
@@ -244,11 +253,14 @@ class ChartItemInputState extends State<ChartItemInput> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Flexible(
                   flex: 2,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
+                    padding: EdgeInsets.only(
+                      left: 16.0,
+                    ),
                     child: Text(
                       "CHORE 2:  ",
                       textAlign: TextAlign.left,
@@ -265,17 +277,18 @@ class ChartItemInputState extends State<ChartItemInput> {
                       controller: chore2Controller,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(
-                          widget.currRingCharLimit.thirdRingLimit,
+                          widget.currRingCharLimit.thirdRingLimit + 1,
                         ),
                       ],
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headlineLarge?.color
                             as Color,
                       ),
-                      decoration: const InputDecoration(
-                        hintStyle: TextStyle(
-                          fontStyle: FontStyle.italic,
-                        ),
+                      decoration: InputDecoration(
+                        fillColor: (chore2Controller.text.length ==
+                                widget.currRingCharLimit.thirdRingLimit + 1)
+                            ? const Color(0xFFF4C7C2)
+                            : null,
                         filled: true,
                       ),
                     ),
