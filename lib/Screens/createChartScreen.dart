@@ -20,7 +20,6 @@ class CreateChartScreen extends StatefulWidget {
 class _CreateChartScreenState extends State<CreateChartScreen> {
   late final args =
       ModalRoute.of(context)!.settings.arguments as CreateChartArguments;
-  final _formKey = GlobalKey<FormState>();
 
   // Defaults
   int currNumRings = 3;
@@ -52,6 +51,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     'Seven Sections',
     'Eight Sections',
   ];
+  // ignore: non_constant_identifier_names
   final int MAX_SECTIONS = 8;
 
   updateCurrRingNum(String value) {
@@ -138,11 +138,23 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     GlobalKey(),
   ];
 
+  int validateAllActiveFields() {
+    for (int i = 0; i < currNumSections; i++) {
+      bool currChartisValid = chartItemKeys[i].currentState!.checkIfValid();
+      if (!currChartisValid) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   @override
   Widget build(BuildContext context) {
     double sizeOfChart = MediaQuery.of(context).size.height * 0.4;
+    int validationNum = 0;
 
     return Scaffold(
+      // resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           "Customize New Chart",
@@ -157,11 +169,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(
@@ -175,6 +184,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                   circleOneText: nameStrings,
                   circleTwoText: ring2Strings,
                   circleThreeText: ring3Strings,
+                  shouldIgnoreTouch: true,
 
                   // Theme
                   linesColors: Global.currentTheme.lineColors,
@@ -227,78 +237,98 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
             const Divider(
               thickness: 2,
             ),
-            Form(
-              key: _formKey,
-              child: ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CarouselSlider.builder(
-                        carouselController: carouselController,
-                        itemCount: currNumSections,
-                        itemBuilder: (BuildContext context, int itemIndex,
-                                int pageViewIndex) =>
-                            Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                          ),
-                          child: ChartItemInput(
-                            key: chartItemKeys[itemIndex],
-                            currStrings: [
-                              nameStrings.elementAt(itemIndex),
-                              ring2Strings.elementAt(itemIndex),
-                              ring3Strings.elementAt(itemIndex),
-                            ],
-                            numRings: currNumRings,
-                            chunkIndex: itemIndex,
-                            currRingCharLimit: currCharLimit,
-                            updateParentChunkText: updateParentText,
-                          ),
+            Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CarouselSlider.builder(
+                      carouselController: carouselController,
+                      itemCount: currNumSections,
+                      itemBuilder: (BuildContext context, int itemIndex,
+                              int pageViewIndex) =>
+                          Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8.0,
+                          right: 8.0,
                         ),
-                        options: CarouselOptions(
-                          scrollPhysics: const BouncingScrollPhysics(),
-                          aspectRatio: 16 / 9,
-                          viewportFraction: 0.9,
-                          initialPage: 0,
-                          enableInfiniteScroll: false,
-                          reverse: false,
-                          autoPlay: false,
-                          enlargeCenterPage: false,
-                          onPageChanged: (index, reason) {},
-                          scrollDirection: Axis.horizontal,
+                        child: ChartItemInput(
+                          key: chartItemKeys[itemIndex],
+                          currStrings: [
+                            nameStrings.elementAt(itemIndex),
+                            ring2Strings.elementAt(itemIndex),
+                            ring3Strings.elementAt(itemIndex),
+                          ],
+                          numRings: currNumRings,
+                          chunkIndex: itemIndex,
+                          currRingCharLimit: currCharLimit,
+                          updateParentChunkText: updateParentText,
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: () {
-                            carouselController.previousPage();
-                          },
-                          icon: const Icon(Icons.arrow_back),
-                        ),
+                      options: CarouselOptions(
+                        scrollPhysics: const BouncingScrollPhysics(),
+                        aspectRatio: 16 / 9,
+                        viewportFraction: 0.9,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        autoPlay: false,
+                        enlargeCenterPage: false,
+                        onPageChanged: (index, reason) {},
+                        scrollDirection: Axis.horizontal,
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () {
-                            carouselController.nextPage();
-                          },
-                          icon: const Icon(Icons.arrow_forward),
-                        ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          carouselController.previousPage();
+                        },
+                        icon: const Icon(Icons.arrow_back),
                       ),
-                    ],
-                  ),
-                  Padding(
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        onPressed: () {
+                          carouselController.nextPage();
+                        },
+                        icon: const Icon(Icons.arrow_forward),
+                      ),
+                    ),
+                  ],
+                ),
+                Visibility(
+                  visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                  child: Padding(
                     padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.3,
                       right: MediaQuery.of(context).size.width * 0.3,
                     ),
                     child: ElevatedButton(
-                      onPressed: () => {},
+                      onPressed: () => {
+                        // I'll have to validate stuff for myself, as
+                        // the form will try to validate ALL the sections
+                        // even the ones not active
+                        validationNum = validateAllActiveFields(),
+                        if (validationNum == -1)
+                          {
+                            debugPrint("VALID"),
+                          }
+                        else
+                          {
+                            Global.rootScaffoldMessengerKey.currentState
+                                ?.showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Section ${validationNum + 1} is incomplete."
+                                  "\nPlease complete all fields to continue",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          },
+                      },
                       child: Text("Continue",
                           style: TextStyle(
                               color: Theme.of(context)
@@ -307,8 +337,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                   ?.color as Color)),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

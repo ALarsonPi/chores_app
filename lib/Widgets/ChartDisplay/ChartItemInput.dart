@@ -1,6 +1,5 @@
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 class ChartItemInput extends StatefulWidget {
@@ -34,9 +33,10 @@ class ChartItemInputState extends State<ChartItemInput> {
     chore2Controller.dispose();
   }
 
-  String nameType = "NAME";
-  String chore1Type = "CHORE 1";
-  String chore2Type = "CHORE 2";
+  final nameType = "NAME";
+  final nameChartLimit = 20;
+  final chore1Type = "CHORE 1";
+  final chore2Type = "CHORE 2";
 
   late InputDecorationTheme subtleUnderlineTheme;
 
@@ -74,6 +74,18 @@ class ChartItemInputState extends State<ChartItemInput> {
         chore2Type,
       );
     });
+  }
+
+  bool checkIfValid() {
+    return (nameController.text.isNotEmpty &&
+            nameController.text.length < nameChartLimit) &&
+        (chore1Controller.text.isNotEmpty &&
+            chore1Controller.text.length <
+                widget.currRingCharLimit.secondRingLimit) &&
+        ((widget.numRings == 2) ||
+            (chore2Controller.text.isNotEmpty &&
+                chore2Controller.text.length <
+                    widget.currRingCharLimit.thirdRingLimit));
   }
 
   updateChild() {
@@ -166,7 +178,7 @@ class ChartItemInputState extends State<ChartItemInput> {
                   controller: nameController,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(
-                      20,
+                      nameChartLimit,
                     ),
                   ],
                   style: TextStyle(

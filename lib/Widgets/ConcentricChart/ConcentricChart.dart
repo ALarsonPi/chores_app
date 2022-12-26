@@ -94,6 +94,8 @@ class ConcentricChart extends StatefulWidget {
   /// should be a value [0.0-1.0]
   double circleThreeRadiusProportion;
 
+  final bool shouldIgnoreTouch;
+
   /// Constructor for concentric chart
   /// Required - [width], [numberOfRings], and all the general info about each
   /// ring including (text, general background color, and font color)
@@ -122,6 +124,7 @@ class ConcentricChart extends StatefulWidget {
     this.overflowLineLimit = 2,
     this.linesColors = const [Colors.black, Colors.black, Colors.black],
     this.chunkOverflowLimitProportion = 0.15,
+    this.shouldIgnoreTouch = false,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -217,6 +220,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
           spaceBetweenLines: widget.spaceBetweenLines,
           overflowLineLimit: widget.overflowLineLimit,
           chunkOverflowLimitProportion: widget.chunkOverflowLimitProportion,
+          shouldIgnoreTouch: widget.shouldIgnoreTouch,
         ),
       ),
     );

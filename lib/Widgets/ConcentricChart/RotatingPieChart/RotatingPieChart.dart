@@ -38,6 +38,8 @@ class RotatingPieChart extends StatelessWidget {
   /// The color of the border lines around the circle / between the segments
   final Color linesColor;
 
+  final bool shouldIgnoreTouch;
+
   /// Constructor which takes these parameters and calculates the spaceBetweenLines
   /// based on what was sent in as well as whether the device is a phone
   /// and if the device has a pixelAspectRatio above 2
@@ -51,6 +53,7 @@ class RotatingPieChart extends StatelessWidget {
     required this.linesColor,
     required this.chunkOverflowLimitProportion,
     required this.isOuterRing,
+    this.shouldIgnoreTouch = false,
   }) {
     items = pie.items;
     sizeOfChart = pie.width;
@@ -87,6 +90,7 @@ class RotatingPieChart extends StatelessWidget {
             linesColor: linesColor,
             pie: pie,
             isOuterRing: isOuterRing,
+            shouldIgnoreTouch: shouldIgnoreTouch,
           ),
         ),
       ),
@@ -106,6 +110,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
   final PieInfo pie;
   final int overflowLineLimit;
   final double overflowLimitProportion;
+  final bool shouldIgnoreTouch;
 
   final Color linesColor;
   final bool isOuterRing;
@@ -124,6 +129,7 @@ class _RotatingPieChartInternal extends StatefulWidget {
     required this.overflowLineLimit,
     required this.linesColor,
     required this.overflowLimitProportion,
+    this.shouldIgnoreTouch = false,
   }) : super(key: key);
 
   @override
@@ -612,89 +618,92 @@ class _RotatingPieChartInternalState extends State<_RotatingPieChartInternal>
       flipStatusArray.add(false);
     }
     if (!isCircle1) setUpPhraseChunks();
-    return GestureDetector(
-      onPanDown: (details) {
-        lastDirection = getDirection(details.globalPosition);
-      },
-      onPanUpdate: (details) {
-        Offset newDirection = getDirection(details.globalPosition);
-        double diff = newDirection.direction - lastDirection.direction;
-
-        var value = _controller.value + (diff / pi / 2);
-        _controller.value = value % 1.0;
-        lastDirection = newDirection;
-      },
-      onPanStart: (details) => {
-        startStopWheelRotation(),
-      },
-      onPanEnd: (details) {
-        // non-angular velocity
-        Offset velocity = details.velocity.pixelsPerSecond;
-
-        var top =
-            (lastDirection.dx * velocity.dy) - (lastDirection.dy * velocity.dx);
-        var bottom = (lastDirection.dx * lastDirection.dx) +
-            (lastDirection.dy * lastDirection.dy);
-
-        var angularVelocity = top / bottom;
-        var angularRotation = angularVelocity / pi / 2;
-        var decelleration = angularRotation * widget.accellerationFactor;
-        _controller.animateWith(
-          RotationEndSimulation(
-            bounds: widget.bounds,
-            decelleration: decelleration,
-            initialPosition: _controller.value,
-            initialVelocity: angularRotation,
-          ),
-        );
-        startStopWheelRotation();
-      },
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, widget) {
-          return Stack(
-            fit: StackFit.passthrough,
-            children: [
-              Transform.rotate(
-                angle: _animation.value,
-                child: widget,
-              ),
-              CustomPaint(
-                painter: (!isCircle1)
-                    ? ArcTextPainter(
-                        userChosenRadius: getMiddleVerticalRadius(),
-                        textStyle: textStyle,
-                        initialAngle: _animation.value + 1.57079632679,
-                        listOfChunkPhrases: chunkPhraseList,
-                        forwardPhraseAlpha: forwardAlphaList,
-                        listOfReverseChunkPhrases: reversePhraseChunkList,
-                        reversePhraseAlpha: reverseAlphaList,
-                        numChunks: numChunks,
-                        spaceBetweenLines: spaceBetweenLines + 10,
-                        isRing3: this.widget.pie.ringNum == 3,
-                        isRotating: !isNotBeingRotated,
-                      )
-                    : PieTextPainter(
-                        items: this.widget.items,
-                        rotation: _animation.value,
-                        toText: (item, _) => TextPainter(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: textStyle,
-                            text: item.name,
-                          ),
-                          textDirection: TextDirection.ltr,
-                        ),
-                        textRadiusCoefficient: textHeightCoefficient,
-                      ),
-              )
-            ],
-          );
+    return IgnorePointer(
+      ignoring: widget.shouldIgnoreTouch,
+      child: GestureDetector(
+        onPanDown: (details) {
+          lastDirection = getDirection(details.globalPosition);
         },
-        child: CustomPaint(
-          painter: PieChartPainter(
-            items: widget.items,
-            linesColor: widget.linesColor,
+        onPanUpdate: (details) {
+          Offset newDirection = getDirection(details.globalPosition);
+          double diff = newDirection.direction - lastDirection.direction;
+
+          var value = _controller.value + (diff / pi / 2);
+          _controller.value = value % 1.0;
+          lastDirection = newDirection;
+        },
+        onPanStart: (details) => {
+          startStopWheelRotation(),
+        },
+        onPanEnd: (details) {
+          // non-angular velocity
+          Offset velocity = details.velocity.pixelsPerSecond;
+
+          var top = (lastDirection.dx * velocity.dy) -
+              (lastDirection.dy * velocity.dx);
+          var bottom = (lastDirection.dx * lastDirection.dx) +
+              (lastDirection.dy * lastDirection.dy);
+
+          var angularVelocity = top / bottom;
+          var angularRotation = angularVelocity / pi / 2;
+          var decelleration = angularRotation * widget.accellerationFactor;
+          _controller.animateWith(
+            RotationEndSimulation(
+              bounds: widget.bounds,
+              decelleration: decelleration,
+              initialPosition: _controller.value,
+              initialVelocity: angularRotation,
+            ),
+          );
+          startStopWheelRotation();
+        },
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, widget) {
+            return Stack(
+              fit: StackFit.passthrough,
+              children: [
+                Transform.rotate(
+                  angle: _animation.value,
+                  child: widget,
+                ),
+                CustomPaint(
+                  painter: (!isCircle1)
+                      ? ArcTextPainter(
+                          userChosenRadius: getMiddleVerticalRadius(),
+                          textStyle: textStyle,
+                          initialAngle: _animation.value + 1.57079632679,
+                          listOfChunkPhrases: chunkPhraseList,
+                          forwardPhraseAlpha: forwardAlphaList,
+                          listOfReverseChunkPhrases: reversePhraseChunkList,
+                          reversePhraseAlpha: reverseAlphaList,
+                          numChunks: numChunks,
+                          spaceBetweenLines: spaceBetweenLines + 10,
+                          isRing3: this.widget.pie.ringNum == 3,
+                          isRotating: !isNotBeingRotated,
+                        )
+                      : PieTextPainter(
+                          items: this.widget.items,
+                          rotation: _animation.value,
+                          toText: (item, _) => TextPainter(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: textStyle,
+                              text: item.name,
+                            ),
+                            textDirection: TextDirection.ltr,
+                          ),
+                          textRadiusCoefficient: textHeightCoefficient,
+                        ),
+                )
+              ],
+            );
+          },
+          child: CustomPaint(
+            painter: PieChartPainter(
+              items: widget.items,
+              linesColor: widget.linesColor,
+            ),
           ),
         ),
       ),
