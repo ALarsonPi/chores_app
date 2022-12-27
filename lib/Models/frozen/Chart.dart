@@ -16,12 +16,20 @@ class Chart with _$Chart {
     required int numberOfRings,
     required List<String> circleOneText,
     required List<String> circleTwoText,
+    required String ownerID,
+    required int tabNumForOwner,
+    required List<String> editorIDs,
+    required List<String> viewerIDs,
     List<String>? circleThreeText,
   }) = _Chart;
 
   static Chart emptyChart = Chart(
     id: "",
     chartTitle: "",
+    ownerID: "",
+    tabNumForOwner: 0,
+    editorIDs: List.empty(),
+    viewerIDs: List.empty(),
     numberOfRings: 0,
     circleOneText: [],
     circleTwoText: [],

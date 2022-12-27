@@ -2,15 +2,17 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
+import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../Global.dart';
-import '../Widgets/ChartDisplay/CorrelatedUserDisplay.dart';
-import '../Widgets/ChartDisplay/ChangeChart/CreateChartUI_Helpers.dart';
+import '../Models/frozen/Chart.dart';
 
 class CreateChartScreen extends StatefulWidget {
   const CreateChartScreen({super.key});
@@ -36,6 +38,15 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     super.initState();
     // -1 for indexes starting at 0, -1 for there not being an option for 1 section
     currCharLimit = RingCharLimits.limits[currNumSections - 1 - 1];
+    chartTitleController.addListener(() {
+      formKey.currentState!.validate();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    chartTitleController.dispose();
   }
 
   List<String> nameStrings = List.filled(4, "", growable: true);
@@ -144,9 +155,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
   int validateAllActiveFields() {
     for (int i = 0; i < currNumSections; i++) {
-      bool currChartisValid = chartItemKeys[i].currentState!.checkIfValid();
-      if (!currChartisValid) {
-        return i;
+      if (chartItemKeys[i].currentState != null) {
+        bool currChartisValid = chartItemKeys[i].currentState!.checkIfValid();
+        if (!currChartisValid) {
+          return i;
+        }
       }
     }
     return -1;
@@ -155,10 +168,15 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   // ignore: non_constant_identifier_names
   int MAX_CHARS_CHART_TITLE = 20;
   TextEditingController chartTitleController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  late Chart newChart;
 
   @override
   Widget build(BuildContext context) {
-    double sizeOfChart = MediaQuery.of(context).size.height * 0.4;
+    double sizeOfChart = (hasValidatedText)
+        ? MediaQuery.of(context).size.width
+        : MediaQuery.of(context).size.height * 0.4;
     int validationNum = 0;
 
     return Scaffold(
@@ -175,236 +193,247 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         ),
         automaticallyImplyLeading: true,
       ),
-      body: (hasValidatedText)
-          ? Padding(
-              padding: const EdgeInsets.all(
-                16.0,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8.0,
-                      bottom: 8.0,
-                    ),
-                    child: Text("Chart Title:",
-                        style: Theme.of(context).textTheme.displayMedium),
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (hasValidatedText)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width * 0.075,
+                    bottom: 8.0,
                   ),
-                  Theme(
-                    data: ThemeData(
-                      inputDecorationTheme: getSubtleUnderlineTheme(context),
+                  child: Text("Chart Title:",
+                      style: Theme.of(context).textTheme.headlineLarge),
+                ),
+              if (hasValidatedText)
+                Theme(
+                  data: ThemeData(
+                    inputDecorationTheme: InputDecorationTheme(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: const BorderSide(
+                          width: 2,
+                          color: Color.fromARGB(255, 231, 231, 231),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(25)),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      errorBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.2,
+                      right: MediaQuery.of(context).size.width * 0.2,
+                      bottom: MediaQuery.of(context).size.width * 0.035,
+                      top: 10.0,
                     ),
                     child: TextFormField(
                       controller: chartTitleController,
+                      maxLength: MAX_CHARS_CHART_TITLE,
+                      validator: (String? title) {
+                        return (title != null &&
+                                (chartTitleController.text.isEmpty ||
+                                    chartTitleController.text.length >
+                                        MAX_CHARS_CHART_TITLE))
+                            ? 'Please fill in the title here'
+                            : null;
+                      },
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(
-                          MAX_CHARS_CHART_TITLE,
+                          MAX_CHARS_CHART_TITLE + 1,
                         ),
                       ],
+                      minLines: 1,
+                      maxLines: 1,
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headlineLarge?.color
                             as Color,
                       ),
-                      decoration: InputDecoration(
-                        fillColor: (chartTitleController.text.length ==
-                                MAX_CHARS_CHART_TITLE + 1)
-                            ? const Color(0xFFF4C7C2)
-                            : null,
-                        filled: true,
-                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: const CorrelatedUserDisplay(),
+                ),
+              // The Circle
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 8.0,
+                ),
+                child: SizedBox(
+                  height: sizeOfChart,
+                  child: ConcentricChart(
+                    numberOfRings: currNumRings,
+                    circleOneText: nameStrings,
+                    circleTwoText: ring2Strings,
+                    circleThreeText: ring3Strings,
+                    shouldIgnoreTouch: true,
+
+                    // Theme
+                    linesColors: Global.currentTheme.lineColors,
+                    circleOneColor: Global.currentTheme.primaryColor,
+                    circleOneFontColor: Global.currentTheme.primaryTextColor,
+                    circleTwoColor: Global.currentTheme.secondaryColor,
+                    circleTwoFontColor: Global.currentTheme.secondaryTextColor,
+                    circleThreeColor: Global.currentTheme.tertiaryColor,
+                    circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
+
+                    // Const Programmer Decisions
+                    width: sizeOfChart,
+                    spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
+                    overflowLineLimit: Global.circleSettings.overflowLineLimit,
+                    chunkOverflowLimitProportion:
+                        Global.circleSettings.chunkOverflowLimitProportion,
+                    circleOneRadiusProportions:
+                        Global.circleSettings.circleOneRadiusProportions,
+                    circleOneFontSize: Global.circleSettings.circleOneFontSize,
+                    circleOneTextRadiusProportion:
+                        Global.circleSettings.circleOneTextRadiusProportion,
+                    circleTwoRadiusProportions:
+                        Global.circleSettings.circleTwoRadiusProportions,
+                    circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+                    circleThreeRadiusProportion:
+                        Global.circleSettings.circleThreeRadiusProportion,
+                    circleThreeFontSize:
+                        Global.circleSettings.circleThreeFontSize,
                   ),
-                  ElevatedButton(
-                    onPressed: () => {},
-                    child: Text(
-                      "CREATE",
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.headlineSmall?.color
-                            as Color,
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
-            )
-          : SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
+              Visibility(
+                visible: !hasValidatedText,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Dropdown(
+                      ringNumOptions,
+                      updateCurrRingNum,
+                      initialIndex: currNumRings - 2,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32.0),
+                      child: Dropdown(
+                        numSectionsOptions,
+                        updateNumSections,
+                        initialIndex: currNumSections - 2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!hasValidatedText)
+                const Divider(
+                  thickness: 2,
+                ),
+              ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8.0,
-                      bottom: 8.0,
-                    ),
-                    child: SizedBox(
-                      height: sizeOfChart,
-                      child: ConcentricChart(
-                        numberOfRings: currNumRings,
-                        circleOneText: nameStrings,
-                        circleTwoText: ring2Strings,
-                        circleThreeText: ring3Strings,
-                        shouldIgnoreTouch: true,
-
-                        // Theme
-                        linesColors: Global.currentTheme.lineColors,
-                        circleOneColor: Global.currentTheme.primaryColor,
-                        circleOneFontColor:
-                            Global.currentTheme.primaryTextColor,
-                        circleTwoColor: Global.currentTheme.secondaryColor,
-                        circleTwoFontColor:
-                            Global.currentTheme.secondaryTextColor,
-                        circleThreeColor: Global.currentTheme.tertiaryColor,
-                        circleThreeFontColor:
-                            Global.currentTheme.tertiaryTextColor,
-
-                        // Const Programmer Decisions
-                        width: sizeOfChart,
-                        spaceBetweenLines:
-                            Global.circleSettings.spaceBetweenLines,
-                        overflowLineLimit:
-                            Global.circleSettings.overflowLineLimit,
-                        chunkOverflowLimitProportion:
-                            Global.circleSettings.chunkOverflowLimitProportion,
-                        circleOneRadiusProportions:
-                            Global.circleSettings.circleOneRadiusProportions,
-                        circleOneFontSize:
-                            Global.circleSettings.circleOneFontSize,
-                        circleOneTextRadiusProportion:
-                            Global.circleSettings.circleOneTextRadiusProportion,
-                        circleTwoRadiusProportions:
-                            Global.circleSettings.circleTwoRadiusProportions,
-                        circleTwoFontSize:
-                            Global.circleSettings.circleTwoFontSize,
-                        circleThreeRadiusProportion:
-                            Global.circleSettings.circleThreeRadiusProportion,
-                        circleThreeFontSize:
-                            Global.circleSettings.circleThreeFontSize,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Dropdown(
-                        ringNumOptions,
-                        updateCurrRingNum,
-                        initialIndex: 1,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 32.0),
-                        child: Dropdown(
-                          numSectionsOptions,
-                          updateNumSections,
-                          initialIndex: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(
-                    thickness: 2,
-                  ),
-                  ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CarouselSlider.builder(
-                            carouselController: carouselController,
-                            itemCount: currNumSections,
-                            itemBuilder: (BuildContext context, int itemIndex,
-                                    int pageViewIndex) =>
-                                Padding(
-                              padding: const EdgeInsets.only(
-                                left: 8.0,
-                                right: 8.0,
-                              ),
-                              child: ChartItemInput(
-                                key: chartItemKeys[itemIndex],
-                                currStrings: [
-                                  nameStrings.elementAt(itemIndex),
-                                  ring2Strings.elementAt(itemIndex),
-                                  ring3Strings.elementAt(itemIndex),
-                                ],
-                                numRings: currNumRings,
-                                chunkIndex: itemIndex,
-                                currRingCharLimit: currCharLimit,
-                                updateParentChunkText: updateParentText,
-                              ),
-                            ),
-                            options: CarouselOptions(
-                              scrollPhysics: const BouncingScrollPhysics(),
-                              viewportFraction: 0.9,
-                              initialPage: 0,
-                              enableInfiniteScroll: false,
-                              reverse: false,
-                              autoPlay: false,
-                              enlargeCenterPage: false,
-                              onPageChanged: (index, reason) {},
-                              scrollDirection: Axis.horizontal,
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: IconButton(
-                              onPressed: () {
-                                carouselController.previousPage();
-                              },
-                              icon: const Icon(Icons.arrow_back),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              onPressed: () {
-                                carouselController.nextPage();
-                              },
-                              icon: const Icon(Icons.arrow_forward),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Visibility(
-                        visible: MediaQuery.of(context).viewInsets.bottom == 0,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.3,
-                            right: MediaQuery.of(context).size.width * 0.3,
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () => {
-                              // I'll have to validate stuff for myself, as
-                              // the form will try to validate ALL the sections
-                              // even the ones not active
-                              validationNum = validateAllActiveFields(),
-                              if (validationNum == -1)
-                                {
-                                  setState(() {
-                                    hasValidatedText = true;
-                                  }),
-                                }
-                              else
-                                {
-                                  Global.rootScaffoldMessengerKey.currentState
-                                      ?.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "Section ${validationNum + 1} is incomplete."
-                                        "\nPlease complete all fields to continue",
-                                        textAlign: TextAlign.center,
-                                      ),
+                  (hasValidatedText)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.035,
+                            )
+                          ],
+                        )
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CarouselSlider(
+                              carouselController: carouselController,
+                              items: [
+                                for (int itemIndex = 0;
+                                    itemIndex < currNumSections;
+                                    itemIndex++)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 8.0,
+                                      right: 8.0,
+                                    ),
+                                    child: ChartItemInput(
+                                      key: chartItemKeys[itemIndex],
+                                      currStrings: [
+                                        nameStrings.elementAt(itemIndex),
+                                        ring2Strings.elementAt(itemIndex),
+                                        ring3Strings.elementAt(itemIndex),
+                                      ],
+                                      numRings: currNumRings,
+                                      chunkIndex: itemIndex,
+                                      currRingCharLimit: currCharLimit,
+                                      updateParentChunkText: updateParentText,
                                     ),
                                   ),
+                              ],
+                              options: CarouselOptions(
+                                scrollPhysics: const BouncingScrollPhysics(),
+                                viewportFraction: 0.9,
+                                initialPage: 0,
+                                enableInfiniteScroll: false,
+                                reverse: false,
+                                autoPlay: false,
+                                enlargeCenterPage: false,
+                                onPageChanged: (index, reason) {},
+                                scrollDirection: Axis.horizontal,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                onPressed: () {
+                                  carouselController.previousPage();
                                 },
-                            },
-                            child: Text("Continue",
+                                icon: const Icon(Icons.arrow_back),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                onPressed: () {
+                                  carouselController.nextPage();
+                                },
+                                icon: const Icon(Icons.arrow_forward),
+                              ),
+                            ),
+                          ],
+                        ),
+                  Visibility(
+                    visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          child: ElevatedButton(
+                            onPressed: (!hasValidatedText)
+                                ? null
+                                : () => {
+                                      setState(() => {
+                                            hasValidatedText = false,
+                                          }),
+                                    },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            )),
+                            child: Text("Back",
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .textTheme
@@ -412,12 +441,91 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                         ?.color as Color)),
                           ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              )),
+                              onPressed: () => {
+                                if (hasValidatedText)
+                                  {
+                                    // can I just pop or should I actually navigate
+                                    if (formKey.currentState!.validate())
+                                      {
+                                        newChart = Chart(
+                                          id: "id",
+                                          chartTitle: chartTitleController.text,
+                                          numberOfRings: currNumRings,
+                                          ownerID: Global.currUserID,
+                                          tabNumForOwner: args.index,
+                                          editorIDs: List.empty(growable: true),
+                                          viewerIDs: List.empty(growable: true),
+                                          circleOneText: nameStrings,
+                                          circleTwoText: ring2Strings,
+                                          circleThreeText: ring3Strings,
+                                        ),
+                                        // Add chart to firebase
+                                        debugPrint(newChart.toString()),
+                                        Provider.of<ChartProvider>(context,
+                                                listen: false)
+                                            .setCircleDataElement(
+                                                newChart, args.index),
+                                      }
+                                  }
+                                else
+                                  {
+                                    // I'll have to validate stuff for myself, as
+                                    // the form will try to validate ALL the sections
+                                    // even the ones not active
+                                    validationNum = validateAllActiveFields(),
+                                    if (validationNum == -1)
+                                      {
+                                        setState(() {
+                                          hasValidatedText = true;
+                                        }),
+                                      }
+                                    else
+                                      {
+                                        Global.rootScaffoldMessengerKey
+                                            .currentState
+                                            ?.showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Section ${validationNum + 1} is incomplete."
+                                              "\nPlease complete all fields to continue",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      },
+                                  },
+                              },
+                              child: Text(
+                                (hasValidatedText) ? "Submit" : "Continue",
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.color as Color),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

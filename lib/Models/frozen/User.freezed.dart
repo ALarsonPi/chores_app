@@ -21,6 +21,9 @@ User _$UserFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$User {
   String get id => throw _privateConstructorUsedError;
+  String? get chart1ID => throw _privateConstructorUsedError;
+  String? get chart2ID => throw _privateConstructorUsedError;
+  String? get chart3ID => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
@@ -38,6 +41,9 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String? chart1ID,
+      String? chart2ID,
+      String? chart3ID,
       String? name,
       String? email,
       String? password,
@@ -58,6 +64,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = null,
+    Object? chart1ID = freezed,
+    Object? chart2ID = freezed,
+    Object? chart3ID = freezed,
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
@@ -68,6 +77,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      chart1ID: freezed == chart1ID
+          ? _value.chart1ID
+          : chart1ID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      chart2ID: freezed == chart2ID
+          ? _value.chart2ID
+          : chart2ID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      chart3ID: freezed == chart3ID
+          ? _value.chart3ID
+          : chart3ID // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -96,6 +117,9 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String? chart1ID,
+      String? chart2ID,
+      String? chart3ID,
       String? name,
       String? email,
       String? password,
@@ -112,6 +136,9 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
   @override
   $Res call({
     Object? id = null,
+    Object? chart1ID = freezed,
+    Object? chart2ID = freezed,
+    Object? chart3ID = freezed,
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
@@ -122,6 +149,18 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      chart1ID: freezed == chart1ID
+          ? _value.chart1ID
+          : chart1ID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      chart2ID: freezed == chart2ID
+          ? _value.chart2ID
+          : chart2ID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      chart3ID: freezed == chart3ID
+          ? _value.chart3ID
+          : chart3ID // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -148,6 +187,9 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
 class _$_User extends _User {
   _$_User(
       {required this.id,
+      this.chart1ID,
+      this.chart2ID,
+      this.chart3ID,
       this.name,
       this.email,
       this.password,
@@ -159,6 +201,12 @@ class _$_User extends _User {
 
   @override
   final String id;
+  @override
+  final String? chart1ID;
+  @override
+  final String? chart2ID;
+  @override
+  final String? chart3ID;
   @override
   final String? name;
   @override
@@ -178,7 +226,7 @@ class _$_User extends _User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, correlatedUserIDs: $correlatedUserIDs)';
+    return 'User(id: $id, chart1ID: $chart1ID, chart2ID: $chart2ID, chart3ID: $chart3ID, name: $name, email: $email, password: $password, correlatedUserIDs: $correlatedUserIDs)';
   }
 
   @override
@@ -187,6 +235,12 @@ class _$_User extends _User {
         (other.runtimeType == runtimeType &&
             other is _$_User &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.chart1ID, chart1ID) ||
+                other.chart1ID == chart1ID) &&
+            (identical(other.chart2ID, chart2ID) ||
+                other.chart2ID == chart2ID) &&
+            (identical(other.chart3ID, chart3ID) ||
+                other.chart3ID == chart3ID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
@@ -197,7 +251,15 @@ class _$_User extends _User {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, password,
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      chart1ID,
+      chart2ID,
+      chart3ID,
+      name,
+      email,
+      password,
       const DeepCollectionEquality().hash(_correlatedUserIDs));
 
   @JsonKey(ignore: true)
@@ -217,6 +279,9 @@ class _$_User extends _User {
 abstract class _User extends User {
   factory _User(
       {required final String id,
+      final String? chart1ID,
+      final String? chart2ID,
+      final String? chart3ID,
       final String? name,
       final String? email,
       final String? password,
@@ -227,6 +292,12 @@ abstract class _User extends User {
 
   @override
   String get id;
+  @override
+  String? get chart1ID;
+  @override
+  String? get chart2ID;
+  @override
+  String? get chart3ID;
   @override
   String? get name;
   @override

@@ -1,3 +1,4 @@
+import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Global.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -40,6 +41,10 @@ class ChartProvider extends ChangeNotifier {
     id: "example1",
     chartTitle: "Example Chart",
     numberOfRings: 3,
+    ownerID: "",
+    tabNumForOwner: 0,
+    editorIDs: List.empty(),
+    viewerIDs: List.empty(),
     circleOneText: circle1Text,
     circleTwoText: circle2Text,
     circleThreeText: circle3Text,
@@ -49,6 +54,10 @@ class ChartProvider extends ChangeNotifier {
     id: "example2",
     chartTitle: "Second Chart",
     numberOfRings: 2,
+    ownerID: "",
+    tabNumForOwner: 0,
+    editorIDs: List.empty(),
+    viewerIDs: List.empty(),
     circleOneText: circle1Text,
     circleTwoText: circle2Text,
     circleThreeText: [],
@@ -66,15 +75,27 @@ class ChartProvider extends ChangeNotifier {
     Chart.emptyChart,
   ];
 
-  setCircleDataElement(Chart newCircleData, int index) {
-    circleDataList[index] = circleDataList[index].copyWith(
-      id: newCircleData.id,
-      chartTitle: newCircleData.chartTitle,
-      numberOfRings: newCircleData.numberOfRings,
-      circleOneText: newCircleData.circleOneText,
-      circleTwoText: newCircleData.circleTwoText,
-      circleThreeText: newCircleData.circleThreeText,
+  setCircleDataElement(Chart newChart, int index) async {
+    String idFromFirebase = await ChartDao.addChart(newChart);
+    debugPrint(idFromFirebase);
+
+    debugPrint(newChart.toString());
+    circleDataList[index] = newChart.copyWith(
+      id: idFromFirebase,
+      chartTitle: newChart.chartTitle,
+      numberOfRings: newChart.numberOfRings,
+      ownerID: newChart.ownerID,
+      editorIDs: newChart.editorIDs,
+      viewerIDs: newChart.viewerIDs,
+      circleOneText: newChart.circleOneText,
+      circleTwoText: newChart.circleTwoText,
+      circleThreeText: newChart.circleThreeText,
     );
+    // await _addChart(circleDataList[index]);
     notifyListeners();
+  }
+
+  _addChart(Chart chartToAdd) async {
+    debugPrint("Got here to add chart in provider");
   }
 }

@@ -11,6 +11,9 @@ class User with _$User {
   @JsonSerializable(explicitToJson: true)
   factory User({
     required String id,
+    String? chart1ID,
+    String? chart2ID,
+    String? chart3ID,
     String? name,
     String? email,
     String? password,
