@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
@@ -185,6 +186,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  void handleClick(int item) {
+    switch (item) {
+      case 0:
+        break;
+      case 1:
+        break;
+    }
+  }
+
   // ignore: non_constant_identifier_names
   Widget HomePageWidget() {
     return DefaultTabController(
@@ -197,7 +207,73 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             centerTitle: true,
             title: Text(
               tabsToUse.elementAt(controller.index).text as String,
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: TextStyle(
+                fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+                color: Theme.of(context).textTheme.headlineMedium?.color,
+              ),
+            ),
+            leading: PopupMenuButton<int>(
+              onSelected: (item) => handleClick(item),
+              icon: const Icon(Icons.menu),
+              offset: Offset(0.0, AppBar().preferredSize.height + 5),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.abc_outlined,
+                      color: Colors.amber,
+                    ),
+                    title: const Text('Edit Title'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      Icons.edit,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    title: const Text('Edit Text'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    title: const Text('Delete Chart'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 3,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.add_alert,
+                      color: Colors.green,
+                    ),
+                    title: const Text('Connected Users'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),

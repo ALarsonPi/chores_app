@@ -156,8 +156,20 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   int validateAllActiveFields() {
     for (int i = 0; i < currNumSections; i++) {
       if (chartItemKeys[i].currentState != null) {
+        //Let child check if the text is valid
         bool currChartisValid = chartItemKeys[i].currentState!.checkIfValid();
         if (!currChartisValid) {
+          return i;
+        }
+      } else {
+        // If the key state is not valid, then we can just check the text
+        //field ourselves
+        if (nameStrings[i].isEmpty ||
+            nameStrings[i].length > 20 ||
+            ring2Strings[i].isEmpty ||
+            ring2Strings.length > currCharLimit.secondRingLimit ||
+            ring3Strings[i].isEmpty ||
+            ring3Strings[i].length > currCharLimit.thirdRingLimit) {
           return i;
         }
       }
