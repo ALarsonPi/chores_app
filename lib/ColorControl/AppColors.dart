@@ -15,8 +15,8 @@ class AppColors {
     secondaryColor: Colors.lightBlue[500] as Color,
     tertiaryColor: Colors.lightBlue[700] as Color,
     primaryTextColor: Colors.black,
-    secondaryTextColor: Colors.black,
-    tertiaryTextColor: Colors.black,
+    secondaryTextColor: Colors.white,
+    tertiaryTextColor: Colors.white,
     lineColors: const [Colors.blue, Colors.white, Colors.white],
   );
   static ThemeColors darkModeBlueTheme = ThemeColors(

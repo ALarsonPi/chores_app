@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'RotatingPieChart/Objects/PieChartItem.dart';
 import 'RotatingPieChart/Objects/PieInfo.dart';
 import 'RotatingPieChart/RotatingPieChart.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
 
 /// A series of two or three concentric pie charts that can hold text
 /// One use for it (the one I've used it for) is to simulate a concentric
@@ -95,6 +92,7 @@ class ConcentricChart extends StatefulWidget {
   double circleThreeRadiusProportion;
 
   final bool shouldIgnoreTouch;
+  final bool shouldBold;
 
   /// Constructor for concentric chart
   /// Required - [width], [numberOfRings], and all the general info about each
@@ -125,6 +123,7 @@ class ConcentricChart extends StatefulWidget {
     this.linesColors = const [Colors.black, Colors.black, Colors.black],
     this.chunkOverflowLimitProportion = 0.15,
     this.shouldIgnoreTouch = false,
+    this.shouldBold = false,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -329,6 +328,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       ringNum: 1,
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
+      isBold: widget.shouldBold,
     );
 
     circleTwoPie = PieInfo(
@@ -342,22 +342,25 @@ class _ConcentricChartState extends State<ConcentricChart> {
         ringOnewidth / 2,
         ringTwowidth / 2,
       ],
+      isBold: widget.shouldBold,
     );
 
     rotatablePies.clear();
     bool isOuterRing = true;
     if (widget.numberOfRings == 3) {
       circleThreePie = PieInfo(
-          width: ringThreewidth,
-          items: circleThreeItems,
-          linesColor: widget.linesColors[2],
-          ringNum: 3,
-          textSize: widget.circleThreeFontSize,
-          textColor: widget.circleThreeFontColor,
-          ringBorders: [
-            ringTwowidth / 2,
-            ringThreewidth / 2,
-          ]);
+        width: ringThreewidth,
+        items: circleThreeItems,
+        linesColor: widget.linesColors[2],
+        ringNum: 3,
+        textSize: widget.circleThreeFontSize,
+        textColor: widget.circleThreeFontColor,
+        ringBorders: [
+          ringTwowidth / 2,
+          ringThreewidth / 2,
+        ],
+        isBold: widget.shouldBold,
+      );
       rotatablePies
           .add(makePieChart(circleThreePie, circleThreeBounds, isOuterRing));
       isOuterRing = false;

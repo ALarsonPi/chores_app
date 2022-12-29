@@ -295,6 +295,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     circleTwoText: ring2Strings,
                     circleThreeText: ring3Strings,
                     shouldIgnoreTouch: true,
+                    shouldBold: true,
 
                     // Theme
                     linesColors: Global.currentTheme.lineColors,

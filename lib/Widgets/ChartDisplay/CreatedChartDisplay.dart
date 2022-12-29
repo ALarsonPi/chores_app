@@ -58,6 +58,7 @@ class CreatedChartDisplay extends StatelessWidget {
           circleOneText: currChart.circleOneText,
           circleTwoText: currChart.circleTwoText,
           circleThreeText: currChart.circleThreeText ?? [],
+          shouldBold: true,
 
           // Theme
           linesColors: Global.currentTheme.lineColors,

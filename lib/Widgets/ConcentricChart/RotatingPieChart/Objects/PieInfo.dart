@@ -7,6 +7,7 @@ class PieInfo {
   List<PieChartItem> items;
   int ringNum;
   Color linesColor;
+  bool isBold;
 
   late List<double> ringBorders;
   late TextStyle textStyle;
@@ -22,10 +23,12 @@ class PieInfo {
     required textColor,
     this.ringBorders = const [0.0, 0.0],
     this.textProportion = 0.0,
+    this.isBold = false,
   }) {
     textStyle = TextStyle(
       fontSize: textSize,
       color: textColor,
+      fontWeight: (isBold) ? FontWeight.bold : FontWeight.normal,
     );
   }
 
