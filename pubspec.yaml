@@ -54,6 +54,7 @@ dependencies:
   sign_in_with_apple: ^4.3.0
   email_validator: ^2.1.17
   carousel_slider: ^4.2.1
+  flutter_keyboard_visibility: ^5.4.0
 
 dev_dependencies:
   integration_test:

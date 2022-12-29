@@ -91,11 +91,16 @@ class ChartProvider extends ChangeNotifier {
       circleTwoText: newChart.circleTwoText,
       circleThreeText: newChart.circleThreeText,
     );
-    // await _addChart(circleDataList[index]);
     notifyListeners();
   }
 
-  _addChart(Chart chartToAdd) async {
-    debugPrint("Got here to add chart in provider");
+  updateChartTitle(int index, String newTitle) {
+    circleDataList[index] =
+        circleDataList[index].copyWith(chartTitle: newTitle);
+    notifyListeners();
+
+    // ACTUALLY UPDATE IN FIREBASE,
+    // NOT DONE YET
+    // #TODO
   }
 }

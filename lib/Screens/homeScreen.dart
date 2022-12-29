@@ -1,12 +1,15 @@
+import 'dart:async';
+
 import 'package:badges/badges.dart';
-import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
+import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
@@ -27,24 +30,36 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late List<Chart> circleDataList;
   late List<Tab> tabs;
   late List<Tab> tabsToUse;
-  late TabController controller = TabController(length: 3, vsync: this);
-
+  late TabController tabsController = TabController(length: 3, vsync: this);
+  bool isEditingTitle = false;
   bool shouldChangeTab = false;
 
   @override
   void initState() {
     super.initState();
-    controller.index = 0;
+    tabsController.index = 0;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabsController.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    tabsController.addListener(() {
+      setState(() {
+        isEditingTitle = false;
+      });
+    });
+
     setTabs();
 
     int numTabs = Provider.of<TabNumberProvider>(context, listen: true).numTabs;
-    controller = TabController(length: numTabs + 1, vsync: this);
+    tabsController = TabController(length: numTabs + 1, vsync: this);
 
     tabsToUse = List.empty(growable: true);
     for (int i = 0; i < numTabs; i++) {
@@ -55,7 +70,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void setTabs() {
-    // THESE WOULD BE GATHERED FROM THE CHARTS
     String chartTitle1 = "Chart 1";
     String chartTitle2 = "Chart 2";
     String chartTitle3 = "Chart 3";
@@ -123,7 +137,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget getBottomNavigationBar(BuildContext context) {
-    controller.index =
+    tabsController.index =
         Provider.of<TabNumberProvider>(context, listen: true).currTab;
     return Container(
       decoration: BoxDecoration(
@@ -137,7 +151,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             : Theme.of(context).primaryColor,
       ),
       child: TabBar(
-        controller: controller,
+        controller: tabsController,
         onTap: (index) => {
           setState(() {
             Provider.of<TabNumberProvider>(context, listen: false)
@@ -186,107 +200,136 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void handleClick(int item) {
-    switch (item) {
-      case 0:
-        break;
-      case 1:
-        break;
-    }
+  endEdit() {
+    setState(() {
+      isEditingTitle = false;
+    });
   }
 
   // ignore: non_constant_identifier_names
   Widget HomePageWidget() {
-    return DefaultTabController(
-      length: tabsToUse.length,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(Global.toolbarHeight),
-          child: AppBar(
-            toolbarHeight: Global.toolbarHeight,
-            centerTitle: true,
-            title: Text(
-              tabsToUse.elementAt(controller.index).text as String,
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
-                color: Theme.of(context).textTheme.headlineMedium?.color,
+    return KeyboardVisibilityBuilder(
+      builder: (context, isKeyboardVisible) {
+        return DefaultTabController(
+          length: tabsToUse.length,
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(Global.toolbarHeight),
+              child: AppBar(
+                toolbarHeight: Global.toolbarHeight,
+                centerTitle: true,
+                title: (isEditingTitle)
+                    ? Padding(
+                        padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.1025,
+                        ),
+                        child: ChangeTitleWidget(
+                          oldTitle: Provider.of<ChartProvider>(context)
+                              .circleDataList[tabsController.index]
+                              .chartTitle,
+                          currTabIndex: tabsController.index,
+                          updateParent: endEdit,
+                        ),
+                      )
+                    : Text(
+                        (tabsController.index == tabsController.length - 1)
+                            ? "Settings"
+                            : (Provider.of<ChartProvider>(context)
+                                        .circleDataList[tabsController.index] ==
+                                    Chart.emptyChart)
+                                ? ""
+                                : Provider.of<ChartProvider>(context)
+                                    .circleDataList[tabsController.index]
+                                    .chartTitle,
+                        style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.fontSize,
+                          color:
+                              Theme.of(context).textTheme.headlineMedium?.color,
+                        ),
+                      ),
+                leading: PopupMenuButton<int>(
+                  icon: const Icon(Icons.menu),
+                  offset: Offset(0.0, Global.toolbarHeight - 5),
+                  itemBuilder: (context) => [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(
+                          Icons.abc_outlined,
+                          color: Colors.amber,
+                        ),
+                        title: const Text('Edit Title'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            isEditingTitle = true;
+                          });
+                        },
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        title: const Text('Edit Text'),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 2,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        title: const Text('Delete Chart'),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 3,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(
+                          Icons.add_alert,
+                          color: Colors.green,
+                        ),
+                        title: const Text('Connected Users'),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            leading: PopupMenuButton<int>(
-              onSelected: (item) => handleClick(item),
-              icon: const Icon(Icons.menu),
-              offset: Offset(0.0, AppBar().preferredSize.height + 5),
-              itemBuilder: (context) => [
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.abc_outlined,
-                      color: Colors.amber,
-                    ),
-                    title: const Text('Edit Title'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.edit,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    title: const Text('Edit Text'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 2,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    title: const Text('Delete Chart'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 3,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.add_alert,
-                      color: Colors.green,
-                    ),
-                    title: const Text('Connected Users'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
+            bottomNavigationBar: getBottomNavigationBar(context),
+            body: TabBarView(
+              controller: tabsController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                for (int i = 0; i < tabsToUse.length - 1; i++) TabContent(i),
+                const SettingsContent(),
               ],
             ),
           ),
-        ),
-        bottomNavigationBar: getBottomNavigationBar(context),
-        body: TabBarView(
-          controller: controller,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            for (int i = 0; i < tabsToUse.length - 1; i++) TabContent(i),
-            const SettingsContent(),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
