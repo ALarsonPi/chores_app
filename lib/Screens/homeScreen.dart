@@ -215,7 +215,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     .circleDataList[tabsController.index] ==
                 Chart.emptyChart);
     String currChartTitle = (tabsController.index == tabsController.length - 1)
-        ? ""
+        ? "Settings"
         : Provider.of<ChartProvider>(context)
             .circleDataList[tabsController.index]
             .chartTitle;
@@ -244,9 +244,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       )
                     : Text(
-                        (tabsController.index == tabsController.length - 1)
-                            ? "Settings"
-                            : currChartTitle,
+                        currChartTitle,
                         style: TextStyle(
                           fontSize: Theme.of(context)
                               .textTheme
