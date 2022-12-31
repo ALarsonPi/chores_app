@@ -484,11 +484,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                           circleThreeText: ring3Strings,
                                         ),
                                         // Add chart to firebase
-                                        debugPrint(newChart.toString()),
                                         Provider.of<ChartProvider>(context,
                                                 listen: false)
-                                            .setCircleDataElement(
+                                            .addChartToFirebase(
                                                 newChart, args.index),
+                                        Navigator.pop(context),
                                       }
                                   }
                                 else

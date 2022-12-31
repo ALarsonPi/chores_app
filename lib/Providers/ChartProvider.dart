@@ -75,11 +75,10 @@ class ChartProvider extends ChangeNotifier {
     Chart.emptyChart,
   ];
 
-  setCircleDataElement(Chart newChart, int index) async {
+  addChartToFirebase(Chart newChart, int index) async {
+    if (circleDataList[index] == newChart) return;
     String idFromFirebase = await ChartDao.addChart(newChart);
-    debugPrint(idFromFirebase);
 
-    debugPrint(newChart.toString());
     circleDataList[index] = newChart.copyWith(
       id: idFromFirebase,
       chartTitle: newChart.chartTitle,
@@ -94,13 +93,17 @@ class ChartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateChartTitle(int index, String newTitle) {
+  deleteChart(Chart currChart, int index) async {
+    await ChartDao.deleteChart(currChart);
+
+    circleDataList[index] = Chart.emptyChart;
+    notifyListeners();
+  }
+
+  updateChartTitle(int index, String newTitle) async {
     circleDataList[index] =
         circleDataList[index].copyWith(chartTitle: newTitle);
     notifyListeners();
-
-    // ACTUALLY UPDATE IN FIREBASE,
-    // NOT DONE YET
-    // #TODO
+    await ChartDao.updateChart(circleDataList[index]);
   }
 }

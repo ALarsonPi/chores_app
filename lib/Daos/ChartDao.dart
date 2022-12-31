@@ -11,13 +11,13 @@ class ChartDao {
     return docRef.id;
   }
 
-  static void updateChart(Chart currChart) async {
+  static Future<void> updateChart(Chart currChart) async {
     await currChartCollection.doc(currChart.id).update(
           currChart.toJson(),
         );
   }
 
-  static void deleteChart(Chart currChart) async {
+  static Future<void> deleteChart(Chart currChart) async {
     await currChartCollection.doc(currChart.id).delete();
   }
 

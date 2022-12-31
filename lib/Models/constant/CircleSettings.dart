@@ -11,6 +11,6 @@ class CircleSettings {
   final double circleThreeRadiusProportion = 1.0;
 
   final double circleOneFontSize = 8.0;
-  final double circleTwoFontSize = 20.0;
-  final double circleThreeFontSize = 20.0;
+  final double circleTwoFontSize = 14.0;
+  final double circleThreeFontSize = 14.0;
 }
