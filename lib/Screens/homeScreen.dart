@@ -303,6 +303,14 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                               title: const Text('Delete Chart'),
                               onTap: () {
+                                Provider.of<ChartProvider>(context,
+                                        listen: false)
+                                    .deleteChart(
+                                        Provider.of<ChartProvider>(context,
+                                                    listen: false)
+                                                .circleDataList[
+                                            tabsController.index],
+                                        tabsController.index);
                                 Navigator.pop(context);
                               },
                             ),
