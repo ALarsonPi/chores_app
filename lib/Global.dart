@@ -8,6 +8,7 @@ import 'Models/constant/RingCharLimit.dart';
 import 'Models/constant/ThemeColors.dart';
 import 'Models/frozen/Chart.dart';
 import 'Providers/ThemeProvider.dart';
+import 'Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 
 /// @nodoc
 class Global {
@@ -25,6 +26,10 @@ class Global {
 
   // These will be changed / checked by file
   static int currPrimaryColorIndex = 0;
+
+  static FocusNode titleFocusNode = FocusNode();
+  static GlobalKey<ChangeTitleWidgetState> changeTitleWidgetKey =
+      GlobalKey<ChangeTitleWidgetState>();
 
   static ThemeProvider themeProvider = ThemeProvider();
   static CircleSettings circleSettings = CircleSettings();

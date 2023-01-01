@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:badges/badges.dart';
+import 'package:chore_app/ColorControl/AppColors.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
@@ -226,8 +227,35 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(Global.toolbarHeight),
+              preferredSize: Size.fromHeight(Global.toolbarHeight + 16),
               child: AppBar(
+                // bottom: PreferredSize(
+                //   preferredSize: Size.zero,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(
+                //       bottom: 16.0,
+                //     ),
+                //     child: Text(
+                //       "Title 2",
+                //       style: TextStyle(
+                //         color:
+                //             Theme.of(context).textTheme.headlineMedium?.color,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // flexibleSpace: Container(
+                //   decoration: BoxDecoration(
+                //     gradient: LinearGradient(
+                //       colors: [
+                //         Theme.of(context).primaryColor,
+                //         AppColors.getPrimaryColorSwatch().shade400,
+                //         Theme.of(context).primaryColor,
+                //       ],
+                //       stops: const [0.0, 0.5, 1.0],
+                //     ),
+                //   ),
+                // ),
                 toolbarHeight: Global.toolbarHeight,
                 centerTitle: true,
                 title: (isEditingTitle)
@@ -236,6 +264,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                           right: MediaQuery.of(context).size.width * 0.1025,
                         ),
                         child: ChangeTitleWidget(
+                          key: Global.changeTitleWidgetKey,
                           oldTitle: Provider.of<ChartProvider>(context)
                               .circleDataList[tabsController.index]
                               .chartTitle,
@@ -243,16 +272,35 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                           updateParent: endEdit,
                         ),
                       )
-                    : Text(
-                        currChartTitle,
-                        style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .textTheme
-                              .headlineLarge
-                              ?.fontSize,
-                          color:
-                              Theme.of(context).textTheme.headlineMedium?.color,
-                        ),
+                    : Column(
+                        children: [
+                          Text(
+                            currChartTitle,
+                            style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headlineLarge
+                                  ?.fontSize,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.color,
+                            ),
+                          ),
+                          // Text(
+                          //   "Title 2",
+                          //   style: TextStyle(
+                          //     color: Theme.of(context)
+                          //         .textTheme
+                          //         .headlineMedium
+                          //         ?.color,
+                          //     fontSize: Theme.of(context)
+                          //         .textTheme
+                          //         .headlineSmall
+                          //         ?.fontSize,
+                          //   ),
+                          // ),
+                        ],
                       ),
                 leading: (isCurrChartEmpty)
                     ? null

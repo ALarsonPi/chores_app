@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Global.dart';
+
 class ChangeTitleWidget extends StatefulWidget {
   ChangeTitleWidget(
       {required this.oldTitle,
@@ -30,6 +32,20 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
     keyboardSubscription.cancel();
   }
 
+  dismissKeyboardAfterNormalDismisal() {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+      updateParent();
+    }
+  }
+
+  updateParent() {
+    setState(() {
+      widget.updateParent();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,13 +54,7 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-          setState(() {
-            widget.updateParent();
-          });
-        }
+        dismissKeyboardAfterNormalDismisal();
       }
     });
 
@@ -55,6 +65,12 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
             .updateChartTitle(widget.currTabIndex, controller.text);
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Global.titleFocusNode.requestFocus();
   }
 
   @override
@@ -73,7 +89,7 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
         ),
       ),
       child: TextFormField(
-        autofocus: true,
+        focusNode: Global.titleFocusNode,
         textAlign: TextAlign.center,
         textAlignVertical: TextAlignVertical.center,
         controller: controller,

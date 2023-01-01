@@ -144,13 +144,13 @@ class GlobalThemes {
     if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: (Global.isPhone) ? 22 : 36,
+        fontSize: (Global.isPhone) ? 26 : 36,
         color: Colors.black,
       );
     } else {
       return TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: (Global.isPhone) ? 22 : 36,
+        fontSize: (Global.isPhone) ? 26 : 36,
         color: Colors.white,
       );
     }

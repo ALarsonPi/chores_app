@@ -34,29 +34,41 @@ class AppRouter extends StatelessWidget {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          return MaterialApp(
-            scaffoldMessengerKey: Global.rootScaffoldMessengerKey,
-            debugShowCheckedModeBanner: false,
-            themeMode: themeProvider.selectedThemeMode,
-            theme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
-            darkTheme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
-            title: 'Custom Chore Chart',
-            builder: (context, widget) => Navigator(
-              onGenerateRoute: (RouteSettings settings) => MaterialPageRoute(
-                builder: (ctx) {
-                  return Container(
-                    child: widget,
-                  );
+          return GestureDetector(
+            onTap: () => {
+              if (Global.titleFocusNode.hasFocus)
+                {
+                  Global.titleFocusNode.unfocus(),
+                  if (Global.changeTitleWidgetKey.currentState != null)
+                    {
+                      Global.changeTitleWidgetKey.currentState!.updateParent(),
+                    }
                 },
-              ),
-            ),
-            initialRoute: '/',
-            routes: {
-              '/': (context) => const SplashScreen(),
-              // 'Settings': (context) => const SettingsScreen(),
-              CreateChartScreen.routeName: (context) =>
-                  const CreateChartScreen()
             },
+            child: MaterialApp(
+              scaffoldMessengerKey: Global.rootScaffoldMessengerKey,
+              debugShowCheckedModeBanner: false,
+              themeMode: themeProvider.selectedThemeMode,
+              theme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
+              darkTheme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
+              title: 'Custom Chore Chart',
+              builder: (context, widget) => Navigator(
+                onGenerateRoute: (RouteSettings settings) => MaterialPageRoute(
+                  builder: (ctx) {
+                    return Container(
+                      child: widget,
+                    );
+                  },
+                ),
+              ),
+              initialRoute: '/',
+              routes: {
+                '/': (context) => const SplashScreen(),
+                // 'Settings': (context) => const SettingsScreen(),
+                CreateChartScreen.routeName: (context) =>
+                    const CreateChartScreen()
+              },
+            ),
           );
         },
       ),
