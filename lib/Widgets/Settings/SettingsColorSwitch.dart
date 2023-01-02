@@ -14,6 +14,7 @@ class SettingsColorSwitch extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: ListView(
         shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           Container(
             padding: const EdgeInsets.only(

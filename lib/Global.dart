@@ -31,6 +31,9 @@ class Global {
   static GlobalKey<ChangeTitleWidgetState> changeTitleWidgetKey =
       GlobalKey<ChangeTitleWidgetState>();
 
+  // Transfer Variable
+  static TextSize currTextSize = TextSize.SMALL;
+
   static ThemeProvider themeProvider = ThemeProvider();
   static CircleSettings circleSettings = CircleSettings();
   static RingCharLimits ringCharLimits = RingCharLimits();

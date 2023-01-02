@@ -1,6 +1,7 @@
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Screens/createChartScreen.dart';
@@ -14,6 +15,11 @@ import 'Screens/SplashScreen.dart';
 /// @nodoc
 class AppRouter extends StatelessWidget {
   const AppRouter({Key? key}) : super(key: key);
+
+  setDefaultTextSize(BuildContext context) {
+    Provider.of<TextSizeProvider>(context, listen: false)
+        .setCurrTextSize(Global.currTextSize);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +36,14 @@ class AppRouter extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => CurrUserProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TextSizeProvider(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
+          setDefaultTextSize(context);
           return GestureDetector(
             onTap: () => {
               if (Global.titleFocusNode.hasFocus)
@@ -49,8 +59,10 @@ class AppRouter extends StatelessWidget {
               scaffoldMessengerKey: Global.rootScaffoldMessengerKey,
               debugShowCheckedModeBanner: false,
               themeMode: themeProvider.selectedThemeMode,
-              theme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
-              darkTheme: GlobalThemes.getThemeData(themeProvider.isDarkMode),
+              theme:
+                  GlobalThemes.getThemeData(themeProvider.isDarkMode, context),
+              darkTheme:
+                  GlobalThemes.getThemeData(themeProvider.isDarkMode, context),
               title: 'Custom Chore Chart',
               builder: (context, widget) => Navigator(
                 onGenerateRoute: (RouteSettings settings) => MaterialPageRoute(

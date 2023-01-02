@@ -1,13 +1,23 @@
 import 'package:chore_app/ColorControl/AppColors.dart';
+import 'package:chore_app/Models/constant/Settings.dart';
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/UI_Helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Global.dart';
 
 class GlobalThemes {
   //Themes to add
 
-  static ThemeData getThemeData(bool isDarkMode) {
+  static late TextSize _textSize;
+
+  static ThemeData getThemeData(bool isDarkMode, BuildContext context) {
     isDarkMode = !isDarkMode;
+
+    _textSize =
+        Provider.of<TextSizeProvider>(context, listen: false).currTextSize;
+    debugPrint(Settings.getCurrTextString(_textSize));
+
     return ThemeData(
       brightness: getBrightness(isDarkMode),
       primarySwatch: AppColors.getPrimaryColorSwatch(),

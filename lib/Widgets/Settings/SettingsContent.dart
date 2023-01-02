@@ -1,6 +1,10 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Widgets/Settings/textSizeChanger.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Models/constant/Settings.dart';
 import '../UserLoginLogout/CurrUserDisplay.dart';
 import 'ContactCreatorButton.dart';
 import 'LogoutButton.dart';
@@ -23,8 +27,10 @@ class _SettingsContent extends State<SettingsContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         Padding(
           padding: const EdgeInsets.only(
@@ -58,13 +64,19 @@ class _SettingsContent extends State<SettingsContent> {
           ),
           child: CurrUserDisplay(),
         ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 16.0,
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: LogoutButton(),
+        // Column For auto sizing properties of button
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 16.0,
+                left: 8.0,
+                right: 8.0,
+              ),
+              child: LogoutButton(),
+            ),
+          ],
         ),
       ],
     );

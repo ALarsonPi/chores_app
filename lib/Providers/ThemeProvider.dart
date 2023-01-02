@@ -12,6 +12,10 @@ class ThemeProvider with ChangeNotifier {
   Color selectedPrimaryColor =
       AppColors.primaryColorList[Global.settings.primaryColorIndex];
 
+  justNotifyListeners() {
+    notifyListeners();
+  }
+
   setSelectedPrimaryColor(Color color) async {
     selectedPrimaryColor = color;
     final prefs = await SharedPreferences.getInstance();

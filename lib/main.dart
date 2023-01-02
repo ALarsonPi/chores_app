@@ -16,6 +16,12 @@ void main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   final prefs = await SharedPreferences.getInstance();
+
+  String? currTextSize = prefs.getString(Settings.textSizeString);
+  Global.currTextSize = (currTextSize == null)
+      ? TextSize.SMALL
+      : Settings.getCurrTextSize(currTextSize);
+
   int? darkModeIndex = prefs.getInt(Settings.darkModeString);
   Global.settings.darkModeIndex = (darkModeIndex != null) ? darkModeIndex : 0;
   int? primaryColorIndex = prefs.getInt(Settings.primaryColorString);
