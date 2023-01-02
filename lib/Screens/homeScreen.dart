@@ -272,36 +272,35 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                           updateParent: endEdit,
                         ),
                       )
-                    : Column(
-                        children: [
-                          Text(
-                            currChartTitle,
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge
-                                  ?.fontSize,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium
-                                  ?.color,
-                            ),
-                          ),
-                          // Text(
-                          //   "Title 2",
-                          //   style: TextStyle(
-                          //     color: Theme.of(context)
-                          //         .textTheme
-                          //         .headlineMedium
-                          //         ?.color,
-                          //     fontSize: Theme.of(context)
-                          //         .textTheme
-                          //         .headlineSmall
-                          //         ?.fontSize,
-                          //   ),
-                          // ),
-                        ],
+                    :
+                    // Column(
+                    //     children: [
+                    Text(
+                        currChartTitle,
+                        style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.fontSize,
+                          color:
+                              Theme.of(context).textTheme.headlineMedium?.color,
+                        ),
                       ),
+                // Text(
+                //   "Title 2",
+                //   style: TextStyle(
+                //     color: Theme.of(context)
+                //         .textTheme
+                //         .headlineMedium
+                //         ?.color,
+                //     fontSize: Theme.of(context)
+                //         .textTheme
+                //         .headlineSmall
+                //         ?.fontSize,
+                //   ),
+                // ),
+                // ],
+                //),
                 leading: (isCurrChartEmpty)
                     ? null
                     : PopupMenuButton<int>(

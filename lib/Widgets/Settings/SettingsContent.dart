@@ -1,3 +1,4 @@
+import 'package:chore_app/Widgets/Settings/textSizeChanger.dart';
 import 'package:flutter/material.dart';
 
 import '../UserLoginLogout/CurrUserDisplay.dart';
@@ -28,11 +29,18 @@ class _SettingsContent extends State<SettingsContent> {
         Padding(
           padding: const EdgeInsets.only(
             top: 8.0,
-            bottom: 8.0,
             left: 8.0,
             right: 8.0,
           ),
           child: SettingsColorSwitch(updateThemeColorParent),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(
+            bottom: 8.0,
+            left: 8.0,
+            right: 8.0,
+          ),
+          child: TextSizeChangerWidget(),
         ),
         const SettingsChartController(),
         Padding(
