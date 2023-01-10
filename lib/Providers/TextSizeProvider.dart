@@ -6,20 +6,24 @@ import '../Models/constant/Settings.dart';
 class TextSizeProvider extends ChangeNotifier {
   TextSize currTextSize = TextSize.MEDIUM;
   double fontSizeToAdd = 0;
+  double iconSizeToAdd = 0;
 
-  void setFontSizeToAdd() {
+  void setAddedSize() {
     if (currTextSize == TextSize.LARGE) {
       fontSizeToAdd = 6;
+      iconSizeToAdd = 4;
     } else if (currTextSize == TextSize.MEDIUM) {
       fontSizeToAdd = 3;
+      iconSizeToAdd = 2;
     } else {
       fontSizeToAdd = 0;
+      iconSizeToAdd = 0;
     }
   }
 
   void setCurrTextSize(TextSize textSizeToSet) async {
     currTextSize = textSizeToSet;
-    setFontSizeToAdd();
+    setAddedSize();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
       Settings.textSizeString,

@@ -75,8 +75,13 @@ class ThemeSwitcher extends StatelessWidget {
                             ? MainAxisAlignment.spaceAround
                             : MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(appThemes[i].icon,
-                              size: (Global.isPhone) ? 24 : 36),
+                          Icon(
+                            appThemes[i].icon,
+                            size: (Theme.of(context).iconTheme.size as double) +
+                                Provider.of<TextSizeProvider>(context,
+                                        listen: false)
+                                    .iconSizeToAdd,
+                          ),
                           Text(
                             appThemes[i].title,
                             style: (Global.isPhone)

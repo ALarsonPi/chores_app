@@ -83,7 +83,7 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
                 ),
                 RadioListTile<String>(
                   title: Text(
-                    'Medium',
+                    'Normal',
                     style: TextStyle(
                       fontSize: (Theme.of(context)
                               .textTheme

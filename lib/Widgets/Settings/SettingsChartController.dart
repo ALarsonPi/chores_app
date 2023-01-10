@@ -49,7 +49,11 @@ class _DropdownButtonToolState extends State<DropdownButtonTool> {
 
     return DropdownButton<String>(
       value: dropdownValue,
-      icon: const Icon(Icons.expand_more),
+      icon: Icon(
+        Icons.expand_more,
+        size: (Theme.of(context).iconTheme.size as double) +
+            Provider.of<TextSizeProvider>(context, listen: true).iconSizeToAdd,
+      ),
       elevation: 16,
       style: TextStyle(
         color: Theme.of(context).primaryColor,

@@ -103,9 +103,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     color: textColor,
                   ),
                 ),
-                child: const Icon(Icons.looks_one),
+                child: Icon(
+                  Icons.looks_one,
+                  size: (Theme.of(context).iconTheme.size as double) +
+                      Provider.of<TextSizeProvider>(context, listen: true)
+                          .iconSizeToAdd,
+                ),
               )
-            : const Icon(Icons.looks_one),
+            : Icon(
+                Icons.looks_one,
+                size: (Theme.of(context).iconTheme.size as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .iconSizeToAdd,
+              ),
       ),
       Tab(
         text: chartTitle2,
@@ -124,9 +134,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     color: textColor,
                   ),
                 ),
-                child: const Icon(Icons.looks_two),
+                child: Icon(
+                  Icons.looks_two,
+                  size: (Theme.of(context).iconTheme.size as double) +
+                      Provider.of<TextSizeProvider>(context, listen: true)
+                          .iconSizeToAdd,
+                ),
               )
-            : const Icon(Icons.looks_two),
+            : Icon(
+                Icons.looks_two,
+                size: (Theme.of(context).iconTheme.size as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .iconSizeToAdd,
+              ),
       ),
       Tab(
         text: chartTitle3,
@@ -145,13 +165,28 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     color: textColor,
                   ),
                 ),
-                child: const Icon(Icons.looks_3),
+                child: Icon(
+                  Icons.looks_3,
+                  size: (Theme.of(context).iconTheme.size as double) +
+                      Provider.of<TextSizeProvider>(context, listen: true)
+                          .iconSizeToAdd,
+                ),
               )
-            : const Icon(Icons.looks_3),
+            : Icon(
+                Icons.looks_3,
+                size: (Theme.of(context).iconTheme.size as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .iconSizeToAdd,
+              ),
       ),
-      const Tab(
+      Tab(
         text: "Settings",
-        icon: Icon(Icons.settings),
+        icon: Icon(
+          Icons.settings,
+          size: (Theme.of(context).iconTheme.size as double) +
+              Provider.of<TextSizeProvider>(context, listen: true)
+                  .iconSizeToAdd,
+        ),
       ),
     ];
   }
@@ -250,33 +285,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                   Provider.of<TextSizeProvider>(context, listen: false)
                       .fontSizeToAdd),
               child: AppBar(
-                // bottom: PreferredSize(
-                //   preferredSize: Size.zero,
-                //   child: Padding(
-                //     padding: const EdgeInsets.only(
-                //       bottom: 16.0,
-                //     ),
-                //     child: Text(
-                //       "Title 2",
-                //       style: TextStyle(
-                //         color:
-                //             Theme.of(context).textTheme.headlineMedium?.color,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // flexibleSpace: Container(
-                //   decoration: BoxDecoration(
-                //     gradient: LinearGradient(
-                //       colors: [
-                //         Theme.of(context).primaryColor,
-                //         AppColors.getPrimaryColorSwatch().shade400,
-                //         Theme.of(context).primaryColor,
-                //       ],
-                //       stops: const [0.0, 0.5, 1.0],
-                //     ),
-                //   ),
-                // ),
                 toolbarHeight: Global.toolbarHeight,
                 centerTitle: true,
                 title: (isEditingTitle)
@@ -293,10 +301,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                           updateParent: endEdit,
                         ),
                       )
-                    :
-                    // Column(
-                    //     children: [
-                    Text(
+                    : Text(
                         currChartTitle,
                         style: TextStyle(
                           fontSize: (Theme.of(context)
@@ -310,25 +315,16 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               Theme.of(context).textTheme.headlineMedium?.color,
                         ),
                       ),
-                // Text(
-                //   "Title 2",
-                //   style: TextStyle(
-                //     color: Theme.of(context)
-                //         .textTheme
-                //         .headlineMedium
-                //         ?.color,
-                //     fontSize: Theme.of(context)
-                //         .textTheme
-                //         .headlineSmall
-                //         ?.fontSize,
-                //   ),
-                // ),
-                // ],
-                //),
                 leading: (isCurrChartEmpty)
                     ? null
                     : PopupMenuButton<int>(
-                        icon: const Icon(Icons.menu),
+                        icon: Icon(
+                          Icons.menu,
+                          size: (Theme.of(context).iconTheme.size as double) +
+                              Provider.of<TextSizeProvider>(context,
+                                      listen: false)
+                                  .iconSizeToAdd,
+                        ),
                         offset: Offset(
                             0.0,
                             Global.toolbarHeight -
@@ -341,10 +337,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 0,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const SizedBox(
+                              leading: SizedBox(
                                 height: double.infinity,
                                 child: Icon(
                                   Icons.abc_outlined,
+                                  size: (Theme.of(context).iconTheme.size
+                                          as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd,
                                   color: Colors.amber,
                                 ),
                               ),
@@ -376,11 +377,16 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 height: double.infinity,
                                 child: Icon(
                                   Icons.edit,
+                                  size: (Theme.of(context).iconTheme.size
+                                          as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd,
                                   color: Theme.of(context).primaryColor,
                                 ),
                               ),
                               title: Text(
-                                'Edit Text',
+                                'Edit Content',
                                 style: TextStyle(
                                   fontSize: (Theme.of(context)
                                           .textTheme
@@ -400,10 +406,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 2,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const SizedBox(
+                              leading: SizedBox(
                                 height: double.infinity,
                                 child: Icon(
                                   Icons.delete,
+                                  size: (Theme.of(context).iconTheme.size
+                                          as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd,
                                   color: Colors.red,
                                 ),
                               ),
@@ -436,10 +447,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 3,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const SizedBox(
+                              leading: SizedBox(
                                 height: double.infinity,
                                 child: Icon(
                                   Icons.add_alert,
+                                  size: (Theme.of(context).iconTheme.size
+                                          as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd,
                                   color: Colors.green,
                                 ),
                               ),

@@ -434,22 +434,50 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                 scrollDirection: Axis.horizontal,
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                onPressed: () {
-                                  carouselController.previousPage();
-                                },
-                                icon: const Icon(Icons.arrow_back),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd *
+                                      4),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: IconButton(
+                                  onPressed: () {
+                                    carouselController.previousPage();
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    size: (Theme.of(context).iconTheme.size
+                                            as double) +
+                                        Provider.of<TextSizeProvider>(context,
+                                                listen: false)
+                                            .iconSizeToAdd,
+                                  ),
+                                ),
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: IconButton(
-                                onPressed: () {
-                                  carouselController.nextPage();
-                                },
-                                icon: const Icon(Icons.arrow_forward),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd *
+                                      4),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  onPressed: () {
+                                    carouselController.nextPage();
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_forward,
+                                    size: (Theme.of(context).iconTheme.size
+                                            as double) +
+                                        Provider.of<TextSizeProvider>(context,
+                                                listen: false)
+                                            .iconSizeToAdd,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -571,7 +599,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                         .fontSizeToAdd,
                                   ),
                                   child: Text(
-                                    (hasValidatedText) ? "Submit" : "Continue",
+                                    (hasValidatedText)
+                                        ? " Submit "
+                                        : "Continue",
                                     style: TextStyle(
                                       fontSize: (Theme.of(context)
                                               .textTheme
@@ -623,7 +653,11 @@ class _DropdownState extends State<Dropdown> {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: dropdownValue,
-      icon: const Icon(Icons.expand_more),
+      icon: Icon(
+        Icons.expand_more,
+        size: (Theme.of(context).iconTheme.size as double) +
+            Provider.of<TextSizeProvider>(context, listen: false).iconSizeToAdd,
+      ),
       elevation: 16,
       style: TextStyle(
         color: Theme.of(context).primaryColor,

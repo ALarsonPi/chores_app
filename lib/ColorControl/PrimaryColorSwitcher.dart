@@ -1,3 +1,4 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,8 +61,13 @@ class PrimaryColorSwitcher extends StatelessWidget {
                             borderRadius: BorderRadius.circular(3),
                             color: Theme.of(context).cardColor.withOpacity(0.5),
                           ),
-                          child: Icon(Icons.check,
-                              size: (Global.isPhone) ? 20 : 36),
+                          child: Icon(
+                            Icons.check,
+                            size: (Theme.of(context).iconTheme.size as double) +
+                                Provider.of<TextSizeProvider>(context,
+                                        listen: false)
+                                    .iconSizeToAdd,
+                          ),
                         ),
                       ),
                     ),
