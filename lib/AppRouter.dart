@@ -17,8 +17,9 @@ class AppRouter extends StatelessWidget {
   const AppRouter({Key? key}) : super(key: key);
 
   setDefaultTextSize(BuildContext context) {
+    Global.didUpdate = true;
     Provider.of<TextSizeProvider>(context, listen: false)
-        .setCurrTextSize(Global.currTextSize);
+        .setCurrTextSize(Global.getCurrTextSize());
   }
 
   @override
@@ -43,7 +44,7 @@ class AppRouter extends StatelessWidget {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          setDefaultTextSize(context);
+          if (!Global.didUpdate) setDefaultTextSize(context);
           return GestureDetector(
             onTap: () => {
               if (Global.titleFocusNode.hasFocus)

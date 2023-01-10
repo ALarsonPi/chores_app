@@ -1,7 +1,12 @@
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
+import 'package:chore_app/Models/constant/Settings.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/CreateChartUI_Helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import '../../../Global.dart';
+import '../../../Providers/TextSizeProvider.dart';
 
 class ChartItemInput extends StatefulWidget {
   ChartItemInput(
@@ -116,6 +121,24 @@ class ChartItemInputState extends State<ChartItemInput> {
     subtleUnderlineTheme = getSubtleUnderlineTheme(context);
   }
 
+  int getTextFlex() {
+    return (Provider.of<TextSizeProvider>(context, listen: false)
+                    .currTextSize ==
+                TextSize.LARGE ||
+            !Global.isPhone)
+        ? 2
+        : 3;
+  }
+
+  int getBodyFlex() {
+    return (Provider.of<TextSizeProvider>(context, listen: false)
+                    .currTextSize ==
+                TextSize.LARGE ||
+            !Global.isPhone)
+        ? 3
+        : 5;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -130,50 +153,77 @@ class ChartItemInputState extends State<ChartItemInput> {
           ),
           child: Text(
             "Section ${widget.chunkIndex + 1}",
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 18,
+              fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
+                      as double) +
+                  Provider.of<TextSizeProvider>(context, listen: false)
+                      .fontSizeToAdd,
             ),
             textAlign: TextAlign.center,
           ),
         ),
         Row(
           children: [
-            const Flexible(
-              flex: 2,
+            Flexible(
+              flex: getTextFlex(),
               child: Padding(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   left: 16.0,
                 ),
                 child: Text(
                   "  NAME:     ",
+                  style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displaySmall
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
+                  ),
                   textAlign: TextAlign.left,
                 ),
               ),
             ),
             Flexible(
-              flex: 5,
+              flex: getBodyFlex(),
               child: Theme(
                 data: ThemeData(
                   inputDecorationTheme: subtleUnderlineTheme,
                 ),
-                child: TextFormField(
-                  controller: nameController,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(
-                      nameChartLimit + 1,
-                    ),
-                  ],
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.headlineLarge?.color
-                        as Color,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 2.0 +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
+                    right: 2.0 +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                   ),
-                  decoration: InputDecoration(
-                    fillColor:
-                        (nameController.text.length == nameChartLimit + 1)
-                            ? const Color(0xFFF4C7C2)
-                            : null,
-                    filled: true,
+                  child: TextFormField(
+                    controller: nameController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(
+                        nameChartLimit + 1,
+                      ),
+                    ],
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displaySmall
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                      color: Theme.of(context).textTheme.headlineLarge?.color
+                          as Color,
+                    ),
+                    decoration: InputDecoration(
+                      fillColor:
+                          (nameController.text.length == nameChartLimit + 1)
+                              ? const Color(0xFFF4C7C2)
+                              : null,
+                      filled: true,
+                    ),
                   ),
                 ),
               ),
@@ -184,43 +234,68 @@ class ChartItemInputState extends State<ChartItemInput> {
           padding: const EdgeInsets.only(top: 8.0),
           child: Row(
             children: [
-              const Flexible(
-                flex: 2,
+              Flexible(
+                flex: getTextFlex(),
                 child: Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     left: 16.0,
                   ),
                   child: Text(
                     "CHORE 1:  ",
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displaySmall
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                    ),
                     textAlign: TextAlign.left,
                   ),
                 ),
               ),
               Flexible(
-                flex: 5,
+                flex: getBodyFlex(),
                 child: Theme(
                   data: ThemeData(
                     inputDecorationTheme: subtleUnderlineTheme,
                   ),
-                  child: TextFormField(
-                    controller: chore1Controller,
-                    minLines: 1,
-                    maxLines: (widget.numRings == 3) ? 1 : 2,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(
-                        widget.currRingCharLimit.secondRingLimit + 1,
-                      ),
-                    ],
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color
-                          as Color,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 2.0 +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                      right: 2.0 +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
                     ),
-                    decoration: InputDecoration(
-                      fillColor: (chore1Controller.text.length ==
-                              widget.currRingCharLimit.secondRingLimit + 1)
-                          ? const Color(0xFFF4C7C2)
-                          : null,
-                      filled: true,
+                    child: TextFormField(
+                      controller: chore1Controller,
+                      minLines: 1,
+                      maxLines: (widget.numRings == 3) ? 1 : 2,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(
+                          widget.currRingCharLimit.secondRingLimit + 1,
+                        ),
+                      ],
+                      style: TextStyle(
+                        fontSize: (Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.fontSize as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
+                        color: Theme.of(context).textTheme.headlineLarge?.color
+                            as Color,
+                      ),
+                      decoration: InputDecoration(
+                        fillColor: (chore1Controller.text.length ==
+                                widget.currRingCharLimit.secondRingLimit + 1)
+                            ? const Color(0xFFF4C7C2)
+                            : null,
+                        filled: true,
+                      ),
                     ),
                   ),
                 ),
@@ -234,41 +309,71 @@ class ChartItemInputState extends State<ChartItemInput> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Flexible(
-                  flex: 2,
+                Flexible(
+                  flex: getTextFlex(),
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: 16.0,
                     ),
                     child: Text(
                       "CHORE 2:  ",
+                      style: TextStyle(
+                        fontSize: (Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.fontSize as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
+                      ),
                       textAlign: TextAlign.left,
                     ),
                   ),
                 ),
                 Flexible(
-                  flex: 5,
+                  flex: getBodyFlex(),
                   child: Theme(
                     data: ThemeData(
                       inputDecorationTheme: subtleUnderlineTheme,
                     ),
-                    child: TextFormField(
-                      controller: chore2Controller,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(
-                          widget.currRingCharLimit.thirdRingLimit + 1,
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.headlineLarge?.color
-                            as Color,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 2.0 +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
+                        right: 2.0 +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
                       ),
-                      decoration: InputDecoration(
-                        fillColor: (chore2Controller.text.length ==
-                                widget.currRingCharLimit.thirdRingLimit + 1)
-                            ? const Color(0xFFF4C7C2)
-                            : null,
-                        filled: true,
+                      child: TextFormField(
+                        controller: chore2Controller,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(
+                            widget.currRingCharLimit.thirdRingLimit + 1,
+                          ),
+                        ],
+                        style: TextStyle(
+                          fontSize: (Theme.of(context)
+                                  .textTheme
+                                  .displaySmall
+                                  ?.fontSize as double) +
+                              Provider.of<TextSizeProvider>(context,
+                                      listen: false)
+                                  .fontSizeToAdd,
+                          color: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.color as Color,
+                        ),
+                        decoration: InputDecoration(
+                          fillColor: (chore2Controller.text.length ==
+                                  widget.currRingCharLimit.thirdRingLimit + 1)
+                              ? const Color(0xFFF4C7C2)
+                              : null,
+                          filled: true,
+                        ),
                       ),
                     ),
                   ),

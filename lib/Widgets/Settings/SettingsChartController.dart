@@ -1,4 +1,5 @@
 import 'package:chore_app/Providers/TabNumberProvider.dart';
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,15 +8,19 @@ class SettingsChartController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Text(
-            "How many Charts should show? ",
+            "How many Charts should show?",
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+              fontSize: (Theme.of(context).textTheme.displayLarge?.fontSize
+                      as double) +
+                  Provider.of<TextSizeProvider>(context, listen: true)
+                      .fontSizeToAdd,
             ),
           ),
         ),
@@ -64,7 +69,15 @@ class _DropdownButtonToolState extends State<DropdownButtonTool> {
       items: list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
+                      as double) +
+                  Provider.of<TextSizeProvider>(context, listen: true)
+                      .fontSizeToAdd,
+            ),
+          ),
         );
       }).toList(),
     );

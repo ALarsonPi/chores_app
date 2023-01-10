@@ -1,4 +1,6 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
@@ -42,8 +44,13 @@ class CreatedChartDisplay extends StatelessWidget {
                 child: Center(
                   child: Text(
                     currChart.id.substring(0, 8),
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displayLarge
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -77,15 +84,21 @@ class CreatedChartDisplay extends StatelessWidget {
               Global.circleSettings.chunkOverflowLimitProportion,
           circleOneRadiusProportions:
               Global.circleSettings.circleOneRadiusProportions,
-          circleOneFontSize: Global.circleSettings.circleOneFontSize,
+          circleOneFontSize: Global.circleSettings.circleOneFontSize +
+              Provider.of<TextSizeProvider>(context, listen: false)
+                  .fontSizeToAdd,
           circleOneTextRadiusProportion:
               Global.circleSettings.circleOneTextRadiusProportion,
           circleTwoRadiusProportions:
               Global.circleSettings.circleTwoRadiusProportions,
-          circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+          circleTwoFontSize: Global.circleSettings.circleTwoFontSize +
+              Provider.of<TextSizeProvider>(context, listen: false)
+                  .fontSizeToAdd,
           circleThreeRadiusProportion:
               Global.circleSettings.circleThreeRadiusProportion,
-          circleThreeFontSize: Global.circleSettings.circleThreeFontSize,
+          circleThreeFontSize: Global.circleSettings.circleThreeFontSize +
+              Provider.of<TextSizeProvider>(context, listen: false)
+                  .fontSizeToAdd,
         ),
       ],
     );

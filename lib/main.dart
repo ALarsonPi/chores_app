@@ -18,9 +18,9 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
 
   String? currTextSize = prefs.getString(Settings.textSizeString);
-  Global.currTextSize = (currTextSize == null)
-      ? TextSize.SMALL
-      : Settings.getCurrTextSize(currTextSize);
+  Global.setCurrTextSize((currTextSize == null)
+      ? TextSize.MEDIUM
+      : Settings.getCurrTextSize(currTextSize));
 
   int? darkModeIndex = prefs.getInt(Settings.darkModeString);
   Global.settings.darkModeIndex = (darkModeIndex != null) ? darkModeIndex : 0;

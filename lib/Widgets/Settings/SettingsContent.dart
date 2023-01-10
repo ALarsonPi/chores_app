@@ -1,8 +1,5 @@
-import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Widgets/Settings/textSizeChanger.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Models/constant/Settings.dart';
 import '../UserLoginLogout/CurrUserDisplay.dart';
@@ -30,7 +27,6 @@ class _SettingsContent extends State<SettingsContent> {
     return ListView(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         Padding(
           padding: const EdgeInsets.only(

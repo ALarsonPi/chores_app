@@ -1,4 +1,5 @@
 import 'package:chore_app/Providers/CurrUserProvider.dart';
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,12 +11,16 @@ class CurrUserDisplay extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         Text(
           "Signed in as",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+            fontSize:
+                (Theme.of(context).textTheme.displayLarge?.fontSize as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .fontSizeToAdd,
             color: Theme.of(context).textTheme.displayMedium?.color,
           ),
         ),
@@ -30,7 +35,10 @@ class CurrUserDisplay extends StatelessWidget {
                 "No name",
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+              fontSize: (Theme.of(context).textTheme.displayLarge?.fontSize
+                      as double) +
+                  Provider.of<TextSizeProvider>(context, listen: true)
+                      .fontSizeToAdd,
               color: Theme.of(context).textTheme.displayMedium?.color,
               fontWeight: FontWeight.bold,
             ),
@@ -39,7 +47,10 @@ class CurrUserDisplay extends StatelessWidget {
           "(${Provider.of<CurrUserProvider>(context, listen: true).currUser.email})",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: Theme.of(context).textTheme.displayLarge?.fontSize,
+            fontSize:
+                (Theme.of(context).textTheme.displayLarge?.fontSize as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .fontSizeToAdd,
             color: Theme.of(context).textTheme.displayMedium?.color,
             fontWeight: FontWeight.bold,
           ),

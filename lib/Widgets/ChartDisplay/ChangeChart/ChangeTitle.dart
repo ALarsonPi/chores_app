@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chore_app/Providers/ChartProvider.dart';
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +77,9 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
   @override
   Widget build(BuildContext context) {
     TextStyle currStyle = TextStyle(
-      fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+      fontSize: (Theme.of(context).textTheme.headlineLarge?.fontSize
+              as double) +
+          Provider.of<TextSizeProvider>(context, listen: false).fontSizeToAdd,
       color: Theme.of(context).textTheme.headlineMedium?.color,
     );
     return Theme(

@@ -52,12 +52,25 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
                 "Change Text Size",
                 style: TextStyle(
                   color: Theme.of(context).textTheme.displaySmall?.color,
-                  fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
+                  fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
+                          as double) +
+                      Provider.of<TextSizeProvider>(context, listen: true)
+                          .fontSizeToAdd,
                 ),
               ),
               children: [
                 RadioListTile<String>(
-                  title: const Text('Small'),
+                  title: Text(
+                    'Small',
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displayMedium
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: true)
+                              .fontSizeToAdd,
+                    ),
+                  ),
                   value: TextSize.SMALL.toString(),
                   groupValue: radioValue,
                   onChanged: (String? value) {
@@ -65,13 +78,21 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
                       radioValue = value as String;
                       Provider.of<TextSizeProvider>(context, listen: false)
                           .setCurrTextSize(TextSize.SMALL);
-                      // Provider.of<ThemeProvider>(context, listen: false)
-                      //     .justNotifyListeners();
                     });
                   },
                 ),
                 RadioListTile<String>(
-                  title: const Text('Medium'),
+                  title: Text(
+                    'Medium',
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displayMedium
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: true)
+                              .fontSizeToAdd,
+                    ),
+                  ),
                   value: TextSize.MEDIUM.toString(),
                   groupValue: radioValue,
                   onChanged: (String? value) {
@@ -79,13 +100,21 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
                       radioValue = value as String;
                       Provider.of<TextSizeProvider>(context, listen: false)
                           .setCurrTextSize(TextSize.MEDIUM);
-                      // Provider.of<ThemeProvider>(context, listen: false)
-                      //     .justNotifyListeners();
                     });
                   },
                 ),
                 RadioListTile<String>(
-                  title: const Text('Large'),
+                  title: Text(
+                    'Large',
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displayMedium
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: true)
+                              .fontSizeToAdd,
+                    ),
+                  ),
                   value: TextSize.LARGE.toString(),
                   groupValue: radioValue,
                   onChanged: (String? value) {
@@ -93,8 +122,6 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
                       radioValue = value as String;
                       Provider.of<TextSizeProvider>(context, listen: false)
                           .setCurrTextSize(TextSize.LARGE);
-                      // Provider.of<ThemeProvider>(context, listen: false)
-                      //     .justNotifyListeners();
                     });
                   },
                 ),

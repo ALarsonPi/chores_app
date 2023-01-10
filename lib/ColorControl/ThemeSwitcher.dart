@@ -1,3 +1,4 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -79,8 +80,32 @@ class ThemeSwitcher extends StatelessWidget {
                           Text(
                             appThemes[i].title,
                             style: (Global.isPhone)
-                                ? Theme.of(context).textTheme.subtitle2
-                                : Theme.of(context).textTheme.headlineLarge,
+                                ? TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .subtitle2
+                                        ?.color as Color,
+                                    fontSize: (Theme.of(context)
+                                            .textTheme
+                                            .subtitle2
+                                            ?.fontSize as double) +
+                                        Provider.of<TextSizeProvider>(context,
+                                                listen: true)
+                                            .fontSizeToAdd,
+                                  )
+                                : TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineLarge
+                                        ?.color as Color,
+                                    fontSize: (Theme.of(context)
+                                            .textTheme
+                                            .headlineLarge
+                                            ?.fontSize as double) +
+                                        Provider.of<TextSizeProvider>(context,
+                                                listen: true)
+                                            .fontSizeToAdd,
+                                  ),
                           ),
                         ],
                       ),

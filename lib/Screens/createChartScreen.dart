@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
+import '../Providers/TextSizeProvider.dart';
 
 class CreateChartScreen extends StatefulWidget {
   const CreateChartScreen({super.key});
@@ -196,6 +197,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         title: Text(
           "Customize New Chart",
           style: TextStyle(
+            fontSize: (Theme.of(context).textTheme.headlineMedium?.fontSize
+                    as double) +
+                Provider.of<TextSizeProvider>(context, listen: false)
+                    .fontSizeToAdd,
             color: Theme.of(context).textTheme.headlineSmall?.color as Color,
           ),
         ),
@@ -218,8 +223,17 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     top: MediaQuery.of(context).size.width * 0.075,
                     bottom: 8.0,
                   ),
-                  child: Text("Chart Title:",
-                      style: Theme.of(context).textTheme.headlineLarge),
+                  child: Text(
+                    "Chart Title:",
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                    ),
+                  ),
                 ),
               if (hasValidatedText)
                 Theme(
@@ -275,6 +289,13 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                       minLines: 1,
                       maxLines: 1,
                       style: TextStyle(
+                        fontSize: (Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.fontSize as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
                         color: Theme.of(context).textTheme.headlineLarge?.color
                             as Color,
                       ),
@@ -314,16 +335,22 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                         Global.circleSettings.chunkOverflowLimitProportion,
                     circleOneRadiusProportions:
                         Global.circleSettings.circleOneRadiusProportions,
-                    circleOneFontSize: Global.circleSettings.circleOneFontSize,
+                    circleOneFontSize: Global.circleSettings.circleOneFontSize +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                     circleOneTextRadiusProportion:
                         Global.circleSettings.circleOneTextRadiusProportion,
                     circleTwoRadiusProportions:
                         Global.circleSettings.circleTwoRadiusProportions,
-                    circleTwoFontSize: Global.circleSettings.circleTwoFontSize,
+                    circleTwoFontSize: Global.circleSettings.circleTwoFontSize +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                     circleThreeRadiusProportion:
                         Global.circleSettings.circleThreeRadiusProportion,
-                    circleThreeFontSize:
-                        Global.circleSettings.circleThreeFontSize,
+                    circleThreeFontSize: Global
+                            .circleSettings.circleThreeFontSize +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                   ),
                 ),
               ),
@@ -432,102 +459,136 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          child: ElevatedButton(
-                            onPressed: (!hasValidatedText)
-                                ? null
-                                : () => {
-                                      setState(() => {
-                                            hasValidatedText = false,
-                                          }),
-                                    },
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
+                        ElevatedButton(
+                          onPressed: (!hasValidatedText)
+                              ? null
+                              : () => {
+                                    setState(() => {
+                                          hasValidatedText = false,
+                                        }),
+                                  },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
-                            )),
-                            child: Text("Back",
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.color as Color)),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                              Provider.of<TextSizeProvider>(context,
+                                      listen: true)
+                                  .fontSizeToAdd,
+                            ),
+                            child: Text(
+                              "   Back   ",
+                              style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                          .textTheme
+                                          .displaySmall
+                                          ?.fontSize as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: true)
+                                          .fontSizeToAdd,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.color as Color),
+                            ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 8.0,
                           ),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              )),
-                              onPressed: () => {
-                                if (hasValidatedText)
-                                  {
-                                    // can I just pop or should I actually navigate
-                                    if (formKey.currentState!.validate())
-                                      {
-                                        newChart = Chart(
-                                          id: "id",
-                                          chartTitle: chartTitleController.text,
-                                          numberOfRings: currNumRings,
-                                          ownerID: Global.currUserID,
-                                          tabNumForOwner: args.index,
-                                          editorIDs: List.empty(growable: true),
-                                          viewerIDs: List.empty(growable: true),
-                                          circleOneText: nameStrings,
-                                          circleTwoText: ring2Strings,
-                                          circleThreeText: ring3Strings,
-                                        ),
-                                        // Add chart to firebase
-                                        Provider.of<ChartProvider>(context,
-                                                listen: false)
-                                            .addChartToFirebase(
-                                                newChart, args.index),
-                                        Navigator.pop(context),
-                                      }
-                                  }
-                                else
-                                  {
-                                    // I'll have to validate stuff for myself, as
-                                    // the form will try to validate ALL the sections
-                                    // even the ones not active
-                                    validationNum = validateAllActiveFields(),
-                                    if (validationNum == -1)
-                                      {
-                                        setState(() {
-                                          hasValidatedText = true;
-                                        }),
-                                      }
-                                    else
-                                      {
-                                        Global.rootScaffoldMessengerKey
-                                            .currentState
-                                            ?.showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              "Section ${validationNum + 1} is incomplete."
-                                              "\nPlease complete all fields to continue",
-                                              textAlign: TextAlign.center,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  if (hasValidatedText)
+                                    {
+                                      if (formKey.currentState!.validate())
+                                        {
+                                          newChart = Chart(
+                                            id: "id",
+                                            chartTitle:
+                                                chartTitleController.text,
+                                            numberOfRings: currNumRings,
+                                            ownerID: Global.currUserID,
+                                            tabNumForOwner: args.index,
+                                            editorIDs:
+                                                List.empty(growable: true),
+                                            viewerIDs:
+                                                List.empty(growable: true),
+                                            circleOneText: nameStrings,
+                                            circleTwoText: ring2Strings,
+                                            circleThreeText: ring3Strings,
+                                          ),
+                                          // Add chart to firebase
+                                          Provider.of<ChartProvider>(context,
+                                                  listen: false)
+                                              .addChartToFirebase(
+                                                  newChart, args.index),
+                                          Navigator.pop(context),
+                                        }
+                                    }
+                                  else
+                                    {
+                                      // I'll have to validate stuff for myself, as
+                                      // the form will try to validate ALL the sections
+                                      // even the ones not active
+                                      validationNum = validateAllActiveFields(),
+                                      if (validationNum == -1)
+                                        {
+                                          setState(() {
+                                            hasValidatedText = true;
+                                          }),
+                                        }
+                                      else
+                                        {
+                                          Global.rootScaffoldMessengerKey
+                                              .currentState
+                                              ?.showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "Section ${validationNum + 1} is incomplete."
+                                                "\nPlease complete all fields to continue",
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      },
-                                  },
-                              },
-                              child: Text(
-                                (hasValidatedText) ? "Submit" : "Continue",
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.color as Color),
+                                        },
+                                    },
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                    Provider.of<TextSizeProvider>(context,
+                                            listen: true)
+                                        .fontSizeToAdd,
+                                  ),
+                                  child: Text(
+                                    (hasValidatedText) ? "Submit" : "Continue",
+                                    style: TextStyle(
+                                      fontSize: (Theme.of(context)
+                                              .textTheme
+                                              .displaySmall
+                                              ?.fontSize as double) +
+                                          Provider.of<TextSizeProvider>(context,
+                                                  listen: true)
+                                              .fontSizeToAdd,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.color as Color,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                       ],
@@ -580,7 +641,14 @@ class _DropdownState extends State<Dropdown> {
       items: widget.list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(
+            value,
+            style: TextStyle(
+                fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
+                        as double) +
+                    Provider.of<TextSizeProvider>(context, listen: false)
+                        .fontSizeToAdd),
+          ),
         );
       }).toList(),
     );

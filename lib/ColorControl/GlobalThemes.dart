@@ -154,13 +154,13 @@ class GlobalThemes {
     if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: (Global.isPhone) ? 26 : 36,
+        fontSize: (Global.isPhone) ? 20 : 30,
         color: Colors.black,
       );
     } else {
       return TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: (Global.isPhone) ? 26 : 36,
+        fontSize: (Global.isPhone) ? 20 : 30,
         color: Colors.white,
       );
     }
@@ -170,7 +170,7 @@ class GlobalThemes {
     if (isDarkMode) {
       return TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: (Global.isPhone) ? 18 : 24,
+        fontSize: (Global.isPhone) ? 16 : 22,
         // NOTICE - Change from previous apps
         color: const Color.fromARGB(255, 250, 253, 255),
       );

@@ -1,4 +1,6 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../ColorControl/AppColors.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
@@ -52,7 +54,14 @@ class EmptyChartDisplay extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     "Press button below to \ncreate new chore chart!",
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: TextStyle(
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                    ),
                   ),
                 ),
                 ElevatedButton(
@@ -60,12 +69,23 @@ class EmptyChartDisplay extends StatelessWidget {
                     Navigator.pushNamed(context, CreateChartScreen.routeName,
                         arguments: CreateChartArguments(currTabIndex)),
                   },
-                  child: Text(
-                    "Create New",
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.bodyMedium?.fontSize,
-                      color: Theme.of(context).textTheme.headlineMedium?.color,
+                  child: Padding(
+                    padding: EdgeInsets.all(
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd),
+                    child: Text(
+                      "Create New",
+                      style: TextStyle(
+                        fontSize: (Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.fontSize as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
+                        color:
+                            Theme.of(context).textTheme.headlineMedium?.color,
+                      ),
                     ),
                   ),
                 )

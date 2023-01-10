@@ -32,7 +32,15 @@ class Global {
       GlobalKey<ChangeTitleWidgetState>();
 
   // Transfer Variable
-  static TextSize currTextSize = TextSize.SMALL;
+  static late TextSize currTextSize; //= TextSize.SMALL;
+  static setCurrTextSize(TextSize size) {
+    currTextSize = size;
+  }
+
+  static bool didUpdate = false;
+  static getCurrTextSize() {
+    return currTextSize;
+  }
 
   static ThemeProvider themeProvider = ThemeProvider();
   static CircleSettings circleSettings = CircleSettings();

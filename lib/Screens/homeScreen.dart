@@ -14,6 +14,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
 import '../Global.dart';
+import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/ChartDisplay/TabContent.dart';
@@ -90,9 +91,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart1Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: const Text(
+                badgeContent: Text(
                   badgeText,
                   style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                     color: textColor,
                   ),
                 ),
@@ -105,9 +112,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart2Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: const Text(
+                badgeContent: Text(
                   badgeText,
                   style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                     color: textColor,
                   ),
                 ),
@@ -120,9 +133,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart3Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: const Text(
+                badgeContent: Text(
                   badgeText,
                   style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd,
                     color: textColor,
                   ),
                 ),
@@ -227,7 +246,9 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(Global.toolbarHeight + 16),
+              preferredSize: Size.fromHeight(Global.toolbarHeight +
+                  Provider.of<TextSizeProvider>(context, listen: false)
+                      .fontSizeToAdd),
               child: AppBar(
                 // bottom: PreferredSize(
                 //   preferredSize: Size.zero,
@@ -278,10 +299,13 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     Text(
                         currChartTitle,
                         style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .textTheme
-                              .headlineLarge
-                              ?.fontSize,
+                          fontSize: (Theme.of(context)
+                                  .textTheme
+                                  .headlineLarge
+                                  ?.fontSize as double) +
+                              Provider.of<TextSizeProvider>(context,
+                                      listen: true)
+                                  .fontSizeToAdd,
                           color:
                               Theme.of(context).textTheme.headlineMedium?.color,
                         ),
@@ -305,17 +329,37 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     ? null
                     : PopupMenuButton<int>(
                         icon: const Icon(Icons.menu),
-                        offset: Offset(0.0, Global.toolbarHeight - 5),
+                        offset: Offset(
+                            0.0,
+                            Global.toolbarHeight -
+                                Provider.of<TextSizeProvider>(context,
+                                        listen: false)
+                                    .fontSizeToAdd -
+                                2),
                         itemBuilder: (context) => [
                           PopupMenuItem<int>(
                             value: 0,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.abc_outlined,
-                                color: Colors.amber,
+                              leading: const SizedBox(
+                                height: double.infinity,
+                                child: Icon(
+                                  Icons.abc_outlined,
+                                  color: Colors.amber,
+                                ),
                               ),
-                              title: const Text('Edit Title'),
+                              title: Text(
+                                'Edit Title',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.fontSize as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .fontSizeToAdd,
+                                ),
+                              ),
                               onTap: () {
                                 Navigator.pop(context);
                                 setState(() {
@@ -328,11 +372,25 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 1,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: Icon(
-                                Icons.edit,
-                                color: Theme.of(context).primaryColor,
+                              leading: SizedBox(
+                                height: double.infinity,
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Theme.of(context).primaryColor,
+                                ),
                               ),
-                              title: const Text('Edit Text'),
+                              title: Text(
+                                'Edit Text',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.fontSize as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .fontSizeToAdd,
+                                ),
+                              ),
                               onTap: () {
                                 Navigator.pop(context);
                               },
@@ -342,11 +400,25 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 2,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                              leading: const SizedBox(
+                                height: double.infinity,
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
                               ),
-                              title: const Text('Delete Chart'),
+                              title: Text(
+                                'Delete Chart',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.fontSize as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .fontSizeToAdd,
+                                ),
+                              ),
                               onTap: () {
                                 Provider.of<ChartProvider>(context,
                                         listen: false)
@@ -364,11 +436,25 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             value: 3,
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.add_alert,
-                                color: Colors.green,
+                              leading: const SizedBox(
+                                height: double.infinity,
+                                child: Icon(
+                                  Icons.add_alert,
+                                  color: Colors.green,
+                                ),
                               ),
-                              title: const Text('Connected Users'),
+                              title: Text(
+                                'Connected Users',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.fontSize as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .fontSizeToAdd,
+                                ),
+                              ),
                               onTap: () {
                                 Navigator.pop(context);
                               },

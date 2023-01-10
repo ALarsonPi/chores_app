@@ -1,4 +1,6 @@
+import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../ColorControl/PrimaryColorSwitcher.dart';
 import '../../ColorControl/ThemeSwitcher.dart';
@@ -27,7 +29,10 @@ class SettingsColorSwitch extends StatelessWidget {
                 "Change Theme Color",
                 style: TextStyle(
                   color: Theme.of(context).textTheme.displaySmall?.color,
-                  fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
+                  fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
+                          as double) +
+                      Provider.of<TextSizeProvider>(context, listen: true)
+                          .fontSizeToAdd,
                 ),
               ),
               children: [
