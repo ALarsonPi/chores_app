@@ -6,6 +6,8 @@ import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
+import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
+import 'package:chore_app/Screens/createChartScreen.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -354,7 +356,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontSize: (Theme.of(context)
                                           .textTheme
-                                          .displayMedium
+                                          .displaySmall
                                           ?.fontSize as double) +
                                       Provider.of<TextSizeProvider>(context,
                                               listen: false)
@@ -390,7 +392,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontSize: (Theme.of(context)
                                           .textTheme
-                                          .displayMedium
+                                          .displaySmall
                                           ?.fontSize as double) +
                                       Provider.of<TextSizeProvider>(context,
                                               listen: false)
@@ -399,6 +401,12 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                               onTap: () {
                                 Navigator.pop(context);
+                                Navigator.pushNamed(
+                                    context, CreateChartScreen.routeName,
+                                    arguments: CreateChartArguments(
+                                      tabsController.index,
+                                      isInEditMode: true,
+                                    ));
                               },
                             ),
                           ),
@@ -423,7 +431,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontSize: (Theme.of(context)
                                           .textTheme
-                                          .displayMedium
+                                          .displaySmall
                                           ?.fontSize as double) +
                                       Provider.of<TextSizeProvider>(context,
                                               listen: false)
@@ -464,7 +472,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   fontSize: (Theme.of(context)
                                           .textTheme
-                                          .displayMedium
+                                          .displaySmall
                                           ?.fontSize as double) +
                                       Provider.of<TextSizeProvider>(context,
                                               listen: false)

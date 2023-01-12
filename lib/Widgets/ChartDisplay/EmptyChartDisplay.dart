@@ -55,10 +55,8 @@ class EmptyChartDisplay extends StatelessWidget {
                   child: Text(
                     "Press button below to \ncreate new chore chart!",
                     style: TextStyle(
-                      fontSize: (Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.fontSize as double) +
+                      fontSize: (Theme.of(context).textTheme.bodySmall?.fontSize
+                              as double) +
                           Provider.of<TextSizeProvider>(context, listen: false)
                               .fontSizeToAdd,
                     ),
@@ -78,7 +76,31 @@ class EmptyChartDisplay extends StatelessWidget {
                       style: TextStyle(
                         fontSize: (Theme.of(context)
                                 .textTheme
-                                .bodyMedium
+                                .bodySmall
+                                ?.fontSize as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .fontSizeToAdd,
+                        color:
+                            Theme.of(context).textTheme.headlineMedium?.color,
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => {
+                    // Will navigate to join chart screen?
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(
+                        Provider.of<TextSizeProvider>(context, listen: false)
+                            .fontSizeToAdd),
+                    child: Text(
+                      " Join Chart ",
+                      style: TextStyle(
+                        fontSize: (Theme.of(context)
+                                .textTheme
+                                .bodySmall
                                 ?.fontSize as double) +
                             Provider.of<TextSizeProvider>(context,
                                     listen: false)

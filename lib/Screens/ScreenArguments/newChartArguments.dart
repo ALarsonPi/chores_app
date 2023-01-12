@@ -1,4 +1,5 @@
 class CreateChartArguments {
   final int index;
-  CreateChartArguments(this.index);
+  final bool isInEditMode;
+  CreateChartArguments(this.index, {this.isInEditMode = false});
 }

@@ -6,7 +6,6 @@ import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -37,11 +36,21 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   @override
   void initState() {
     super.initState();
+
     // -1 for indexes starting at 0, -1 for there not being an option for 1 section
     currCharLimit = RingCharLimits.limits[currNumSections - 1 - 1];
     chartTitleController.addListener(() {
       formKey.currentState!.validate();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (args.isInEditMode != null) {
+      debugPrint("IS EDIT MODE: ${args.isInEditMode}");
+    }
   }
 
   @override
