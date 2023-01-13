@@ -11,13 +11,12 @@ class User with _$User {
   @JsonSerializable(explicitToJson: true)
   factory User({
     required String id,
-    String? chart1ID,
-    String? chart2ID,
-    String? chart3ID,
     String? name,
     String? email,
     String? password,
     List<String>? correlatedUserIDs,
+    List<String>? chartIDs,
+    List<int>? associatedTabNums,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

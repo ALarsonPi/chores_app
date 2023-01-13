@@ -54,6 +54,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    Future.delayed(
+      const Duration(seconds: 0),
+      () {
+        if (!Global.dataTransferComplete) {
+          for (int i = 0; i < Global.chartHolderGlobal.length; i++) {
+            Provider.of<ChartProvider>(context, listen: false)
+                .setChartData(Global.chartHolderGlobal.elementAt(i), i);
+          }
+          Global.dataTransferComplete = true;
+        }
+      },
+    );
+
     tabsController.addListener(() {
       setState(() {
         isEditingTitle = false;
@@ -226,16 +239,28 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  getCurrUserFromProvider() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Global.currUserID = user.uid;
+      //var currUser =
+      await Provider.of<CurrUserProvider>(context, listen: false)
+          .getCurrUser(user.email!);
+      // currUser = getCurrUserFromProvider();
+      // var userIds = currUser.chartIDs as Iterable<String>;
+      // var tabNums = currUser.associatedTabNums as Iterable<int>;
+      // for (int i = 0; i < userIds.length; i++) {
+      //   Provider.of<ChartProvider>(context, listen: false)
+      //       .getChartFromDatabase(userIds.elementAt(i), tabNums.elementAt(i));
+      // }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (Provider.of<CurrUserProvider>(context, listen: false).currUser.id ==
         "ID") {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        Global.currUserID = user.uid;
-        Provider.of<CurrUserProvider>(context, listen: false)
-            .getCurrUser(user.email!);
-      }
+      getCurrUserFromProvider();
     }
 
     return StreamBuilder<User?>(
@@ -276,6 +301,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         : Provider.of<ChartProvider>(context)
             .circleDataList[tabsController.index]
             .chartTitle;
+
     return KeyboardVisibilityBuilder(
       builder: (context, isKeyboardVisible) {
         return DefaultTabController(
@@ -439,6 +465,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
+                                Provider.of<CurrUserProvider>(context,
+                                        listen: false)
+                                    .deleteChartIDForUser(
+                                        Provider.of<ChartProvider>(context,
+                                                listen: false)
+                                            .circleDataList[
+                                                tabsController.index]
+                                            .id,
+                                        tabsController.index);
                                 Provider.of<ChartProvider>(context,
                                         listen: false)
                                     .deleteChart(

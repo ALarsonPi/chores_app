@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
+import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
@@ -62,6 +63,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   List<String> nameStrings = List.filled(4, "", growable: true);
   List<String> ring2Strings = List.filled(4, "", growable: true);
   List<String> ring3Strings = List.filled(4, "", growable: true);
+
+  bool isLoading = false;
 
   final List<String> ringNumOptions = <String>[
     'Two Ring',
@@ -200,6 +203,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
         ? MediaQuery.of(context).size.width
         : MediaQuery.of(context).size.height * 0.4;
     int validationNum = 0;
+    String id = "";
 
     return Scaffold(
       appBar: AppBar(
@@ -545,11 +549,14 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                onPressed: () => {
+                                onPressed: () async => {
                                   if (hasValidatedText)
                                     {
                                       if (formKey.currentState!.validate())
                                         {
+                                          setState(() => {
+                                                isLoading = true,
+                                              }),
                                           newChart = Chart(
                                             id: "id",
                                             chartTitle:
@@ -566,10 +573,14 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                             circleThreeText: ring3Strings,
                                           ),
                                           // Add chart to firebase
-                                          Provider.of<ChartProvider>(context,
+                                          id = await Provider.of<ChartProvider>(
+                                                  context,
                                                   listen: false)
                                               .addChartToFirebase(
                                                   newChart, args.index),
+                                          Provider.of<CurrUserProvider>(context,
+                                                  listen: false)
+                                              .addChartIDToUser(id, args.index),
                                           Navigator.pop(context),
                                         }
                                     }
@@ -601,31 +612,34 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                         },
                                     },
                                 },
-                                child: Padding(
-                                  padding: EdgeInsets.all(
-                                    Provider.of<TextSizeProvider>(context,
-                                            listen: true)
-                                        .fontSizeToAdd,
-                                  ),
-                                  child: Text(
-                                    (hasValidatedText)
-                                        ? " Submit "
-                                        : "Continue",
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
+                                child: (isLoading)
+                                    ? const CircularProgressIndicator()
+                                    : Padding(
+                                        padding: EdgeInsets.all(
                                           Provider.of<TextSizeProvider>(context,
                                                   listen: true)
                                               .fontSizeToAdd,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall
-                                          ?.color as Color,
-                                    ),
-                                  ),
-                                ),
+                                        ),
+                                        child: Text(
+                                          (hasValidatedText)
+                                              ? " Submit "
+                                              : "Continue",
+                                          style: TextStyle(
+                                            fontSize: (Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.fontSize as double) +
+                                                Provider.of<TextSizeProvider>(
+                                                        context,
+                                                        listen: true)
+                                                    .fontSizeToAdd,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall
+                                                ?.color as Color,
+                                          ),
+                                        ),
+                                      ),
                               ),
                             ],
                           ),

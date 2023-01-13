@@ -21,13 +21,12 @@ User _$UserFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$User {
   String get id => throw _privateConstructorUsedError;
-  String? get chart1ID => throw _privateConstructorUsedError;
-  String? get chart2ID => throw _privateConstructorUsedError;
-  String? get chart3ID => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   List<String>? get correlatedUserIDs => throw _privateConstructorUsedError;
+  List<String>? get chartIDs => throw _privateConstructorUsedError;
+  List<int>? get associatedTabNums => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,13 +40,12 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String? chart1ID,
-      String? chart2ID,
-      String? chart3ID,
       String? name,
       String? email,
       String? password,
-      List<String>? correlatedUserIDs});
+      List<String>? correlatedUserIDs,
+      List<String>? chartIDs,
+      List<int>? associatedTabNums});
 }
 
 /// @nodoc
@@ -64,31 +62,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = null,
-    Object? chart1ID = freezed,
-    Object? chart2ID = freezed,
-    Object? chart3ID = freezed,
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
     Object? correlatedUserIDs = freezed,
+    Object? chartIDs = freezed,
+    Object? associatedTabNums = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      chart1ID: freezed == chart1ID
-          ? _value.chart1ID
-          : chart1ID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      chart2ID: freezed == chart2ID
-          ? _value.chart2ID
-          : chart2ID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      chart3ID: freezed == chart3ID
-          ? _value.chart3ID
-          : chart3ID // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -105,6 +90,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.correlatedUserIDs
           : correlatedUserIDs // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      chartIDs: freezed == chartIDs
+          ? _value.chartIDs
+          : chartIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      associatedTabNums: freezed == associatedTabNums
+          ? _value.associatedTabNums
+          : associatedTabNums // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
     ) as $Val);
   }
 }
@@ -117,13 +110,12 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String? chart1ID,
-      String? chart2ID,
-      String? chart3ID,
       String? name,
       String? email,
       String? password,
-      List<String>? correlatedUserIDs});
+      List<String>? correlatedUserIDs,
+      List<String>? chartIDs,
+      List<int>? associatedTabNums});
 }
 
 /// @nodoc
@@ -136,31 +128,18 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
   @override
   $Res call({
     Object? id = null,
-    Object? chart1ID = freezed,
-    Object? chart2ID = freezed,
-    Object? chart3ID = freezed,
     Object? name = freezed,
     Object? email = freezed,
     Object? password = freezed,
     Object? correlatedUserIDs = freezed,
+    Object? chartIDs = freezed,
+    Object? associatedTabNums = freezed,
   }) {
     return _then(_$_User(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      chart1ID: freezed == chart1ID
-          ? _value.chart1ID
-          : chart1ID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      chart2ID: freezed == chart2ID
-          ? _value.chart2ID
-          : chart2ID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      chart3ID: freezed == chart3ID
-          ? _value.chart3ID
-          : chart3ID // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -177,6 +156,14 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value._correlatedUserIDs
           : correlatedUserIDs // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      chartIDs: freezed == chartIDs
+          ? _value._chartIDs
+          : chartIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      associatedTabNums: freezed == associatedTabNums
+          ? _value._associatedTabNums
+          : associatedTabNums // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
     ));
   }
 }
@@ -187,26 +174,21 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
 class _$_User extends _User {
   _$_User(
       {required this.id,
-      this.chart1ID,
-      this.chart2ID,
-      this.chart3ID,
       this.name,
       this.email,
       this.password,
-      final List<String>? correlatedUserIDs})
+      final List<String>? correlatedUserIDs,
+      final List<String>? chartIDs,
+      final List<int>? associatedTabNums})
       : _correlatedUserIDs = correlatedUserIDs,
+        _chartIDs = chartIDs,
+        _associatedTabNums = associatedTabNums,
         super._();
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
   @override
   final String id;
-  @override
-  final String? chart1ID;
-  @override
-  final String? chart2ID;
-  @override
-  final String? chart3ID;
   @override
   final String? name;
   @override
@@ -224,9 +206,30 @@ class _$_User extends _User {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<String>? _chartIDs;
+  @override
+  List<String>? get chartIDs {
+    final value = _chartIDs;
+    if (value == null) return null;
+    if (_chartIDs is EqualUnmodifiableListView) return _chartIDs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<int>? _associatedTabNums;
+  @override
+  List<int>? get associatedTabNums {
+    final value = _associatedTabNums;
+    if (value == null) return null;
+    if (_associatedTabNums is EqualUnmodifiableListView)
+      return _associatedTabNums;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'User(id: $id, chart1ID: $chart1ID, chart2ID: $chart2ID, chart3ID: $chart3ID, name: $name, email: $email, password: $password, correlatedUserIDs: $correlatedUserIDs)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, correlatedUserIDs: $correlatedUserIDs, chartIDs: $chartIDs, associatedTabNums: $associatedTabNums)';
   }
 
   @override
@@ -235,18 +238,15 @@ class _$_User extends _User {
         (other.runtimeType == runtimeType &&
             other is _$_User &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.chart1ID, chart1ID) ||
-                other.chart1ID == chart1ID) &&
-            (identical(other.chart2ID, chart2ID) ||
-                other.chart2ID == chart2ID) &&
-            (identical(other.chart3ID, chart3ID) ||
-                other.chart3ID == chart3ID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
             const DeepCollectionEquality()
-                .equals(other._correlatedUserIDs, _correlatedUserIDs));
+                .equals(other._correlatedUserIDs, _correlatedUserIDs) &&
+            const DeepCollectionEquality().equals(other._chartIDs, _chartIDs) &&
+            const DeepCollectionEquality()
+                .equals(other._associatedTabNums, _associatedTabNums));
   }
 
   @JsonKey(ignore: true)
@@ -254,13 +254,12 @@ class _$_User extends _User {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      chart1ID,
-      chart2ID,
-      chart3ID,
       name,
       email,
       password,
-      const DeepCollectionEquality().hash(_correlatedUserIDs));
+      const DeepCollectionEquality().hash(_correlatedUserIDs),
+      const DeepCollectionEquality().hash(_chartIDs),
+      const DeepCollectionEquality().hash(_associatedTabNums));
 
   @JsonKey(ignore: true)
   @override
@@ -279,25 +278,18 @@ class _$_User extends _User {
 abstract class _User extends User {
   factory _User(
       {required final String id,
-      final String? chart1ID,
-      final String? chart2ID,
-      final String? chart3ID,
       final String? name,
       final String? email,
       final String? password,
-      final List<String>? correlatedUserIDs}) = _$_User;
+      final List<String>? correlatedUserIDs,
+      final List<String>? chartIDs,
+      final List<int>? associatedTabNums}) = _$_User;
   _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
 
   @override
   String get id;
-  @override
-  String? get chart1ID;
-  @override
-  String? get chart2ID;
-  @override
-  String? get chart3ID;
   @override
   String? get name;
   @override
@@ -306,6 +298,10 @@ abstract class _User extends User {
   String? get password;
   @override
   List<String>? get correlatedUserIDs;
+  @override
+  List<String>? get chartIDs;
+  @override
+  List<int>? get associatedTabNums;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;

@@ -31,6 +31,9 @@ class Global {
   static GlobalKey<ChangeTitleWidgetState> changeTitleWidgetKey =
       GlobalKey<ChangeTitleWidgetState>();
 
+  static bool dataTransferComplete = false;
+  static List<Chart> chartHolderGlobal = List.empty(growable: true);
+
   // Transfer Variable
   static late TextSize currTextSize; //= TextSize.SMALL;
   static setCurrTextSize(TextSize size) {

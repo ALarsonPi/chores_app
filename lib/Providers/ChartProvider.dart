@@ -1,19 +1,29 @@
 import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../Models/ChartDataHolder.dart';
 import '../Models/frozen/Chart.dart';
 
 class ChartProvider extends ChangeNotifier {
-  late var circleDataList = [
+  late List<Chart> circleDataList = [
     Chart.emptyChart,
     Chart.emptyChart,
     Chart.emptyChart,
   ];
 
-  addChartToFirebase(Chart newChart, int index) async {
-    if (circleDataList[index] == newChart) return;
-    String idFromFirebase = await ChartDao.addChart(newChart);
+  getChartFromDatabase(String chartID, int index) async {
+    Chart chart = await ChartDao.getChartByID(chartID);
+    circleDataList[index] = chart;
+  }
 
+  setChartData(Chart chart, int index) {
+    circleDataList[index] = chart;
+    notifyListeners();
+  }
+
+  Future<String> addChartToFirebase(Chart newChart, int index) async {
+    if (circleDataList[index] == newChart) return "";
+    String idFromFirebase = await ChartDao.addChart(newChart);
     circleDataList[index] = newChart.copyWith(
       id: idFromFirebase,
       chartTitle: newChart.chartTitle,
@@ -26,6 +36,7 @@ class ChartProvider extends ChangeNotifier {
       circleThreeText: newChart.circleThreeText,
     );
     notifyListeners();
+    return idFromFirebase;
   }
 
   deleteChart(Chart currChart, int index) async {

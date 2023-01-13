@@ -29,6 +29,16 @@ class CurrUserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  addChartIDToUser(String newChartID, int newTabNum) {
+    User user = UserDao.addChartIDToUser(currUser, newChartID, newTabNum);
+    currUser = user;
+  }
+
+  deleteChartIDForUser(String oldChartID, int oldTabNum) {
+    User user = UserDao.removeChartIDForUser(currUser, oldChartID, oldTabNum);
+    currUser = user;
+  }
+
   isEmailBeingUsedByOtherProvider(String proposedEmail) async {
     bool emailIsInUse = await isEmailAlreadyInUse(proposedEmail);
     if (emailIsInUse) {
@@ -66,13 +76,13 @@ class CurrUserProvider extends ChangeNotifier {
   }
 
   // Used on Sign-in and refresh
-  getCurrUser(String email) async {
+  Future<User> getCurrUser(String email) async {
     User newUser = await UserDao.getCurrUser(email);
-    if (currUser == newUser) return;
-    currUser = newUser.copyWith(
-        name: newUser.name, email: newUser.email, password: newUser.password);
+    if (currUser == newUser) return currUser;
+    currUser = newUser;
     Global.currUserID = currUser.id;
     notifyListeners();
+    return currUser;
   }
 
   void signInWithGoogle() async {
