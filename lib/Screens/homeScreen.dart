@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:chore_app/Models/frozen/User.dart' as UserModel;
 
 import '../Global.dart';
+import '../Providers/DisplayChartProvider.dart';
 import '../Providers/FutureDataProvider.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
@@ -46,6 +47,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     tabsController.index = 0;
+    Global.dataTransferComplete = false;
   }
 
   @override
@@ -270,6 +272,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           );
         } else {
+          Global.dataTransferComplete = false;
           return LoginSignUpWidget();
         }
       },
@@ -300,44 +303,27 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     if (tabsController.index == tabsController.length - 1) {
       return "Settings";
     }
-    if (Global.editedTitles.isNotEmpty &&
-        Global.editedTitles.containsKey(tabsController.index)) {
-      return Global.editedTitles[tabsController.index] as String;
-    }
     return currChart.chartTitle;
   }
 
   // ignore: non_constant_identifier_names
   Widget HomePageWidget(BuildContext c) {
-    List listOfThisUsersCharts =
-        Provider.of<List<List<Chart>>>(c, listen: true);
-    List<Chart> currCharts = List.empty(growable: true);
-    for (List<Chart> currList in listOfThisUsersCharts) {
-      currCharts.addAll(currList);
-      currCharts.addAll(Global.addedChartsDuringSession);
-    }
-
     List<UserModel.User> listOfUser =
         Provider.of<List<UserModel.User>>(c, listen: true);
 
-    int indexOfCurrTab = (listOfUser.isEmpty)
-        ? -1
-        : listOfUser
-            .elementAt(0)
-            .associatedTabNums
-            ?.indexOf(tabsController.index) as int;
-
-    Chart chartData = Chart.emptyChart;
-
-    if (indexOfCurrTab != -1) {
-      String currChartID =
-          listOfUser.elementAt(0).chartIDs?.elementAt(indexOfCurrTab) as String;
-      var correctChart =
-          currCharts.where((element) => element.id == currChartID);
-      if (correctChart.isNotEmpty) {
-        chartData = correctChart.first;
-      }
+    if (listOfUser.isNotEmpty && !Global.dataTransferComplete) {
+      ChartDao.getAndListenToChartsForUser(listOfUser.elementAt(0), context);
+      Global.dataTransferComplete = true;
+      debugPrint("Setting new listeners");
     }
+
+    Chart chartData = (!Provider.of<DisplayChartProvider>(context, listen: true)
+            .usersCharts
+            .keys
+            .contains(tabsController.index))
+        ? Chart.emptyChart
+        : Provider.of<DisplayChartProvider>(context, listen: true)
+            .usersCharts[tabsController.index] as Chart;
 
     // Don't show Chart Edit Menu if chart is empty or settings screen
     bool isCurrChartEmpty =
@@ -511,12 +497,12 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                         listen: false)
                                     .deleteChartIDForUser(
                                         chartData.id, tabsController.index);
-                                Global.addedChartsDuringSession
-                                    .remove(chartData);
-                                Global.editedTitles.removeWhere((key, value) =>
-                                    key == tabsController.index &&
-                                    value == chartData.chartTitle);
-                                debugPrint(Global.editedTitles.toString());
+                                // Global.addedChartsDuringSession
+                                //     .remove(chartData);
+                                // Global.editedTitles.removeWhere((key, value) =>
+                                //     key == tabsController.index &&
+                                //     value == chartData.chartTitle);
+                                // debugPrint(Global.editedTitles.toString());
                                 Provider.of<ChartProvider>(context,
                                         listen: false)
                                     .deleteChart(

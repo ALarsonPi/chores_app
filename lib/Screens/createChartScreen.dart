@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
+import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
@@ -580,8 +581,13 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                                   listen: false)
                                               .addChartToFirebase(
                                                   newChart, args.index),
-                                          Global.addedChartsDuringSession
-                                              .add(newChart.copyWith(id: id)),
+                                          Provider.of<DisplayChartProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .updateChart(
+                                            args.index,
+                                            newChart.copyWith(id: id),
+                                          ),
                                           Provider.of<CurrUserProvider>(context,
                                                   listen: false)
                                               .addChartIDToUser(id, args.index),

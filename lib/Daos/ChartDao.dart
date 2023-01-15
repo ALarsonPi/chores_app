@@ -1,9 +1,12 @@
 import 'package:async/async.dart';
+import 'package:chore_app/Global.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../Models/ChartDataHolder.dart';
+import '../Providers/DisplayChartProvider.dart';
 
 class ChartDao {
   static final CollectionReference currChartCollection =
@@ -79,6 +82,42 @@ class ChartDao {
     }
 
     return fullDataList;
+  }
+
+  static List listOfListening = List.empty(growable: true);
+  static getAndListenToChartsForUser(
+      User currUserDataObj, BuildContext context) {
+    if (currUserDataObj.chartIDs == null) return;
+    for (int i = 0; i < (currUserDataObj.chartIDs?.length as int); i++) {
+      final docRef =
+          currChartCollection.doc(currUserDataObj.chartIDs?.elementAt(i));
+      var subscription =
+          docRef.snapshots(includeMetadataChanges: true).listen((event) {
+        Provider.of<DisplayChartProvider>(context, listen: false).putChart(
+            i,
+            currUserDataObj.associatedTabNums?.elementAt(i) as int,
+            Chart.fromSnapshot(event));
+      });
+      listOfListening.add(subscription);
+    }
+  }
+
+  static endListeningToCharts() {
+    debugPrint("Ending");
+    for (int i = 0; i < listOfListening.length; i++) {
+      debugPrint("End:" + i.toString());
+      listOfListening.elementAt(i).cancel();
+    }
+    // for (int i = 0; i < (currUserDataObj.chartIDs?.length as int); i++) {
+    //   final docRef =
+    //       currChartCollection.doc(currUserDataObj.chartIDs?.elementAt(i));
+    //   docRef.snapshots()((event) {
+    //     Provider.of<DisplayChartProvider>(context, listen: false).putChart(
+    //         i,
+    //         currUserDataObj.associatedTabNums?.elementAt(i) as int,
+    //         Chart.fromSnapshot(event));
+    //   });
+    // }
   }
 
   static Future<String> addChart(Chart currChart) async {

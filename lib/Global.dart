@@ -23,9 +23,6 @@ class Global {
   // Constants Decided by me that could change
   static const int TABS_ALLOWED = 3;
 
-  static List<Chart> addedChartsDuringSession = List.empty(growable: true);
-  static Map<int, String> editedTitles = HashMap();
-
   // Make sure that this is defined before the chart is defined
   static ThemeColors currentTheme = AppColors.blueTheme;
 

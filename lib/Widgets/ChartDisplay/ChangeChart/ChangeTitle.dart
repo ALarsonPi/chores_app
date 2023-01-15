@@ -64,13 +64,13 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
     controller.text = widget.oldTitle;
     controller.addListener(() {
       if (widget.oldTitle != controller.text) {
-        if (Global.editedTitles.containsKey(widget.currTabIndex)) {
-          Global.editedTitles
-              .update(widget.currTabIndex, (value) => controller.text);
-        } else {
-          Global.editedTitles
-              .putIfAbsent(widget.currTabIndex, () => controller.text);
-        }
+        // if (Global.editedTitles.containsKey(widget.currTabIndex)) {
+        //   Global.editedTitles
+        //       .update(widget.currTabIndex, (value) => controller.text);
+        // } else {
+        //   Global.editedTitles
+        //       .putIfAbsent(widget.currTabIndex, () => controller.text);
+        // }
       }
     });
   }
