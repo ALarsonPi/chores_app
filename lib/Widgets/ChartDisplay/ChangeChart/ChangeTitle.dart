@@ -1,21 +1,23 @@
 import 'dart:async';
 
-import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Global.dart';
+import '../../../Models/frozen/Chart.dart';
 
 class ChangeTitleWidget extends StatefulWidget {
   ChangeTitleWidget(
       {required this.oldTitle,
       required this.currTabIndex,
       required this.updateParent,
+      required this.currChart,
       super.key});
   String oldTitle;
   int currTabIndex;
+  Chart currChart;
   Function updateParent;
 
   @override
@@ -43,7 +45,7 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
 
   updateParent() {
     setState(() {
-      widget.updateParent();
+      widget.updateParent(widget.currChart, controller.text);
     });
   }
 
@@ -62,8 +64,13 @@ class ChangeTitleWidgetState extends State<ChangeTitleWidget> {
     controller.text = widget.oldTitle;
     controller.addListener(() {
       if (widget.oldTitle != controller.text) {
-        Provider.of<ChartProvider>(context, listen: false)
-            .updateChartTitle(widget.currTabIndex, controller.text);
+        if (Global.editedTitles.containsKey(widget.currTabIndex)) {
+          Global.editedTitles
+              .update(widget.currTabIndex, (value) => controller.text);
+        } else {
+          Global.editedTitles
+              .putIfAbsent(widget.currTabIndex, () => controller.text);
+        }
       }
     });
   }

@@ -20,6 +20,7 @@ class Chart with _$Chart {
     required int tabNumForOwner,
     required List<String> editorIDs,
     required List<String> viewerIDs,
+    required List<String> pendingIDs,
     List<String>? circleThreeText,
   }) = _Chart;
 
@@ -30,6 +31,7 @@ class Chart with _$Chart {
     tabNumForOwner: 0,
     editorIDs: List.empty(),
     viewerIDs: List.empty(),
+    pendingIDs: List.empty(),
     numberOfRings: 0,
     circleOneText: [],
     circleTwoText: [],

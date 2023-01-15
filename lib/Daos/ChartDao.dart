@@ -1,8 +1,8 @@
+import 'package:async/async.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../Models/ChartDataHolder.dart';
 
 class ChartDao {
@@ -10,6 +10,37 @@ class ChartDao {
       FirebaseFirestore.instance.collection('charts');
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
+
+  static Stream<List<List<Chart>>> getChartsViaStream(String firebaseAuthID) {
+    Query isOwner =
+        currChartCollection.where("ownerID", isEqualTo: firebaseAuthID);
+    Query isEditor =
+        currChartCollection.where("editorIDs", arrayContains: firebaseAuthID);
+    Query isViewer =
+        currChartCollection.where("viewIDs", arrayContains: firebaseAuthID);
+
+    Stream<List<Chart>> ownerStream = isOwner.snapshots().map((snapShot) =>
+        snapShot.docs.map((document) => Chart.fromSnapshot(document)).toList());
+    Stream<List<Chart>> editorStream = isEditor.snapshots().map((snapShot) =>
+        snapShot.docs.map((document) => Chart.fromSnapshot(document)).toList());
+    Stream<List<Chart>> viewerStream = isViewer.snapshots().map((snapShot) =>
+        snapShot.docs.map((document) => Chart.fromSnapshot(document)).toList());
+
+    return StreamZip([
+      ownerStream,
+      editorStream,
+      viewerStream,
+    ]);
+
+    // Stream<List<Chart>> j;
+    // for(List<Chart> k in ownerStream.first.first) {
+
+    // }
+// Observable.merge(([stream1, stream2])) is all the data from list2, but if I return Observable.merge(([stream2, stream1]))
+//     StreamGroup.merge;
+//     snapshots().map((snapShot) =>
+//         snapShot.docs.map((document) => Chart.fromSnapshot(document)).toList());
+  }
 
   static Future<List<ChartDataHolder>> getCharts(String currUserID) async {
     User currUser = User(id: "id");
@@ -58,6 +89,7 @@ class ChartDao {
   }
 
   static Future<void> updateChart(Chart currChart) async {
+    debugPrint(currChart.toString());
     await currChartCollection.doc(currChart.id).update(
           currChart.toJson(),
         );

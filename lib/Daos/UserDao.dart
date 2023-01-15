@@ -17,6 +17,13 @@ class UserDao {
         ));
   }
 
+  static Stream<List<User>> getUserDataViaStream(String firebaseAuthID) {
+    Query isUser = currUserCollection.where("id", isEqualTo: firebaseAuthID);
+    Stream<List<User>> userStream = isUser.snapshots().map((snapShot) =>
+        snapShot.docs.map((document) => User.fromSnapshot(document)).toList());
+    return userStream;
+  }
+
   static User addChartIDToUser(
       User currUser, String newChartID, int chartTabNum) {
     List<String> userChartIds = List.empty(growable: true);
@@ -77,14 +84,15 @@ class UserDao {
 
   static Future<User> getCurrUser(String email) async {
     User userFromDatabase = User(id: "ID");
-    await FirebaseFirestore.instance
-        .collection('users')
+    await currUserCollection
         .where("email", isEqualTo: email.toLowerCase())
         .limit(1)
         .get()
         .then((QuerySnapshot value) => {
               if (value.docs.isNotEmpty)
-                userFromDatabase = User.fromSnapshot(value.docs.elementAt(0)),
+                {
+                  userFromDatabase = User.fromSnapshot(value.docs.elementAt(0)),
+                }
             });
     return userFromDatabase;
   }

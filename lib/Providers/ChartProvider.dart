@@ -50,6 +50,15 @@ class ChartProvider extends ChangeNotifier {
     circleDataList[index] =
         circleDataList[index].copyWith(chartTitle: newTitle);
     notifyListeners();
-    await ChartDao.updateChart(circleDataList[index]);
+    if (circleDataList[index] != Chart.emptyChart &&
+        circleDataList[index].id.isNotEmpty) {
+      await ChartDao.updateChart(circleDataList[index]);
+    }
+  }
+
+  updateChartWithChart(Chart chart, String newTitle) async {
+    debugPrint("Should update title:");
+    debugPrint(newTitle);
+    await ChartDao.updateChart(chart.copyWith(chartTitle: newTitle));
   }
 }

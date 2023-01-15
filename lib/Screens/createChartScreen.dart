@@ -568,6 +568,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                                 List.empty(growable: true),
                                             viewerIDs:
                                                 List.empty(growable: true),
+                                            pendingIDs:
+                                                List.empty(growable: true),
                                             circleOneText: nameStrings,
                                             circleTwoText: ring2Strings,
                                             circleThreeText: ring3Strings,
@@ -578,6 +580,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                                   listen: false)
                                               .addChartToFirebase(
                                                   newChart, args.index),
+                                          Global.addedChartsDuringSession
+                                              .add(newChart.copyWith(id: id)),
                                           Provider.of<CurrUserProvider>(context,
                                                   listen: false)
                                               .addChartIDToUser(id, args.index),

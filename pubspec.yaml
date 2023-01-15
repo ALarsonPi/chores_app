@@ -55,6 +55,7 @@ dependencies:
   email_validator: ^2.1.17
   carousel_slider: ^4.2.1
   flutter_keyboard_visibility: ^5.4.0
+  async: ^2.9.0
 
 dev_dependencies:
   integration_test:

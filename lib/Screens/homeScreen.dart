@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:badges/badges.dart';
-import 'package:chore_app/ColorControl/AppColors.dart';
+import 'package:chore_app/Daos/ChartDao.dart';
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
@@ -14,10 +15,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:chore_app/Models/frozen/User.dart' as UserModel;
 
 import '../Global.dart';
+import '../Providers/FutureDataProvider.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
+import '../Services/fetchChartService.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/ChartDisplay/TabContent.dart';
 
@@ -53,19 +57,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    Future.delayed(
-      const Duration(seconds: 0),
-      () {
-        if (!Global.dataTransferComplete) {
-          for (int i = 0; i < Global.chartHolderGlobal.length; i++) {
-            Provider.of<ChartProvider>(context, listen: false)
-                .setChartData(Global.chartHolderGlobal.elementAt(i), i);
-          }
-          Global.dataTransferComplete = true;
-        }
-      },
-    );
 
     tabsController.addListener(() {
       setState(() {
@@ -239,21 +230,21 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  getCurrUserFromProvider() async {
+  Future<UserModel.User> getCurrUserFromProvider() async {
     final user = FirebaseAuth.instance.currentUser;
+    UserModel.User updatedUser = UserModel.User(id: "id");
     if (user != null) {
       Global.currUserID = user.uid;
-      //var currUser =
-      await Provider.of<CurrUserProvider>(context, listen: false)
+      updatedUser = await Provider.of<CurrUserProvider>(context, listen: false)
           .getCurrUser(user.email!);
-      // currUser = getCurrUserFromProvider();
-      // var userIds = currUser.chartIDs as Iterable<String>;
-      // var tabNums = currUser.associatedTabNums as Iterable<int>;
-      // for (int i = 0; i < userIds.length; i++) {
-      //   Provider.of<ChartProvider>(context, listen: false)
-      //       .getChartFromDatabase(userIds.elementAt(i), tabNums.elementAt(i));
-      // }
     }
+    return updatedUser;
+  }
+
+  fetchChartsBasedOnCurrentUser(BuildContext context) async {
+    await Provider.of<FutureDataProvider>(context, listen: false)
+        .updateDataFuture(FetchChartService.fetchUsersCharts(
+            FirebaseAuth.instance.currentUser?.uid as String));
   }
 
   @override
@@ -265,9 +256,19 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
+      builder: (c, snapshot) {
         if (snapshot.hasData) {
-          return HomePageWidget();
+          return StreamProvider<List<List<Chart>>>(
+            create: (BuildContext c) => ChartDao.getChartsViaStream(
+                FirebaseAuth.instance.currentUser?.uid as String),
+            initialData: const [],
+            builder: (context, child) => StreamProvider<List<UserModel.User>>(
+              create: (BuildContext c) => UserDao.getUserDataViaStream(
+                  FirebaseAuth.instance.currentUser?.uid as String),
+              initialData: const [],
+              builder: (context, child) => HomePageWidget(context),
+            ),
+          );
         } else {
           return LoginSignUpWidget();
         }
@@ -282,25 +283,67 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  endEdit() {
+  endEdit(Chart chartData, String finalString) {
+    Provider.of<ChartProvider>(context, listen: false)
+        .updateChartWithChart(chartData, finalString);
     setState(() {
       isEditingTitle = false;
     });
   }
 
+  changeType(BuildContext context, Chart chart, int index) async {
+    await Provider.of<ChartProvider>(context, listen: false)
+        .setChartData(chart, index);
+  }
+
+  String getCurrChartTitle(Chart currChart) {
+    if (tabsController.index == tabsController.length - 1) {
+      return "Settings";
+    }
+    if (Global.editedTitles.isNotEmpty &&
+        Global.editedTitles.containsKey(tabsController.index)) {
+      return Global.editedTitles[tabsController.index] as String;
+    }
+    return currChart.chartTitle;
+  }
+
   // ignore: non_constant_identifier_names
-  Widget HomePageWidget() {
+  Widget HomePageWidget(BuildContext c) {
+    List listOfThisUsersCharts =
+        Provider.of<List<List<Chart>>>(c, listen: true);
+    List<Chart> currCharts = List.empty(growable: true);
+    for (List<Chart> currList in listOfThisUsersCharts) {
+      currCharts.addAll(currList);
+      currCharts.addAll(Global.addedChartsDuringSession);
+    }
+
+    List<UserModel.User> listOfUser =
+        Provider.of<List<UserModel.User>>(c, listen: true);
+
+    int indexOfCurrTab = (listOfUser.isEmpty)
+        ? -1
+        : listOfUser
+            .elementAt(0)
+            .associatedTabNums
+            ?.indexOf(tabsController.index) as int;
+
+    Chart chartData = Chart.emptyChart;
+
+    if (indexOfCurrTab != -1) {
+      String currChartID =
+          listOfUser.elementAt(0).chartIDs?.elementAt(indexOfCurrTab) as String;
+      var correctChart =
+          currCharts.where((element) => element.id == currChartID);
+      if (correctChart.isNotEmpty) {
+        chartData = correctChart.first;
+      }
+    }
+
     // Don't show Chart Edit Menu if chart is empty or settings screen
     bool isCurrChartEmpty =
         (tabsController.index == tabsController.length - 1) ||
-            (Provider.of<ChartProvider>(context)
-                    .circleDataList[tabsController.index] ==
-                Chart.emptyChart);
-    String currChartTitle = (tabsController.index == tabsController.length - 1)
-        ? "Settings"
-        : Provider.of<ChartProvider>(context)
-            .circleDataList[tabsController.index]
-            .chartTitle;
+            (chartData == Chart.emptyChart);
+    String currChartTitle = getCurrChartTitle(chartData);
 
     return KeyboardVisibilityBuilder(
       builder: (context, isKeyboardVisible) {
@@ -322,11 +365,10 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                         child: ChangeTitleWidget(
                           key: Global.changeTitleWidgetKey,
-                          oldTitle: Provider.of<ChartProvider>(context)
-                              .circleDataList[tabsController.index]
-                              .chartTitle,
+                          oldTitle: currChartTitle,
                           currTabIndex: tabsController.index,
                           updateParent: endEdit,
+                          currChart: chartData,
                         ),
                       )
                     : Text(
@@ -468,20 +510,17 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 Provider.of<CurrUserProvider>(context,
                                         listen: false)
                                     .deleteChartIDForUser(
-                                        Provider.of<ChartProvider>(context,
-                                                listen: false)
-                                            .circleDataList[
-                                                tabsController.index]
-                                            .id,
-                                        tabsController.index);
+                                        chartData.id, tabsController.index);
+                                Global.addedChartsDuringSession
+                                    .remove(chartData);
+                                Global.editedTitles.removeWhere((key, value) =>
+                                    key == tabsController.index &&
+                                    value == chartData.chartTitle);
+                                debugPrint(Global.editedTitles.toString());
                                 Provider.of<ChartProvider>(context,
                                         listen: false)
                                     .deleteChart(
-                                        Provider.of<ChartProvider>(context,
-                                                    listen: false)
-                                                .circleDataList[
-                                            tabsController.index],
-                                        tabsController.index);
+                                        chartData, tabsController.index);
                                 Navigator.pop(context);
                               },
                             ),

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:chore_app/Models/constant/Settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -20,6 +22,9 @@ class Global {
 
   // Constants Decided by me that could change
   static const int TABS_ALLOWED = 3;
+
+  static List<Chart> addedChartsDuringSession = List.empty(growable: true);
+  static Map<int, String> editedTitles = HashMap();
 
   // Make sure that this is defined before the chart is defined
   static ThemeColors currentTheme = AppColors.blueTheme;
@@ -51,4 +56,10 @@ class Global {
   static Settings settings = Settings();
   static GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+}
+
+class EditedChart {
+  EditedChart(this.editedChart, this.index);
+  Chart editedChart;
+  int index;
 }

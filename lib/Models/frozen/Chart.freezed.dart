@@ -29,6 +29,7 @@ mixin _$Chart {
   int get tabNumForOwner => throw _privateConstructorUsedError;
   List<String> get editorIDs => throw _privateConstructorUsedError;
   List<String> get viewerIDs => throw _privateConstructorUsedError;
+  List<String> get pendingIDs => throw _privateConstructorUsedError;
   List<String>? get circleThreeText => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,6 +52,7 @@ abstract class $ChartCopyWith<$Res> {
       int tabNumForOwner,
       List<String> editorIDs,
       List<String> viewerIDs,
+      List<String> pendingIDs,
       List<String>? circleThreeText});
 }
 
@@ -76,6 +78,7 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
     Object? tabNumForOwner = null,
     Object? editorIDs = null,
     Object? viewerIDs = null,
+    Object? pendingIDs = null,
     Object? circleThreeText = freezed,
   }) {
     return _then(_value.copyWith(
@@ -115,6 +118,10 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
           ? _value.viewerIDs
           : viewerIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      pendingIDs: null == pendingIDs
+          ? _value.pendingIDs
+          : pendingIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       circleThreeText: freezed == circleThreeText
           ? _value.circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
@@ -139,6 +146,7 @@ abstract class _$$_ChartCopyWith<$Res> implements $ChartCopyWith<$Res> {
       int tabNumForOwner,
       List<String> editorIDs,
       List<String> viewerIDs,
+      List<String> pendingIDs,
       List<String>? circleThreeText});
 }
 
@@ -160,6 +168,7 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
     Object? tabNumForOwner = null,
     Object? editorIDs = null,
     Object? viewerIDs = null,
+    Object? pendingIDs = null,
     Object? circleThreeText = freezed,
   }) {
     return _then(_$_Chart(
@@ -199,6 +208,10 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
           ? _value._viewerIDs
           : viewerIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      pendingIDs: null == pendingIDs
+          ? _value._pendingIDs
+          : pendingIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       circleThreeText: freezed == circleThreeText
           ? _value._circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
@@ -220,11 +233,13 @@ class _$_Chart extends _Chart {
       required this.tabNumForOwner,
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
+      required final List<String> pendingIDs,
       final List<String>? circleThreeText})
       : _circleOneText = circleOneText,
         _circleTwoText = circleTwoText,
         _editorIDs = editorIDs,
         _viewerIDs = viewerIDs,
+        _pendingIDs = pendingIDs,
         _circleThreeText = circleThreeText,
         super._();
 
@@ -273,6 +288,14 @@ class _$_Chart extends _Chart {
     return EqualUnmodifiableListView(_viewerIDs);
   }
 
+  final List<String> _pendingIDs;
+  @override
+  List<String> get pendingIDs {
+    if (_pendingIDs is EqualUnmodifiableListView) return _pendingIDs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pendingIDs);
+  }
+
   final List<String>? _circleThreeText;
   @override
   List<String>? get circleThreeText {
@@ -285,7 +308,7 @@ class _$_Chart extends _Chart {
 
   @override
   String toString() {
-    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerID: $ownerID, tabNumForOwner: $tabNumForOwner, editorIDs: $editorIDs, viewerIDs: $viewerIDs, circleThreeText: $circleThreeText)';
+    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerID: $ownerID, tabNumForOwner: $tabNumForOwner, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleThreeText: $circleThreeText)';
   }
 
   @override
@@ -310,6 +333,8 @@ class _$_Chart extends _Chart {
             const DeepCollectionEquality()
                 .equals(other._viewerIDs, _viewerIDs) &&
             const DeepCollectionEquality()
+                .equals(other._pendingIDs, _pendingIDs) &&
+            const DeepCollectionEquality()
                 .equals(other._circleThreeText, _circleThreeText));
   }
 
@@ -326,6 +351,7 @@ class _$_Chart extends _Chart {
       tabNumForOwner,
       const DeepCollectionEquality().hash(_editorIDs),
       const DeepCollectionEquality().hash(_viewerIDs),
+      const DeepCollectionEquality().hash(_pendingIDs),
       const DeepCollectionEquality().hash(_circleThreeText));
 
   @JsonKey(ignore: true)
@@ -353,6 +379,7 @@ abstract class _Chart extends Chart {
       required final int tabNumForOwner,
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
+      required final List<String> pendingIDs,
       final List<String>? circleThreeText}) = _$_Chart;
   _Chart._() : super._();
 
@@ -376,6 +403,8 @@ abstract class _Chart extends Chart {
   List<String> get editorIDs;
   @override
   List<String> get viewerIDs;
+  @override
+  List<String> get pendingIDs;
   @override
   List<String>? get circleThreeText;
   @override
