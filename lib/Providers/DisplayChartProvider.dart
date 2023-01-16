@@ -23,4 +23,9 @@ class DisplayChartProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  clearCharts() {
+    usersCharts.clear();
+    notifyListeners();
+  }
 }

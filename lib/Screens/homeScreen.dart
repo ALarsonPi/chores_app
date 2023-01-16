@@ -19,10 +19,8 @@ import 'package:chore_app/Models/frozen/User.dart' as UserModel;
 
 import '../Global.dart';
 import '../Providers/DisplayChartProvider.dart';
-import '../Providers/FutureDataProvider.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
-import '../Services/fetchChartService.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/ChartDisplay/TabContent.dart';
 
@@ -243,12 +241,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     return updatedUser;
   }
 
-  fetchChartsBasedOnCurrentUser(BuildContext context) async {
-    await Provider.of<FutureDataProvider>(context, listen: false)
-        .updateDataFuture(FetchChartService.fetchUsersCharts(
-            FirebaseAuth.instance.currentUser?.uid as String));
-  }
-
   @override
   Widget build(BuildContext context) {
     if (Provider.of<CurrUserProvider>(context, listen: false).currUser.id ==
@@ -260,16 +252,11 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (c, snapshot) {
         if (snapshot.hasData) {
-          return StreamProvider<List<List<Chart>>>(
-            create: (BuildContext c) => ChartDao.getChartsViaStream(
+          return StreamProvider<List<UserModel.User>>(
+            create: (BuildContext c) => UserDao.getUserDataViaStream(
                 FirebaseAuth.instance.currentUser?.uid as String),
             initialData: const [],
-            builder: (context, child) => StreamProvider<List<UserModel.User>>(
-              create: (BuildContext c) => UserDao.getUserDataViaStream(
-                  FirebaseAuth.instance.currentUser?.uid as String),
-              initialData: const [],
-              builder: (context, child) => HomePageWidget(context),
-            ),
+            builder: (context, child) => HomePageWidget(context),
           );
         } else {
           Global.dataTransferComplete = false;
@@ -314,7 +301,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     if (listOfUser.isNotEmpty && !Global.dataTransferComplete) {
       ChartDao.getAndListenToChartsForUser(listOfUser.elementAt(0), context);
       Global.dataTransferComplete = true;
-      debugPrint("Setting new listeners");
     }
 
     Chart chartData = (!Provider.of<DisplayChartProvider>(context, listen: true)
@@ -497,12 +483,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                         listen: false)
                                     .deleteChartIDForUser(
                                         chartData.id, tabsController.index);
-                                // Global.addedChartsDuringSession
-                                //     .remove(chartData);
-                                // Global.editedTitles.removeWhere((key, value) =>
-                                //     key == tabsController.index &&
-                                //     value == chartData.chartTitle);
-                                // debugPrint(Global.editedTitles.toString());
                                 Provider.of<ChartProvider>(context,
                                         listen: false)
                                     .deleteChart(
