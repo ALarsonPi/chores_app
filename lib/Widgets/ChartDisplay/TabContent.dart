@@ -4,11 +4,13 @@ import 'package:chore_app/Widgets/ChartDisplay/EmptyChartDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Models/frozen/Chart.dart';
+import '../../Models/frozen/User.dart';
 import 'CreatedChartDisplay.dart';
 
 class TabContent extends StatelessWidget {
-  TabContent(this.circleDataIndex, {super.key});
+  TabContent(this.circleDataIndex, this.userFromParent, {super.key});
   int circleDataIndex;
+  User userFromParent;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class TabContent extends StatelessWidget {
     if (!(chartData == Chart.emptyChart)) {
       return CreatedChartDisplay(circleDataIndex, chartData);
     } else {
-      return EmptyChartDisplay(circleDataIndex);
+      return EmptyChartDisplay(circleDataIndex, userFromParent);
     }
   }
 }

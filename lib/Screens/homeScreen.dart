@@ -6,6 +6,8 @@ import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
+import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
+import 'package:chore_app/Screens/ScreenArguments/connectedUserArguments.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
@@ -76,16 +78,47 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     tabsToUse.add(tabs.last);
   }
 
+  final Color badgeColor = Colors.red;
+  int? chart1Changes;
+  int? chart2Changes;
+  int? chart3Changes;
+  List<int?> chartChanges = List.empty(growable: true);
+
   void setTabs() {
     String chartTitle1 = "Chart 1";
     String chartTitle2 = "Chart 2";
     String chartTitle3 = "Chart 3";
-    int chart1Changes = 0;
-    int chart2Changes = 0;
-    int chart3Changes = 0;
 
-    const Color badgeColor = Colors.red;
-    //Theme.of(context).primaryColor,
+    Provider.of<DisplayChartProvider>(context, listen: true)
+        .usersCharts[1]
+        ?.pendingIDs
+        .toString();
+
+    Provider.of<DisplayChartProvider>(context, listen: true)
+        .usersCharts[2]
+        ?.pendingIDs
+        .toString();
+
+    chart1Changes = Provider.of<DisplayChartProvider>(context, listen: true)
+            .usersCharts[0]
+            ?.pendingIDs
+            .length ??
+        0;
+    chart2Changes = Provider.of<DisplayChartProvider>(context, listen: true)
+            .usersCharts[1]
+            ?.pendingIDs
+            .length ??
+        0;
+    chart3Changes = Provider.of<DisplayChartProvider>(context, listen: true)
+            .usersCharts[2]
+            ?.pendingIDs
+            .length ??
+        0;
+
+    chartChanges.clear();
+    chartChanges.add(chart1Changes);
+    chartChanges.add(chart2Changes);
+    chartChanges.add(chart3Changes);
 
     const String badgeText = ' ';
     const Color textColor = Colors.white;
@@ -96,15 +129,10 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart1Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: Text(
+                badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
-                    fontSize: (Theme.of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.fontSize as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .fontSizeToAdd,
+                    fontSize: 4,
                     color: textColor,
                   ),
                 ),
@@ -127,15 +155,10 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart2Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: Text(
+                badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
-                    fontSize: (Theme.of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.fontSize as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .fontSizeToAdd,
+                    fontSize: 4,
                     color: textColor,
                   ),
                 ),
@@ -158,15 +181,10 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
         icon: (chart3Changes != 0)
             ? Badge(
                 badgeColor: badgeColor,
-                badgeContent: Text(
+                badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
-                    fontSize: (Theme.of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.fontSize as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .fontSizeToAdd,
+                    fontSize: 4,
                     color: textColor,
                   ),
                 ),
@@ -292,6 +310,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     return currChart.chartTitle;
   }
 
+  UserModel.User emptyUserModel = UserModel.User(id: "ID");
+
   // ignore: non_constant_identifier_names
   Widget HomePageWidget(BuildContext c) {
     List<UserModel.User> listOfUser =
@@ -359,13 +379,27 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 leading: (isCurrChartEmpty)
                     ? null
                     : PopupMenuButton<int>(
-                        icon: Icon(
-                          Icons.menu,
-                          size: (Theme.of(context).iconTheme.size as double) +
-                              Provider.of<TextSizeProvider>(context,
-                                      listen: false)
-                                  .iconSizeToAdd,
-                        ),
+                        icon: (chartChanges.any(
+                                (element) => element != null && element > 0))
+                            ? Badge(
+                                badgeContent: const Text(''),
+                                child: Icon(
+                                  Icons.menu,
+                                  size: (Theme.of(context).iconTheme.size
+                                          as double) +
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .iconSizeToAdd,
+                                ),
+                              )
+                            : Icon(
+                                Icons.menu,
+                                size: (Theme.of(context).iconTheme.size
+                                        as double) +
+                                    Provider.of<TextSizeProvider>(context,
+                                            listen: false)
+                                        .iconSizeToAdd,
+                              ),
                         offset: Offset(
                             0.0,
                             Global.toolbarHeight -
@@ -502,15 +536,40 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               contentPadding: EdgeInsets.zero,
                               leading: SizedBox(
                                 height: double.infinity,
-                                child: Icon(
-                                  Icons.add_alert,
-                                  size: (Theme.of(context).iconTheme.size
-                                          as double) +
-                                      Provider.of<TextSizeProvider>(context,
-                                              listen: false)
-                                          .iconSizeToAdd,
-                                  color: Colors.green,
-                                ),
+                                child: (chartChanges.elementAt(
+                                                tabsController.index) !=
+                                            null &&
+                                        chartChanges.elementAt(
+                                                tabsController.index)! >
+                                            0)
+                                    ? Badge(
+                                        badgeContent: const Text(''),
+                                        position: BadgePosition.topEnd(
+                                          top: 1,
+                                          end: -1,
+                                        ),
+                                        child: Icon(
+                                          Icons.add_alert,
+                                          size: (Theme.of(context)
+                                                  .iconTheme
+                                                  .size as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .iconSizeToAdd,
+                                          color: Colors.green,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.add_alert,
+                                        size: (Theme.of(context).iconTheme.size
+                                                as double) +
+                                            Provider.of<TextSizeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .iconSizeToAdd,
+                                        color: Colors.green,
+                                      ),
                               ),
                               title: Text(
                                 'Connected Users',
@@ -526,6 +585,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                               onTap: () {
                                 Navigator.pop(context);
+                                Navigator.pushNamed(
+                                  context,
+                                  ConnectedUsersScreen.routeName,
+                                  arguments: ConnectedUserArguments(
+                                    tabsController.index,
+                                    chartData,
+                                    listOfUser.first,
+                                  ),
+                                );
                               },
                             ),
                           ),
@@ -538,7 +606,13 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
               controller: tabsController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                for (int i = 0; i < tabsToUse.length - 1; i++) TabContent(i),
+                for (int i = 0; i < tabsToUse.length - 1; i++)
+                  TabContent(
+                    i,
+                    (listOfUser.isNotEmpty)
+                        ? listOfUser.elementAt(0)
+                        : emptyUserModel,
+                  ),
                 const SettingsContent(),
               ],
             ),

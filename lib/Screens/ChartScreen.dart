@@ -14,7 +14,6 @@ import 'package:provider/provider.dart';
 import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
-import '../Models/frozen/User.dart';
 import '../Providers/TextSizeProvider.dart';
 
 class ChartScreen extends StatefulWidget {
@@ -196,17 +195,17 @@ class _ChartScreenState extends State<ChartScreen> {
 
   int validateAllActiveFields() {
     for (int i = 0; i < currNumSections; i++) {
-
-        // If the key state is not valid, then we can just check the text
-        //field ourselves
-        if (nameStrings[i].isEmpty ||
-            nameStrings[i].length > 20 ||
-            ring2Strings[i].isEmpty ||
-            ring2Strings.length > currCharLimit.secondRingLimit || (currNumRings == 3 &&
-            (ring3Strings[i].isEmpty ||
-            ring3Strings[i].length > currCharLimit.thirdRingLimit))) {
-          return i;
-        }
+      // If the key state is not valid, then we can just check the text
+      //field ourselves
+      if (nameStrings[i].isEmpty ||
+          nameStrings[i].length > 20 ||
+          ring2Strings[i].isEmpty ||
+          ring2Strings.length > currCharLimit.secondRingLimit ||
+          (currNumRings == 3 &&
+              (ring3Strings[i].isEmpty ||
+                  ring3Strings[i].length > currCharLimit.thirdRingLimit))) {
+        return i;
+      }
     }
     return -1;
   }

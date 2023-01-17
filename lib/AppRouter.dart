@@ -4,6 +4,7 @@ import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
+import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'ColorControl/GlobalThemes.dart';
@@ -90,7 +91,8 @@ class _AppRouter extends State<AppRouter> {
               initialRoute: '/',
               routes: {
                 '/': (context) => const SplashScreen(),
-                // 'Settings': (context) => const SettingsScreen(),
+                ConnectedUsersScreen.routeName: (context) =>
+                    const ConnectedUsersScreen(),
                 ChartScreen.routeName: (context) => const ChartScreen(),
               },
             ),

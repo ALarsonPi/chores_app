@@ -15,7 +15,25 @@ class ChartDao {
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
 
-  static List listOfListening = List.empty(growable: true);
+  static addPendingRequest(String pendingUserID, String chartID) async {
+    final chartDoc = await currChartCollection
+        .where("id", isGreaterThanOrEqualTo: chartID)
+        .where("id", isLessThanOrEqualTo: '$chartID\uf8ff')
+        .limit(1)
+        .get();
+
+    Chart desiredChart = Chart.fromSnapshot(chartDoc.docs.first);
+
+    List<String> allPendingUserIds = List.empty(growable: true);
+    allPendingUserIds.addAll(desiredChart.pendingIDs);
+    if (!allPendingUserIds.contains(pendingUserID)) {
+      allPendingUserIds.add(pendingUserID);
+    }
+
+    currChartCollection
+        .doc(desiredChart.id)
+        .update(desiredChart.copyWith(pendingIDs: allPendingUserIds).toJson());
+  }
 
   static getAndListenToChartsForUser(
       User currUserDataObj, BuildContext context) {
@@ -34,11 +52,14 @@ class ChartDao {
     Global.streamMap[indexToRemove]?.cancel();
   }
 
-  static addListenerAtIndex(
-      int index, String uid, BuildContext context, bool shouldRefresh) {
+  static Future<Chart> addListenerAtIndex(
+      int index, String uid, BuildContext context, bool shouldRefresh) async {
     final docRef = currChartCollection.doc(uid);
+    Chart chart = Chart.emptyChart;
     var subscription =
         docRef.snapshots(includeMetadataChanges: true).listen((event) {
+      chart = Chart.fromSnapshot(event);
+
       Future.delayed(
         Duration.zero,
         Provider.of<DisplayChartProvider>(context, listen: false).updateChart(
@@ -48,6 +69,7 @@ class ChartDao {
       );
     });
     Global.streamMap.putIfAbsent(index, () => subscription);
+    return chart;
   }
 
   static addListener(User currUser, int indexToAdd, BuildContext context) {
