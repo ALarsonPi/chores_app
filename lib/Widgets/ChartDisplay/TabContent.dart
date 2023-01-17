@@ -4,7 +4,6 @@ import 'package:chore_app/Widgets/ChartDisplay/EmptyChartDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Providers/ChartProvider.dart';
 import 'CreatedChartDisplay.dart';
 
 class TabContent extends StatelessWidget {
@@ -13,8 +12,6 @@ class TabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ChartProvider>(context, listen: true)
-        .circleDataList[circleDataIndex];
     Chart chartData = (!Provider.of<DisplayChartProvider>(context, listen: true)
             .usersCharts
             .keys

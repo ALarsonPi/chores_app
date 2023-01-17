@@ -1,14 +1,14 @@
-import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
-import 'package:chore_app/Screens/createChartScreen.dart';
+import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'ColorControl/GlobalThemes.dart';
 import 'Global.dart';
+import 'Models/frozen/Chart.dart';
 import 'Screens/SplashScreen.dart';
 
 /// @nodoc
@@ -35,6 +35,8 @@ class _AppRouter extends State<AppRouter> {
 
   @override
   Widget build(BuildContext context) {
+    // NEEDED?
+    Global.dataTransferComplete = false;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -42,9 +44,6 @@ class _AppRouter extends State<AppRouter> {
         ),
         ChangeNotifierProvider(
           create: (_) => TabNumberProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ChartProvider(),
         ),
         ChangeNotifierProvider(
           create: (_) => CurrUserProvider(),
@@ -92,8 +91,7 @@ class _AppRouter extends State<AppRouter> {
               routes: {
                 '/': (context) => const SplashScreen(),
                 // 'Settings': (context) => const SettingsScreen(),
-                CreateChartScreen.routeName: (context) =>
-                    const CreateChartScreen()
+                ChartScreen.routeName: (context) => const ChartScreen(),
               },
             ),
           );

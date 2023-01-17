@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:chore_app/Models/constant/Settings.dart';
@@ -26,7 +27,9 @@ class Global {
   // Make sure that this is defined before the chart is defined
   static ThemeColors currentTheme = AppColors.blueTheme;
 
-  // These will be changed / checked by file
+// Making this global
+  static Map<int, StreamSubscription> streamMap = HashMap();
+
   static int currPrimaryColorIndex = 0;
 
   static FocusNode titleFocusNode = FocusNode();

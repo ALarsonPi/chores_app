@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import '../Global.dart';
 import '../Providers/DisplayChartProvider.dart';
 
 class ChartDao {
@@ -12,39 +16,63 @@ class ChartDao {
       FirebaseFirestore.instance.collection('users');
 
   static List listOfListening = List.empty(growable: true);
+
   static getAndListenToChartsForUser(
       User currUserDataObj, BuildContext context) {
     if (currUserDataObj.chartIDs == null) return;
+    debugPrint("Adding all listener");
+
     for (int i = 0; i < (currUserDataObj.chartIDs?.length as int); i++) {
-      final docRef =
-          currChartCollection.doc(currUserDataObj.chartIDs?.elementAt(i));
-      var subscription =
-          docRef.snapshots(includeMetadataChanges: true).listen((event) {
-        Provider.of<DisplayChartProvider>(context, listen: false).putChart(
-            i,
-            currUserDataObj.associatedTabNums?.elementAt(i) as int,
-            Chart.fromSnapshot(event));
-      });
-      listOfListening.add(subscription);
+      int tabIndex = currUserDataObj.associatedTabNums?.elementAt(i) as int;
+      addListenerAtIndex(tabIndex,
+          currUserDataObj.chartIDs?.elementAt(i) as String, context, false);
     }
   }
 
+  static removeListener(int indexToRemove) {
+    debugPrint("Removing listener for index:" + indexToRemove.toString());
+    Global.streamMap[indexToRemove]?.cancel();
+  }
+
+  static addListenerAtIndex(
+      int index, String uid, BuildContext context, bool shouldRefresh) {
+    final docRef = currChartCollection.doc(uid);
+    var subscription =
+        docRef.snapshots(includeMetadataChanges: true).listen((event) {
+      Future.delayed(
+        Duration.zero,
+        Provider.of<DisplayChartProvider>(context, listen: false).updateChart(
+          index,
+          Chart.fromSnapshot(event),
+        ),
+      );
+    });
+    Global.streamMap.putIfAbsent(index, () => subscription);
+  }
+
+  static addListener(User currUser, int indexToAdd, BuildContext context) {
+    final docRef =
+        currChartCollection.doc(currUser.chartIDs?.elementAt(indexToAdd));
+    var subscription =
+        docRef.snapshots(includeMetadataChanges: true).listen((event) {
+      debugPrint(
+          "THERE was a change for " + Chart.fromSnapshot(event).chartTitle);
+      Future.delayed(
+          Duration.zero,
+          Provider.of<DisplayChartProvider>(context, listen: false).putChart(
+              indexToAdd,
+              currUser.associatedTabNums?.elementAt(indexToAdd) as int,
+              Chart.fromSnapshot(event)));
+    });
+    Global.streamMap.putIfAbsent(indexToAdd, () => subscription);
+  }
+
   static endListeningToCharts() {
-    debugPrint("Ending");
-    for (int i = 0; i < listOfListening.length; i++) {
-      debugPrint("End:" + i.toString());
-      listOfListening.elementAt(i).cancel();
+    debugPrint("ENDING LISTEN TO ALL");
+    for (int i = 0; i < Global.streamMap.length; i++) {
+      Global.streamMap.values.elementAt(i).cancel();
     }
-    // for (int i = 0; i < (currUserDataObj.chartIDs?.length as int); i++) {
-    //   final docRef =
-    //       currChartCollection.doc(currUserDataObj.chartIDs?.elementAt(i));
-    //   docRef.snapshots()((event) {
-    //     Provider.of<DisplayChartProvider>(context, listen: false).putChart(
-    //         i,
-    //         currUserDataObj.associatedTabNums?.elementAt(i) as int,
-    //         Chart.fromSnapshot(event));
-    //   });
-    // }
+    Global.streamMap.clear();
   }
 
   static Future<String> addChart(Chart currChart) async {
@@ -55,7 +83,6 @@ class ChartDao {
   }
 
   static Future<void> updateChart(Chart currChart) async {
-    debugPrint(currChart.toString());
     await currChartCollection.doc(currChart.id).update(
           currChart.toJson(),
         );

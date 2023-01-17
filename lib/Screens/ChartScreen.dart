@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
-import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
@@ -12,25 +11,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
+import '../Models/frozen/User.dart';
 import '../Providers/TextSizeProvider.dart';
 
-class CreateChartScreen extends StatefulWidget {
-  const CreateChartScreen({super.key});
+class ChartScreen extends StatefulWidget {
+  const ChartScreen({super.key});
   static const routeName = "/extractChartNum";
 
   @override
-  State<CreateChartScreen> createState() => _CreateChartScreenState();
+  State<ChartScreen> createState() => _ChartScreenState();
 }
 
-class _CreateChartScreenState extends State<CreateChartScreen> {
+class _ChartScreenState extends State<ChartScreen> {
+  // ignore: prefer_typing_uninitialized_variables
   late final args =
       ModalRoute.of(context)!.settings.arguments as CreateChartArguments;
 
   // Defaults
-  int currNumRings = 3;
-  int currNumSections = 4;
+  late int currNumRings;
+  late int currNumSections;
 
   late RingCharLimit currCharLimit;
   bool hasValidatedText = false;
@@ -38,6 +40,44 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  late List<String> nameStrings;
+  late List<String> ring2Strings;
+  late List<String> ring3Strings;
+
+  bool hasFinishedDepositingData = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!hasFinishedDepositingData) {
+      currNumRings = (args.isInEditMode) ? args.chartData.numberOfRings : 3;
+      currNumSections =
+          (args.isInEditMode) ? args.chartData.circleOneText.length : 4;
+
+      List<String> copyOfNameText = List.empty(growable: true);
+      copyOfNameText.addAll(args.chartData.circleOneText);
+      nameStrings = (args.isInEditMode)
+          ? copyOfNameText
+          : List.filled(currNumSections, "", growable: true);
+
+      List<String> copyOfRingTwoText = List.empty(growable: true);
+      copyOfRingTwoText.addAll(args.chartData.circleTwoText);
+      ring2Strings = (args.isInEditMode)
+          ? copyOfRingTwoText
+          : List.filled(currNumSections, "", growable: true);
+
+      List<String> copyOfRingThreeText = List.empty(growable: true);
+      copyOfRingThreeText
+          .addAll(args.chartData.circleThreeText as List<String>);
+      ring3Strings = (args.isInEditMode)
+          ? copyOfRingThreeText
+          : List.filled(currNumSections, "", growable: true);
+
+      hasFinishedDepositingData = true;
+    }
 
     // -1 for indexes starting at 0, -1 for there not being an option for 1 section
     currCharLimit = RingCharLimits.limits[currNumSections - 1 - 1];
@@ -47,23 +87,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (args.isInEditMode != null) {
-      debugPrint("IS EDIT MODE: ${args.isInEditMode}");
-    }
-  }
-
-  @override
   void dispose() {
     super.dispose();
     chartTitleController.dispose();
   }
-
-  List<String> nameStrings = List.filled(4, "", growable: true);
-  List<String> ring2Strings = List.filled(4, "", growable: true);
-  List<String> ring3Strings = List.filled(4, "", growable: true);
 
   bool isLoading = false;
 
@@ -169,24 +196,17 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
 
   int validateAllActiveFields() {
     for (int i = 0; i < currNumSections; i++) {
-      if (chartItemKeys[i].currentState != null) {
-        //Let child check if the text is valid
-        bool currChartisValid = chartItemKeys[i].currentState!.checkIfValid();
-        if (!currChartisValid) {
-          return i;
-        }
-      } else {
+
         // If the key state is not valid, then we can just check the text
         //field ourselves
         if (nameStrings[i].isEmpty ||
             nameStrings[i].length > 20 ||
             ring2Strings[i].isEmpty ||
-            ring2Strings.length > currCharLimit.secondRingLimit ||
-            ring3Strings[i].isEmpty ||
-            ring3Strings[i].length > currCharLimit.thirdRingLimit) {
+            ring2Strings.length > currCharLimit.secondRingLimit || (currNumRings == 3 &&
+            (ring3Strings[i].isEmpty ||
+            ring3Strings[i].length > currCharLimit.thirdRingLimit))) {
           return i;
         }
-      }
     }
     return -1;
   }
@@ -209,7 +229,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Customize New Chart",
+          (args.isInEditMode) ? "Edit Chart Text" : "Customize New Chart",
           style: TextStyle(
             fontSize: (Theme.of(context).textTheme.headlineMedium?.fontSize
                     as double) +
@@ -501,39 +521,42 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: (!hasValidatedText)
-                              ? null
-                              : () => {
-                                    setState(() => {
-                                          hasValidatedText = false,
-                                        }),
-                                  },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                        Visibility(
+                          visible: !args.isInEditMode,
+                          child: ElevatedButton(
+                            onPressed: (!hasValidatedText)
+                                ? null
+                                : () => {
+                                      setState(() => {
+                                            hasValidatedText = false,
+                                          }),
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(
-                              Provider.of<TextSizeProvider>(context,
-                                      listen: true)
-                                  .fontSizeToAdd,
-                            ),
-                            child: Text(
-                              "   Back   ",
-                              style: TextStyle(
-                                  fontSize: (Theme.of(context)
-                                          .textTheme
-                                          .displaySmall
-                                          ?.fontSize as double) +
-                                      Provider.of<TextSizeProvider>(context,
-                                              listen: true)
-                                          .fontSizeToAdd,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.color as Color),
+                            child: Padding(
+                              padding: EdgeInsets.all(
+                                Provider.of<TextSizeProvider>(context,
+                                        listen: true)
+                                    .fontSizeToAdd,
+                              ),
+                              child: Text(
+                                "   Back   ",
+                                style: TextStyle(
+                                    fontSize: (Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.fontSize as double) +
+                                        Provider.of<TextSizeProvider>(context,
+                                                listen: true)
+                                            .fontSizeToAdd,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.color as Color),
+                              ),
                             ),
                           ),
                         ),
@@ -576,7 +599,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                             circleThreeText: ring3Strings,
                                           ),
                                           // Add chart to firebase
-                                          id = await Provider.of<ChartProvider>(
+                                          id = await Provider.of<
+                                                      DisplayChartProvider>(
                                                   context,
                                                   listen: false)
                                               .addChartToFirebase(
@@ -591,6 +615,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                           Provider.of<CurrUserProvider>(context,
                                                   listen: false)
                                               .addChartIDToUser(id, args.index),
+
+                                          ChartDao.addListenerAtIndex(
+                                              args.index, id, context, true),
                                           Navigator.pop(context),
                                         }
                                     }
@@ -602,9 +629,34 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                       validationNum = validateAllActiveFields(),
                                       if (validationNum == -1)
                                         {
-                                          setState(() {
-                                            hasValidatedText = true;
-                                          }),
+                                          (args.isInEditMode)
+                                              ? {
+                                                  Provider.of<DisplayChartProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .updateChart(
+                                                    args.index,
+                                                    args.chartData.copyWith(
+                                                      circleOneText:
+                                                          nameStrings,
+                                                      circleTwoText:
+                                                          ring2Strings,
+                                                      circleThreeText:
+                                                          ring3Strings,
+                                                    ),
+                                                  ),
+                                                  ChartDao.updateChart(
+                                                      args.chartData.copyWith(
+                                                    circleOneText: nameStrings,
+                                                    circleTwoText: ring2Strings,
+                                                    circleThreeText:
+                                                        ring3Strings,
+                                                  )),
+                                                  Navigator.pop(context),
+                                                }
+                                              : setState(() {
+                                                  hasValidatedText = true;
+                                                }),
                                         }
                                       else
                                         {
@@ -633,7 +685,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                         child: Text(
                                           (hasValidatedText)
                                               ? " Submit "
-                                              : "Continue",
+                                              : (args.isInEditMode)
+                                                  ? "Update Text"
+                                                  : "Continue",
                                           style: TextStyle(
                                             fontSize: (Theme.of(context)
                                                     .textTheme

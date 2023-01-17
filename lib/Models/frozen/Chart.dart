@@ -29,9 +29,9 @@ class Chart with _$Chart {
     chartTitle: "",
     ownerID: "",
     tabNumForOwner: 0,
-    editorIDs: List.empty(),
-    viewerIDs: List.empty(),
-    pendingIDs: List.empty(),
+    editorIDs: [],
+    viewerIDs: [],
+    pendingIDs: [],
     numberOfRings: 0,
     circleOneText: [],
     circleTwoText: [],
@@ -41,8 +41,9 @@ class Chart with _$Chart {
   factory Chart.fromJson(Map<String, dynamic> json) => _$ChartFromJson(json);
 
   factory Chart.fromSnapshot(DocumentSnapshot snapshot) {
-    Chart newChart = Chart.fromJson(snapshot.data() as Map<String, dynamic>);
-    // newChart = newChart.copyWith(id: snapshot.reference.id);
+    Chart newChart = (snapshot.data() == null)
+        ? Chart.emptyChart
+        : Chart.fromJson(snapshot.data() as Map<String, dynamic>);
     return newChart;
   }
 

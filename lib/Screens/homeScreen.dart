@@ -4,11 +4,10 @@ import 'package:badges/badges.dart';
 import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
-import 'package:chore_app/Providers/ChartProvider.dart';
 import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
-import 'package:chore_app/Screens/createChartScreen.dart';
+import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -274,16 +273,16 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   endEdit(Chart chartData, String finalString) {
-    Provider.of<ChartProvider>(context, listen: false)
-        .updateChartWithChart(chartData, finalString);
+    Provider.of<DisplayChartProvider>(context, listen: false).updateChartTitle(
+      tabsController.index,
+      finalString,
+    );
+
+    ChartDao.updateChart(chartData.copyWith(chartTitle: finalString));
+
     setState(() {
       isEditingTitle = false;
     });
-  }
-
-  changeType(BuildContext context, Chart chart, int index) async {
-    await Provider.of<ChartProvider>(context, listen: false)
-        .setChartData(chart, index);
   }
 
   String getCurrChartTitle(Chart currChart) {
@@ -442,9 +441,11 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               onTap: () {
                                 Navigator.pop(context);
                                 Navigator.pushNamed(
-                                    context, CreateChartScreen.routeName,
+                                    context, ChartScreen.routeName,
                                     arguments: CreateChartArguments(
                                       tabsController.index,
+                                      chartData,
+                                      listOfUser.elementAt(0),
                                       isInEditMode: true,
                                     ));
                               },
@@ -479,14 +480,18 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               onTap: () {
+                                ChartDao.removeListener(listOfUser
+                                    .elementAt(0)
+                                    .chartIDs
+                                    ?.indexOf(chartData.id) as int);
                                 Provider.of<CurrUserProvider>(context,
                                         listen: false)
                                     .deleteChartIDForUser(
                                         chartData.id, tabsController.index);
-                                Provider.of<ChartProvider>(context,
+                                Provider.of<DisplayChartProvider>(context,
                                         listen: false)
-                                    .deleteChart(
-                                        chartData, tabsController.index);
+                                    .updateChart(
+                                        tabsController.index, Chart.emptyChart);
                                 Navigator.pop(context);
                               },
                             ),

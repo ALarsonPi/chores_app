@@ -1,10 +1,12 @@
 import 'package:chore_app/Providers/TextSizeProvider.dart';
+import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../ColorControl/AppColors.dart';
+import '../../Models/frozen/Chart.dart';
+import '../../Models/frozen/User.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
-import '../../Screens/createChartScreen.dart';
 
 class EmptyChartDisplay extends StatelessWidget {
   EmptyChartDisplay(this.currTabIndex, {super.key});
@@ -64,8 +66,12 @@ class EmptyChartDisplay extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () => {
-                    Navigator.pushNamed(context, CreateChartScreen.routeName,
-                        arguments: CreateChartArguments(currTabIndex)),
+                    Navigator.pushNamed(context, ChartScreen.routeName,
+                        arguments: CreateChartArguments(
+                          currTabIndex,
+                          Chart.emptyChart,
+                          Provider.of<List<User>>(context, listen: false).first,
+                        )),
                   },
                   child: Padding(
                     padding: EdgeInsets.all(

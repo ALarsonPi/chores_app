@@ -5,7 +5,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../Models/frozen/Chart.dart';
-import '../Providers/ChartProvider.dart';
 
 /// @nodoc
 class SplashScreen extends StatefulWidget {
