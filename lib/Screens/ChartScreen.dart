@@ -1,9 +1,8 @@
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
-import 'package:chore_app/Providers/CurrUserProvider.dart';
-import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
@@ -15,6 +14,7 @@ import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
 import '../Providers/TextSizeProvider.dart';
+import '../Services/ChartManager.dart';
 
 class ChartScreen extends StatefulWidget {
   const ChartScreen({super.key});
@@ -598,79 +598,32 @@ class _ChartScreenState extends State<ChartScreen> {
                                             circleThreeText: ring3Strings,
                                           ),
                                           // Add chart to firebase
-                                          id = await Provider.of<
-                                                      DisplayChartProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .addChartToFirebase(
-                                                  newChart, args.index),
-                                          Provider.of<DisplayChartProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .updateChart(
+                                          id =
+                                              await ChartDao.addChartToFirebase(
+                                            newChart,
                                             args.index,
-                                            newChart.copyWith(id: id),
                                           ),
-                                          Provider.of<CurrUserProvider>(context,
-                                                  listen: false)
-                                              .addChartIDToUser(id, args.index),
+                                          UserDao.addChartIDToUser(
+                                            args.currUser,
+                                            id,
+                                            args.index,
+                                          ),
 
-                                          ChartDao.addListenerAtIndex(
-                                              args.index, id, context, true),
+                                          Global.getIt
+                                              .get<ChartList>()
+                                              .addListenerByFullID(
+                                                args.index,
+                                                id,
+                                                args.currUser,
+                                              ),
                                           Navigator.pop(context),
                                         }
                                     }
                                   else
                                     {
-                                      // I'll have to validate stuff for myself, as
-                                      // the form will try to validate ALL the sections
-                                      // even the ones not active
                                       validationNum = validateAllActiveFields(),
-                                      if (validationNum == -1)
-                                        {
-                                          (args.isInEditMode)
-                                              ? {
-                                                  Provider.of<DisplayChartProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .updateChart(
-                                                    args.index,
-                                                    args.chartData.copyWith(
-                                                      circleOneText:
-                                                          nameStrings,
-                                                      circleTwoText:
-                                                          ring2Strings,
-                                                      circleThreeText:
-                                                          ring3Strings,
-                                                    ),
-                                                  ),
-                                                  ChartDao.updateChart(
-                                                      args.chartData.copyWith(
-                                                    circleOneText: nameStrings,
-                                                    circleTwoText: ring2Strings,
-                                                    circleThreeText:
-                                                        ring3Strings,
-                                                  )),
-                                                  Navigator.pop(context),
-                                                }
-                                              : setState(() {
-                                                  hasValidatedText = true;
-                                                }),
-                                        }
-                                      else
-                                        {
-                                          Global.rootScaffoldMessengerKey
-                                              .currentState
-                                              ?.showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                "Section ${validationNum + 1} is incomplete."
-                                                "\nPlease complete all fields to continue",
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ),
-                                        },
+                                      tryValidation(
+                                          validationNum == -1, validationNum),
                                     },
                                 },
                                 child: (isLoading)
@@ -717,6 +670,35 @@ class _ChartScreenState extends State<ChartScreen> {
         ),
       ),
     );
+  }
+
+  saveEdits() {
+    Chart editedChart = args.chartData.copyWith(
+      circleOneText: nameStrings,
+      circleTwoText: ring2Strings,
+      circleThreeText: ring3Strings,
+    );
+    // Global.getIt.get<ChartList>().userCharts.value[args.index] = editedChart;
+    ChartDao.updateChart(editedChart);
+    // debugPrint("Edited");
+    // debugPrint(editedChart.toString());
+    Navigator.pop(context, false);
+    // Navigator.pushNamed(context, 'home');
+  }
+
+  tryValidation(bool success, int sectionNum) {
+    if (success) {
+      (args.isInEditMode)
+          ? saveEdits()
+          : setState(() {
+              hasValidatedText = true;
+            });
+    } else {
+      Global.makeSnackbar(
+        "Section ${sectionNum + 1} is incomplete."
+        "\nPlease complete all fields to continue",
+      );
+    }
   }
 }
 

@@ -1,6 +1,9 @@
+import 'package:chore_app/Models/frozen/Chart.dart';
+import 'package:chore_app/Services/ChartManager.dart';
 import 'package:chore_app/Widgets/Settings/textSizeChanger.dart';
 import 'package:flutter/material.dart';
 
+import '../../Global.dart';
 import '../../Models/constant/Settings.dart';
 import '../UserLoginLogout/CurrUserDisplay.dart';
 import 'ContactCreatorButton.dart';

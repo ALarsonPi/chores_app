@@ -1,20 +1,22 @@
 import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Global.dart';
-import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/TextSizeProvider.dart';
+import '../../Services/ChartManager.dart';
 
 class LogoutButton extends StatelessWidget {
+  const LogoutButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => {
         ChartDao.endListeningToCharts(),
-        Provider.of<DisplayChartProvider>(context, listen: false).clearCharts(),
+        Global.getIt.get<ChartList>().setChartsToEmpty(),
         Provider.of<TabNumberProvider>(context, listen: false)
             .changeCurrTabNum(0),
         FirebaseAuth.instance.signOut(),

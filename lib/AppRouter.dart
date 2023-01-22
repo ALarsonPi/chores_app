@@ -1,15 +1,15 @@
 import 'package:chore_app/Providers/CurrUserProvider.dart';
-import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
+import 'package:chore_app/Screens/homeScreen.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'ColorControl/GlobalThemes.dart';
 import 'Global.dart';
-import 'Models/frozen/Chart.dart';
 import 'Screens/SplashScreen.dart';
 
 /// @nodoc
@@ -40,20 +40,27 @@ class _AppRouter extends State<AppRouter> {
     Global.dataTransferComplete = false;
     return MultiProvider(
       providers: [
+        StreamProvider(
+          create: (context) => Connectivity().onConnectivityChanged,
+          initialData: ConnectivityResult.wifi,
+        ),
+        // Light / Dark Mode as well as Primary Color
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(),
         ),
+        // To remember which tab currently on
+        // and control number of tabs available
         ChangeNotifierProvider(
           create: (_) => TabNumberProvider(),
         ),
+        // To get and maintain the correct
+        // UserModel object
         ChangeNotifierProvider(
           create: (_) => CurrUserProvider(),
         ),
+        // To change text size throughout the app
         ChangeNotifierProvider(
           create: (_) => TextSizeProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => DisplayChartProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(
@@ -94,6 +101,7 @@ class _AppRouter extends State<AppRouter> {
                 ConnectedUsersScreen.routeName: (context) =>
                     const ConnectedUsersScreen(),
                 ChartScreen.routeName: (context) => const ChartScreen(),
+                'home': (context) => HomeScreen(),
               },
             ),
           );

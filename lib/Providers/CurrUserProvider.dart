@@ -264,9 +264,7 @@ class CurrUserProvider extends ChangeNotifier {
 }
 
 makeSnackBarWithText(String message) {
-  Global.rootScaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(message.toString()),
-    ),
+  Global.makeSnackbar(
+    message.toString(),
   );
 }

@@ -1,31 +1,29 @@
 import 'package:chore_app/Global.dart';
-import 'package:chore_app/Providers/DisplayChartProvider.dart';
 import 'package:chore_app/Widgets/ChartDisplay/EmptyChartDisplay.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
+import 'package:get_it_mixin/get_it_mixin.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Models/frozen/User.dart';
+import '../../Services/ChartManager.dart';
 import 'CreatedChartDisplay.dart';
 
-class TabContent extends StatelessWidget {
-  TabContent(this.circleDataIndex, this.userFromParent, {super.key});
+class TabContent extends StatelessWidget with GetItMixin {
+  TabContent(this.circleDataIndex, {super.key});
   int circleDataIndex;
-  User userFromParent;
 
   @override
   Widget build(BuildContext context) {
-    Chart chartData = (!Provider.of<DisplayChartProvider>(context, listen: true)
-            .usersCharts
-            .keys
-            .contains(circleDataIndex))
-        ? Chart.emptyChart
-        : Provider.of<DisplayChartProvider>(context, listen: true)
-            .usersCharts[circleDataIndex] as Chart;
-
-    if (!(chartData == Chart.emptyChart)) {
-      return CreatedChartDisplay(circleDataIndex, chartData);
-    } else {
-      return EmptyChartDisplay(circleDataIndex, userFromParent);
-    }
+    return ValueListenableBuilder(
+      builder: (context, value, child) {
+        return (!(value == Chart.emptyChart))
+            ? CreatedChartDisplay(
+                circleDataIndex,
+                value as Chart,
+              )
+            : EmptyChartDisplay(circleDataIndex);
+      },
+      valueListenable:
+          Global.getIt.get<ChartList>().getCurrNotifierByIndex(circleDataIndex),
+    );
   }
 }

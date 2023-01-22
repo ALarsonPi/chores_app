@@ -1,5 +1,5 @@
 import 'package:chore_app/Daos/ChartDao.dart';
-import 'package:chore_app/Providers/DisplayChartProvider.dart';
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +11,24 @@ import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
 import '../../Models/frozen/User.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
+import '../../Services/ChartManager.dart';
 
-class EmptyChartDisplay extends StatelessWidget {
-  EmptyChartDisplay(this.currTabIndex, this.userFromParent, {super.key});
+class EmptyChartDisplay extends StatefulWidget {
+  EmptyChartDisplay(this.currTabIndex, {super.key});
   int currTabIndex;
-  User userFromParent;
 
+  @override
+  State<StatefulWidget> createState() {
+    return EmptyChartDisplayState();
+  }
+}
+
+class EmptyChartDisplayState extends State<EmptyChartDisplay> {
   String? chartId;
   Chart? chart;
 
   int? isChartAlreadyUsed(User currUser, String? id) {
+    if (currUser.chartIDs == null) return -1;
     for (int i = 0; i < (currUser.chartIDs as List<String>).length; i++) {
       if (currUser.chartIDs?.elementAt(i).contains(id as String) as bool) {
         return i;
@@ -31,7 +39,15 @@ class EmptyChartDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User currUser = userFromParent;
+    List<User> currUserList = Provider.of<List<User>>(context, listen: true);
+    if (currUserList.isEmpty) {
+      return const SizedBox(
+        height: 50,
+        width: 50,
+        child: CircularProgressIndicator(),
+      );
+    }
+    User currUser = currUserList.first;
     int num;
     return Stack(
       alignment: Alignment.center,
@@ -98,7 +114,7 @@ class EmptyChartDisplay extends StatelessWidget {
                         onPressed: () => {
                           Navigator.pushNamed(context, ChartScreen.routeName,
                               arguments: CreateChartArguments(
-                                currTabIndex,
+                                widget.currTabIndex,
                                 Chart.emptyChart,
                                 currUser,
                               )),
@@ -124,7 +140,7 @@ class EmptyChartDisplay extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         chartId = await prompt(
-                          context,
+                          Global.scaffoldKey.currentContext as BuildContext,
                           title: const Text('Please enter Chart Code:'),
                           initialValue: '',
                           isSelectedInitialValue: false,
@@ -150,34 +166,39 @@ class EmptyChartDisplay extends StatelessWidget {
                         if (chartId != null) {
                           num = isChartAlreadyUsed(currUser, chartId) as int;
                           if (num != -1) {
-                            Global.rootScaffoldMessengerKey.currentState
-                                ?.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "You are already a part of that chart\nIt is your Chart ${num + 1}",
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
+                            Global.makeSnackbar(
+                              "You are already a part of that chart\nIt is your Chart ${num + 1}",
                             );
                           } else {
-                            debugPrint(chartId);
-                            ChartDao.addPendingRequest(
+                            if (currUser.chartIDs == null) {
+                              return;
+                            }
+
+                            Chart currChart =
+                                await ChartDao.getChartFromSubstringID(
+                                    chartId as String);
+                            if (currChart == Chart.emptyChart) {
+                              Global.makeSnackbar(
+                                  "No Chart found with that code. Please make " +
+                                      "sure you have the correct code and try again");
+                              return;
+                            }
+
+                            await ChartDao.addPendingRequest(
                                 currUser.id, chartId as String);
-                            // chart = await ChartDao.addListenerAtIndex(
-                            //     currTabIndex,
-                            //     chartId as String,
-                            //     context,
-                            //     false);
-                            // debugPrint(chart.toString());
-                            // Global.rootScaffoldMessengerKey.currentState
-                            //     ?.showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text(
-                            //       "You have sent in a request to join the chart. \nOnce the chart owner accepts your request, you will be added to the chart ",
-                            //       textAlign: TextAlign.center,
-                            //     ),
-                            //   ),
-                            // );
+                            currChart =
+                                currChart.addPendingID(currChart, currUser.id);
+
+                            currUser = currUser.addTabToUser(
+                              widget.currTabIndex,
+                              currChart.id,
+                              currUser,
+                            );
+
+                            UserDao.updateUserInFirebase(currUser);
+
+                            Global.getIt.get<ChartList>().addListenerByFullID(
+                                widget.currTabIndex, currChart.id, currUser);
                           }
                         }
                       },

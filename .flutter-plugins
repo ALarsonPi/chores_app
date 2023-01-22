@@ -1,6 +1,9 @@
 # This is a generated file; do not edit or check into version control.
 cloud_firestore=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-4.2.0/
 cloud_firestore_web=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore_web-3.1.1/
+connectivity=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/connectivity-3.0.6/
+connectivity_for_web=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/connectivity_for_web-0.4.0+1/
+connectivity_macos=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/connectivity_macos-0.2.1+2/
 facebook_auth_desktop=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/facebook_auth_desktop-0.0.7/
 firebase_auth=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-4.2.1/
 firebase_auth_web=/Users/aleclarson/Desktop/FlutterFolder/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-5.2.1/

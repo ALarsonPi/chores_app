@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'Chart.freezed.dart';
@@ -29,13 +30,13 @@ class Chart with _$Chart {
     chartTitle: "",
     ownerID: "",
     tabNumForOwner: 0,
-    editorIDs: [],
-    viewerIDs: [],
-    pendingIDs: [],
+    editorIDs: List.empty(growable: true),
+    viewerIDs: List.empty(growable: true),
+    pendingIDs: List.empty(growable: true),
     numberOfRings: 0,
-    circleOneText: [],
-    circleTwoText: [],
-    circleThreeText: [],
+    circleOneText: List.empty(growable: true),
+    circleTwoText: List.empty(growable: true),
+    circleThreeText: List.empty(growable: true),
   );
 
   factory Chart.fromJson(Map<String, dynamic> json) => _$ChartFromJson(json);
@@ -47,11 +48,34 @@ class Chart with _$Chart {
     return newChart;
   }
 
-  // static void copy(Chart objToCopyTo, Chart objToCopyFrom) {
-  //   objToCopyTo.circleID = objToCopyFrom.circleID;
-  //   objToCopyTo.chartTitle = objToCopyFrom.chartTitle;
-  //   objToCopyTo.circleOneText = objToCopyFrom.circleOneText;
-  //   objToCopyTo.circleTwoText = objToCopyFrom.circleTwoText;
-  //   objToCopyTo.circleThreeText = objToCopyFrom.circleThreeText;
-  // }
+  Chart addPendingID(Chart chart, String id) {
+    List<String> currIds = List.empty(growable: true);
+    currIds.addAll(pendingIDs);
+    currIds.add(id);
+    return chart.copyWith(pendingIDs: currIds);
+  }
+
+  Chart removeUserFromChart(Chart chart, String userToRemoveID) {
+    List<String> currPendingIDs = List.empty(growable: true);
+    List<String> currviewIDs = List.empty(growable: true);
+    List<String> currEditingIDs = List.empty(growable: true);
+
+    if (userToRemoveID == chart.ownerID) {
+      debugPrint("Error - trying to remove owner from chart");
+    }
+
+    currPendingIDs.addAll(chart.pendingIDs);
+    currviewIDs.addAll(chart.viewerIDs);
+    currEditingIDs.addAll(chart.editorIDs);
+
+    currPendingIDs.remove(userToRemoveID);
+    currviewIDs.remove(userToRemoveID);
+    currEditingIDs.remove(userToRemoveID);
+
+    return chart.copyWith(
+      pendingIDs: currPendingIDs,
+      viewerIDs: currviewIDs,
+      editorIDs: currEditingIDs,
+    );
+  }
 }

@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:chore_app/Models/constant/Settings.dart';
+import 'package:chore_app/Services/ChartManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-
+import 'package:get_it/get_it.dart';
 import 'ColorControl/AppColors.dart';
 import 'Models/constant/CircleSettings.dart';
 import 'Models/constant/RingCharLimit.dart';
@@ -18,6 +19,23 @@ class Global {
   static bool isPhone = Device.get().isPhone;
   static bool isHighPixelRatio = (Device.devicePixelRatio > 2);
   static double toolbarHeight = (isPhone) ? 65.0 : 85.0;
+
+  static final getIt = GetIt.instance;
+
+  static void setupGetIt() {
+    getIt.registerSingleton<ChartList>(ChartList());
+  }
+
+  static void makeSnackbar(String message) {
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
 
   static String currUserID = "ID";
 
@@ -35,6 +53,8 @@ class Global {
   static FocusNode titleFocusNode = FocusNode();
   static GlobalKey<ChangeTitleWidgetState> changeTitleWidgetKey =
       GlobalKey<ChangeTitleWidgetState>();
+  static final GlobalKey<ScaffoldState> scaffoldKey =
+      GlobalKey<ScaffoldState>();
 
   static bool dataTransferComplete = false;
   static List<Chart> chartHolderGlobal = List.empty(growable: true);

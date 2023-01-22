@@ -52,20 +52,28 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     );
   }
 
-  Widget buildPendingWidget(int index) {
+  Widget buildDisplaySkeleton(
+    String name,
+    List<IconData> icons,
+    List<Color> iconColors,
+    Function iconOneFunction,
+    Function iconTwoFunction,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 8.0,
+        top: 4.0,
         bottom: 8.0,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: GridView.count(
+        shrinkWrap: true,
+        childAspectRatio: 4 / 1,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
         children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.075),
+          Align(
+            alignment: Alignment.topCenter,
             child: Text(
-              "Name Name",
+              name,
               style: TextStyle(
                 fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
                         as double) +
@@ -74,181 +82,94 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.15),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.clear,
-                    color: Colors.red,
-                    size: (Theme.of(context).iconTheme.size as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .iconSizeToAdd),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.03),
-                  child: Icon(Icons.check,
-                      color: Colors.green,
+          Align(
+              alignment: Alignment.topLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icons.first,
+                      color: iconColors.first,
                       size: (Theme.of(context).iconTheme.size as double) +
                           Provider.of<TextSizeProvider>(context, listen: false)
                               .iconSizeToAdd),
-                ),
-              ],
-            ),
-          )
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.03),
+                    child: Icon(icons.last,
+                        color: iconColors.last,
+                        size: (Theme.of(context).iconTheme.size as double) +
+                            Provider.of<TextSizeProvider>(context,
+                                    listen: false)
+                                .iconSizeToAdd),
+                  ),
+                ],
+              )),
         ],
       ),
+    );
+  }
+
+  Widget buildPendingWidget(int index) {
+    return buildDisplaySkeleton(
+      "DUDE Guy",
+      [
+        Icons.clear,
+        Icons.check,
+      ],
+      [
+        Colors.red,
+        Colors.green,
+      ],
+      () => {},
+      () => {},
     );
   }
 
   Widget buildViewerWidget(int index) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.075),
-            child: Text(
-              "Name Name",
-              style: TextStyle(
-                fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
-                        as double) +
-                    Provider.of<TextSizeProvider>(context, listen: false)
-                        .fontSizeToAdd,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.15),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.clear,
-                    color: Colors.red,
-                    size: (Theme.of(context).iconTheme.size as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .iconSizeToAdd),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.03),
-                  child: Icon(Icons.edit,
-                      color: Theme.of(context).primaryColor,
-                      size: (Theme.of(context).iconTheme.size as double) +
-                          Provider.of<TextSizeProvider>(context, listen: false)
-                              .iconSizeToAdd),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+    return buildDisplaySkeleton(
+      "BRO Man",
+      [
+        Icons.clear,
+        Icons.edit,
+      ],
+      [
+        Colors.red,
+        Colors.orangeAccent,
+      ],
+      () => {},
+      () => {},
     );
   }
 
   Widget buildEditorWidget(int index) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.075),
-            child: Text(
-              "Name Name",
-              style: TextStyle(
-                fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
-                        as double) +
-                    Provider.of<TextSizeProvider>(context, listen: false)
-                        .fontSizeToAdd,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.15),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.clear,
-                    color: Colors.red,
-                    size: (Theme.of(context).iconTheme.size as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .iconSizeToAdd),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.03),
-                  child: Icon(Icons.edit,
-                      color: Theme.of(context).primaryColor,
-                      size: (Theme.of(context).iconTheme.size as double) +
-                          Provider.of<TextSizeProvider>(context, listen: false)
-                              .iconSizeToAdd),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+    return buildDisplaySkeleton(
+      "BROTHER Bear",
+      [
+        Icons.clear,
+        Icons.edit,
+      ],
+      [
+        Colors.red,
+        Colors.orangeAccent,
+      ],
+      () => {},
+      () => {},
     );
   }
 
   Widget buildOwnerWidget(int index) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.075),
-            child: Text(
-              "Name Name",
-              style: TextStyle(
-                fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
-                        as double) +
-                    Provider.of<TextSizeProvider>(context, listen: false)
-                        .fontSizeToAdd,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.15),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.clear,
-                    color: Colors.transparent,
-                    size: (Theme.of(context).iconTheme.size as double) +
-                        Provider.of<TextSizeProvider>(context, listen: false)
-                            .iconSizeToAdd),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.03),
-                  child: Icon(Icons.edit,
-                      color: Colors.transparent,
-                      size: (Theme.of(context).iconTheme.size as double) +
-                          Provider.of<TextSizeProvider>(context, listen: false)
-                              .iconSizeToAdd),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+    return buildDisplaySkeleton(
+      "OWNER Person",
+      [
+        Icons.clear,
+        Icons.edit,
+      ],
+      [
+        Colors.transparent,
+        Colors.transparent,
+      ],
+      () => {},
+      () => {},
     );
   }
 

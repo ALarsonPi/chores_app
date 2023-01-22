@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import '../Global.dart';
-import '../Providers/DisplayChartProvider.dart';
 
 class ChartDao {
   static final CollectionReference currChartCollection =
@@ -15,14 +14,29 @@ class ChartDao {
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
 
-  static addPendingRequest(String pendingUserID, String chartID) async {
+  static Future<Chart> getChartFromSubstringID(String subStringId) async {
     final chartDoc = await currChartCollection
-        .where("id", isGreaterThanOrEqualTo: chartID)
-        .where("id", isLessThanOrEqualTo: '$chartID\uf8ff')
+        .where("id", isGreaterThanOrEqualTo: subStringId)
+        .where("id", isLessThanOrEqualTo: '$subStringId\uf8ff')
         .limit(1)
         .get();
+    Chart desiredChart;
 
-    Chart desiredChart = Chart.fromSnapshot(chartDoc.docs.first);
+    try {
+      desiredChart = Chart.fromSnapshot(chartDoc.docs.first);
+    } catch (e) {
+      debugPrint("Error - chart not found");
+      desiredChart = Chart.emptyChart;
+    }
+    return desiredChart;
+  }
+
+  static DocumentReference getChartDocByID(String id) {
+    return currChartCollection.doc(id);
+  }
+
+  static addPendingRequest(String pendingUserID, String chartID) async {
+    Chart desiredChart = await getChartFromSubstringID(chartID);
 
     List<String> allPendingUserIds = List.empty(growable: true);
     allPendingUserIds.addAll(desiredChart.pendingIDs);
@@ -35,62 +49,25 @@ class ChartDao {
         .update(desiredChart.copyWith(pendingIDs: allPendingUserIds).toJson());
   }
 
-  static getAndListenToChartsForUser(
-      User currUserDataObj, BuildContext context) {
-    if (currUserDataObj.chartIDs == null) return;
-    debugPrint("Adding all listener");
+  static Future<List<Chart>> getChartsForUser(User user) async {
+    List<Chart> chartList = List.empty(growable: true);
 
-    for (int i = 0; i < (currUserDataObj.chartIDs?.length as int); i++) {
-      int tabIndex = currUserDataObj.associatedTabNums?.elementAt(i) as int;
-      addListenerAtIndex(tabIndex,
-          currUserDataObj.chartIDs?.elementAt(i) as String, context, false);
+    if (user.chartIDs != null) {
+      for (String chartId in user.chartIDs as List<String>) {
+        Chart retrievedChart = await getChartByID(chartId);
+        chartList.add(retrievedChart);
+      }
     }
+    return chartList;
   }
 
   static removeListener(int indexToRemove) {
-    debugPrint("Removing listener for index:" + indexToRemove.toString());
+    // debugPrint("Removing listener for index:" + indexToRemove.toString());
     Global.streamMap[indexToRemove]?.cancel();
   }
 
-  static Future<Chart> addListenerAtIndex(
-      int index, String uid, BuildContext context, bool shouldRefresh) async {
-    final docRef = currChartCollection.doc(uid);
-    Chart chart = Chart.emptyChart;
-    var subscription =
-        docRef.snapshots(includeMetadataChanges: true).listen((event) {
-      chart = Chart.fromSnapshot(event);
-
-      Future.delayed(
-        Duration.zero,
-        Provider.of<DisplayChartProvider>(context, listen: false).updateChart(
-          index,
-          Chart.fromSnapshot(event),
-        ),
-      );
-    });
-    Global.streamMap.putIfAbsent(index, () => subscription);
-    return chart;
-  }
-
-  static addListener(User currUser, int indexToAdd, BuildContext context) {
-    final docRef =
-        currChartCollection.doc(currUser.chartIDs?.elementAt(indexToAdd));
-    var subscription =
-        docRef.snapshots(includeMetadataChanges: true).listen((event) {
-      debugPrint(
-          "THERE was a change for " + Chart.fromSnapshot(event).chartTitle);
-      Future.delayed(
-          Duration.zero,
-          Provider.of<DisplayChartProvider>(context, listen: false).putChart(
-              indexToAdd,
-              currUser.associatedTabNums?.elementAt(indexToAdd) as int,
-              Chart.fromSnapshot(event)));
-    });
-    Global.streamMap.putIfAbsent(indexToAdd, () => subscription);
-  }
-
   static endListeningToCharts() {
-    debugPrint("ENDING LISTEN TO ALL");
+    // debugPrint("ENDING LISTEN TO ALL");
     for (int i = 0; i < Global.streamMap.length; i++) {
       Global.streamMap.values.elementAt(i).cancel();
     }
@@ -122,9 +99,17 @@ class ChartDao {
         .limit(1)
         .get()
         .then((QuerySnapshot value) => {
-              if (value.docs.isNotEmpty)
-                ChartFromDatabase = Chart.fromSnapshot(value.docs.elementAt(0)),
+              if (value.docs.isNotEmpty && value.docs.elementAt(0) != null)
+                {
+                  ChartFromDatabase =
+                      Chart.fromSnapshot(value.docs.elementAt(0)),
+                }
             });
     return ChartFromDatabase;
+  }
+
+  static Future<String> addChartToFirebase(Chart newChart, int index) async {
+    String idFromFirebase = await ChartDao.addChart(newChart);
+    return idFromFirebase;
   }
 }
