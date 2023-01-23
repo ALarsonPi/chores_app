@@ -46,6 +46,10 @@ class ChartList {
   }
 
   addListenersForChartsFromFirebase(User currUser) {
+    if (currUser.chartIDs == null) {
+      debugPrint("No chartIDs");
+      return;
+    }
     List<String> currIds = currUser.chartIDs as List<String>;
     for (int i = 0; i < currIds.length; i++) {
       addListenerByFullID(currUser.associatedTabNums?.elementAt(i) as int,
@@ -64,11 +68,15 @@ class ChartList {
     var subscription = docRef.snapshots().listen((event) {
       updatedChart = Chart.fromSnapshot(event);
 
+      debugPrint("In listener: " + currUser.toString());
+
       if (updatedChart ==
           Global.getIt
               .get<ChartList>()
               .getCurrNotifierByIndex(indexToAdd)
               .value) return;
+
+      debugPrint("Updated Chart: " + updatedChart.toString());
 
       // If a change removes this user from the chart, set it as empty,
       // end listening to it, and remove from user object

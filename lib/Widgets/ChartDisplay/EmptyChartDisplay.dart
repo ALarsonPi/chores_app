@@ -170,10 +170,6 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
                               "You are already a part of that chart\nIt is your Chart ${num + 1}",
                             );
                           } else {
-                            if (currUser.chartIDs == null) {
-                              return;
-                            }
-
                             Chart currChart =
                                 await ChartDao.getChartFromSubstringID(
                                     chartId as String);

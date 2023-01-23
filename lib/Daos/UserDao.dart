@@ -24,8 +24,8 @@ class UserDao {
     return userStream;
   }
 
-  static User addChartIDToUser(
-      User currUser, String newChartID, int chartTabNum) {
+  static Future<User> addChartIDToUser(
+      User currUser, String newChartID, int chartTabNum) async {
     List<String> userChartIds = List.empty(growable: true);
     if (currUser.chartIDs != null) {
       userChartIds.addAll(currUser.chartIDs as Iterable<String>);
@@ -42,7 +42,7 @@ class UserDao {
       chartIDs: userChartIds,
       associatedTabNums: tabNums,
     );
-    updateUserInFirebase(updatedUser);
+    await updateUserInFirebase(updatedUser);
     return updatedUser;
   }
 
@@ -72,7 +72,7 @@ class UserDao {
     return updatedUser;
   }
 
-  static void updateUserInFirebase(User currUser) async {
+  static Future<void> updateUserInFirebase(User currUser) async {
     await currUserCollection.doc(currUser.id).update(
           currUser.toJson(),
         );

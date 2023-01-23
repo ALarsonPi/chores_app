@@ -29,8 +29,8 @@ class CurrUserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  addChartIDToUser(String newChartID, int newTabNum) {
-    User user = UserDao.addChartIDToUser(currUser, newChartID, newTabNum);
+  addChartIDToUser(String newChartID, int newTabNum) async {
+    User user = await UserDao.addChartIDToUser(currUser, newChartID, newTabNum);
     currUser = user;
   }
 

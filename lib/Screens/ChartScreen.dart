@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
+import '../Models/frozen/User.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Services/ChartManager.dart';
 
@@ -216,6 +217,7 @@ class _ChartScreenState extends State<ChartScreen> {
   final formKey = GlobalKey<FormState>();
 
   late Chart newChart;
+  late User currUser;
 
   @override
   Widget build(BuildContext context) {
@@ -603,18 +605,36 @@ class _ChartScreenState extends State<ChartScreen> {
                                             newChart,
                                             args.index,
                                           ),
-                                          UserDao.addChartIDToUser(
+                                          currUser =
+                                              await UserDao.addChartIDToUser(
                                             args.currUser,
                                             id,
                                             args.index,
                                           ),
 
                                           Global.getIt
+                                                  .get<ChartList>()
+                                                  .getCurrNotifierByIndex(
+                                                      args.index)
+                                                  .value =
+                                              newChart.copyWith(id: id),
+
+                                          // debugPrint(currUser.toString()),
+
+                                          // Global.getIt
+                                          //     .get<ChartList>()
+                                          //     .(
+                                          //       args.index,
+                                          //       id,
+                                          //       currUser,
+                                          //     ),
+
+                                          Global.getIt
                                               .get<ChartList>()
                                               .addListenerByFullID(
                                                 args.index,
                                                 id,
-                                                args.currUser,
+                                                currUser,
                                               ),
                                           Navigator.pop(context),
                                         }
