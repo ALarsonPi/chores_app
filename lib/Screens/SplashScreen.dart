@@ -1,3 +1,4 @@
+import 'package:chore_app/Global.dart';
 import 'package:chore_app/Screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
@@ -19,7 +20,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreen extends State<SplashScreen> {
   @override
   void initState() {
-    //Contact Firebase to get Stuff if needed
+    Global.dataTransferComplete = false;
     super.initState();
   }
 

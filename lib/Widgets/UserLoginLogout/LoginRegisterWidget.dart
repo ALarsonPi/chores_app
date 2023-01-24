@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:auth_buttons/auth_buttons.dart';
-import 'package:chore_app/Providers/CurrUserProvider.dart';
+import 'package:chore_app/Services/FirebaseLogin.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/ForgotPassword.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'UI_Helpers.dart';
 
 class LoginRegisterWidget extends StatefulWidget {
@@ -190,15 +189,11 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                             if (_formKey.currentState!.validate())
                               {
                                 (isInLoginMode)
-                                    ? Provider.of<CurrUserProvider>(context,
-                                            listen: false)
-                                        .login(
+                                    ? FirebaseLogin.login(
                                         emailController.text.trim(),
                                         passwordController.text.trim(),
                                       )
-                                    : Provider.of<CurrUserProvider>(context,
-                                            listen: false)
-                                        .register(
+                                    : FirebaseLogin.register(
                                         fullNameController.text.trim(),
                                         emailController.text.trim(),
                                         passwordController.text.trim(),
@@ -265,8 +260,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 if (Platform.isIOS)
                   AppleAuthButton(
                     onPressed: () => {
-                      Provider.of<CurrUserProvider>(context, listen: false)
-                          .signInWithApple(),
+                      FirebaseLogin.signInWithApple(),
                     },
                     themeMode: ThemeMode.light,
                     text: '   CONTINUE WITH APPLE    ',
@@ -282,8 +276,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 if (Platform.isIOS) verticalSpaceRegular,
                 FacebookAuthButton(
                   onPressed: () => {
-                    Provider.of<CurrUserProvider>(context, listen: false)
-                        .signInWithFacebook(),
+                    FirebaseLogin.signInWithFacebook(),
                   },
                   text: 'CONTINUE WITH FACEBOOK',
                   style: const AuthButtonStyle(
@@ -299,8 +292,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                 verticalSpaceRegular,
                 GoogleAuthButton(
                   onPressed: () => {
-                    Provider.of<CurrUserProvider>(context, listen: false)
-                        .signInWithGoogle(),
+                    FirebaseLogin.signInWithGoogle(),
                   },
                   text: 'CONTINUE WITH GOOGLE',
                   style: const AuthButtonStyle(

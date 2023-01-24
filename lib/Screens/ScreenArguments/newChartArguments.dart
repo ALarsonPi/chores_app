@@ -5,7 +5,5 @@ class CreateChartArguments {
   final int index;
   final bool isInEditMode;
   Chart chartData;
-  UserModel currUser;
-  CreateChartArguments(this.index, this.chartData, this.currUser,
-      {this.isInEditMode = false});
+  CreateChartArguments(this.index, this.chartData, {this.isInEditMode = false});
 }

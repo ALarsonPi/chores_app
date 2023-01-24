@@ -2,6 +2,7 @@ import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
+import 'package:chore_app/Services/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
 import 'package:provider/provider.dart';
@@ -39,16 +40,7 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    List<UserModel> currUserList =
-        Provider.of<List<UserModel>>(context, listen: true);
-    if (currUserList.isEmpty) {
-      return const SizedBox(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(),
-      );
-    }
-    UserModel currUser = currUserList.first;
+    UserModel currUser = Global.getIt.get<UserManager>().currUser.value;
     int num;
     return Stack(
       alignment: Alignment.center,
@@ -117,7 +109,6 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
                               arguments: CreateChartArguments(
                                 widget.currTabIndex,
                                 Chart.emptyChart,
-                                currUser,
                               )),
                         },
                         child: Text(
@@ -186,16 +177,14 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
                             currChart =
                                 currChart.addPendingID(currChart, currUser.id);
 
-                            currUser = currUser.addTabToUser(
-                              widget.currTabIndex,
-                              currChart.id,
-                              currUser,
-                            );
+                            Global.getIt.get<UserManager>().addTabToUser(
+                                widget.currTabIndex, currChart.id);
 
-                            UserDao.updateUserInFirebase(currUser);
+                            UserDao.updateUserInFirebase(
+                                Global.getIt.get<UserManager>().currUser.value);
 
                             Global.getIt.get<ChartList>().addListenerByFullID(
-                                widget.currTabIndex, currChart.id, currUser);
+                                widget.currTabIndex, currChart.id);
                           }
                         }
                       },

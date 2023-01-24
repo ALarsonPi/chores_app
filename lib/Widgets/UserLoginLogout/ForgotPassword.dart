@@ -1,7 +1,6 @@
-import 'package:chore_app/Providers/CurrUserProvider.dart';
+import 'package:chore_app/Services/FirebaseLogin.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'UI_Helpers.dart';
 import 'CheckEmail.dart';
@@ -156,11 +155,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               if (_formKey.currentState!.validate())
                                 {
                                   didResetCorrectly =
-                                      await Provider.of<CurrUserProvider>(
-                                              context,
-                                              listen: false)
-                                          .passwordReset(
-                                              emailController.text.trim()),
+                                      await FirebaseLogin.passwordReset(
+                                          emailController.text.trim()),
                                   setState(() => {
                                         isEmailSent = didResetCorrectly,
                                       }),

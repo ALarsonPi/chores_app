@@ -1,7 +1,9 @@
-import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../Global.dart';
+import '../../Services/UserManager.dart';
 
 class CurrUserDisplay extends StatelessWidget {
   const CurrUserDisplay({super.key});
@@ -24,27 +26,20 @@ class CurrUserDisplay extends StatelessWidget {
             color: Theme.of(context).textTheme.displayMedium?.color,
           ),
         ),
-        if ((Provider.of<CurrUserProvider>(context, listen: true)
-                .currUser
-                .name !=
-            null))
-          Text(
-            Provider.of<CurrUserProvider>(context, listen: true)
-                    .currUser
-                    .name ??
-                "No name",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: (Theme.of(context).textTheme.displayLarge?.fontSize
-                      as double) +
-                  Provider.of<TextSizeProvider>(context, listen: true)
-                      .fontSizeToAdd,
-              color: Theme.of(context).textTheme.displayMedium?.color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
         Text(
-          "(${Provider.of<CurrUserProvider>(context, listen: true).currUser.email})",
+          Global.getIt.get<UserManager>().currUser.value.name ?? "No name",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize:
+                (Theme.of(context).textTheme.displayLarge?.fontSize as double) +
+                    Provider.of<TextSizeProvider>(context, listen: true)
+                        .fontSizeToAdd,
+            color: Theme.of(context).textTheme.displayMedium?.color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          "(${Global.getIt.get<UserManager>().currUser.value.email})",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize:

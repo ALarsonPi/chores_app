@@ -19,37 +19,9 @@ class UserModel with _$UserModel {
     List<int>? associatedTabNums,
   }) = _UserModel;
 
-  UserModel addTabToUser(int tabNum, String chartIDToAdd, UserModel currUser) {
-    List<int> currTabs = List.empty(growable: true);
-    if (currUser.associatedTabNums != null) {
-      currTabs.addAll(currUser.associatedTabNums as List<int>);
-    }
-    currTabs.add(tabNum);
-
-    List<String> currIds = List.empty(growable: true);
-    if (chartIDs != null) {
-      currIds.addAll(chartIDs as List<String>);
-    }
-    currIds.add(chartIDToAdd);
-
-    return currUser.copyWith(associatedTabNums: currTabs, chartIDs: currIds);
-  }
-
-  UserModel removeTabFromUser(int tabNum, String chartID, UserModel currUser) {
-    List<int> currTabs = List.empty(growable: true);
-    if (currUser.associatedTabNums != null) {
-      currTabs.addAll(currUser.associatedTabNums as List<int>);
-    }
-    currTabs.remove(tabNum);
-
-    List<String> currIds = List.empty(growable: true);
-    if (chartIDs != null) {
-      currIds.addAll(chartIDs as List<String>);
-    }
-    currIds.remove(chartID);
-
-    return currUser.copyWith(associatedTabNums: currTabs, chartIDs: currIds);
-  }
+  static UserModel emptyUser = UserModel(
+    id: "ID",
+  );
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

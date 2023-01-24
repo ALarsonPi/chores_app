@@ -6,17 +6,9 @@ import '../Daos/ChartDao.dart';
 import '../Daos/UserDao.dart';
 import '../Models/frozen/Chart.dart';
 import '../Models/frozen/UserModel.dart';
+import 'UserManager.dart';
 
 class ChartList {
-  // ValueNotifier<List<Chart>> userCharts = ValueNotifier<List<Chart>>(
-  //     List.filled(Global.TABS_ALLOWED, Chart.emptyChart));
-  // List<ValueNotifier<Chart>> userCharts = List<ValueNotifier<Chart>>.filled(
-  //   Global.TABS_ALLOWED,
-  //   ValueNotifier<Chart>(
-  //     Chart.emptyChart,
-  //   ),
-  // );
-
   ValueNotifier<Chart> firstChart = ValueNotifier<Chart>(
     Chart.emptyChart,
   );
@@ -53,30 +45,31 @@ class ChartList {
     List<String> currIds = currUser.chartIDs as List<String>;
     for (int i = 0; i < currIds.length; i++) {
       addListenerByFullID(currUser.associatedTabNums?.elementAt(i) as int,
-          currIds.elementAt(i), currUser);
+          currIds.elementAt(i));
     }
   }
 
   addListenerByPartID(int indexToAdd, String partID, UserModel currUser) async {
     Chart currChart = await ChartDao.getChartFromSubstringID(partID);
-    addListenerByFullID(indexToAdd, currChart.id, currUser);
+    addListenerByFullID(indexToAdd, currChart.id);
   }
 
-  addListenerByFullID(int indexToAdd, String fullID, UserModel currUser) {
+  addListenerByFullID(int indexToAdd, String fullID) {
     final DocumentReference docRef = ChartDao.getChartDocByID(fullID);
     Chart updatedChart = Chart.emptyChart;
     var subscription = docRef.snapshots().listen((event) {
       updatedChart = Chart.fromSnapshot(event);
 
-      debugPrint("In listener: " + currUser.toString());
-
+      // debugPrint("In listener: " + currUser.toString());
       if (updatedChart ==
           Global.getIt
               .get<ChartList>()
               .getCurrNotifierByIndex(indexToAdd)
               .value) return;
 
-      debugPrint("Updated Chart: " + updatedChart.toString());
+      UserModel currUser = Global.getIt.get<UserManager>().currUser.value;
+
+      // debugPrint("Updated Chart: " + updatedChart.toString());
 
       // If a change removes this user from the chart, set it as empty,
       // end listening to it, and remove from user object
@@ -85,15 +78,16 @@ class ChartList {
           !updatedChart.editorIDs.contains(currUser.id) &&
           updatedChart.ownerID != currUser.id) {
         Global.streamMap[indexToAdd]?.cancel();
+        debugPrint(currUser.toString());
         debugPrint("CANCELLING to changes for : " + updatedChart.chartTitle);
+        debugPrint("CANCELLING to changes for : " + updatedChart.toString());
 
         Global.getIt.get<ChartList>().getCurrNotifierByIndex(indexToAdd).value =
             Chart.emptyChart;
-        currUser = currUser.removeTabFromUser(
-          indexToAdd,
-          updatedChart.id,
-          currUser,
-        );
+        Global.getIt.get<UserManager>().removeTabFromUser(
+              indexToAdd,
+              updatedChart.id,
+            );
         UserDao.updateUserInFirebase(currUser);
         return;
       }

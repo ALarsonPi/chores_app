@@ -1,4 +1,3 @@
-import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
@@ -36,7 +35,6 @@ class _AppRouter extends State<AppRouter> {
 
   @override
   Widget build(BuildContext context) {
-    // NEEDED?
     Global.dataTransferComplete = false;
     return MultiProvider(
       providers: [
@@ -52,11 +50,6 @@ class _AppRouter extends State<AppRouter> {
         // and control number of tabs available
         ChangeNotifierProvider(
           create: (_) => TabNumberProvider(),
-        ),
-        // To get and maintain the correct
-        // UserModel object
-        ChangeNotifierProvider(
-          create: (_) => CurrUserProvider(),
         ),
         // To change text size throughout the app
         ChangeNotifierProvider(

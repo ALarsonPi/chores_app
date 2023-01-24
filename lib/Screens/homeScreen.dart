@@ -4,19 +4,20 @@ import 'package:badges/badges.dart';
 import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
-import 'package:chore_app/Providers/CurrUserProvider.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
 import 'package:chore_app/Screens/ScreenArguments/connectedUserArguments.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Services/ChartManager.dart';
+import 'package:chore_app/Services/UserManager.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:get_it/get_it.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'package:provider/provider.dart';
 import '../Global.dart';
@@ -242,17 +243,6 @@ class _HomeScreen extends State<HomeScreen>
     );
   }
 
-  Future<UserModel> getCurrUserFromProvider() async {
-    final user = FirebaseAuth.instance.currentUser;
-    UserModel updatedUser = UserModel(id: "id");
-    if (user != null) {
-      Global.currUserID = user.uid;
-      updatedUser = await Provider.of<CurrUserProvider>(context, listen: false)
-          .getCurrUser(user.email!);
-    }
-    return updatedUser;
-  }
-
   @override
   Widget build(BuildContext context) {
     // WIFI CHECKING
@@ -260,20 +250,16 @@ class _HomeScreen extends State<HomeScreen>
         Provider.of<ConnectivityResult>(context, listen: true);
     if (network != ConnectivityResult.wifi) {
       ChartDao.endListeningToCharts();
+      Global.getIt.get<UserManager>().endListening();
       return Center(
         child: Image.asset("assets/images/dino_dark.png"),
       );
     }
 
-    if (Provider.of<CurrUserProvider>(context, listen: false).currUser.id ==
-        "ID") {
-      getCurrUserFromProvider();
-    }
-
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (c, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data?.uid != null) {
           return StreamProvider<List<UserModel>>(
             create: (BuildContext c) => UserDao.getUserDataViaStream(
                 FirebaseAuth.instance.currentUser?.uid as String),
@@ -367,24 +353,36 @@ class _HomeScreen extends State<HomeScreen>
 
   // ignore: non_constant_identifier_names
   Widget HomePageWidget(BuildContext c) {
-    List<UserModel> listOfUser = Provider.of<List<UserModel>>(c, listen: true);
+    UserModel currUser = Global.getIt.get<UserManager>().currUser.value;
 
     // Initial Retrival of chart data happens only once
     // and listeners are also set here
-    if (listOfUser.isNotEmpty && !Global.dataTransferComplete) {
-      // Refresh when charts are retrieved
-      getCharts(listOfUser.elementAt(0)).then(
-        (value) => {
-          setState(() {}),
-          Global.getIt
-              .get<ChartList>()
-              .addListenersForChartsFromFirebase(listOfUser.elementAt(0)),
-        },
-      );
+    if (!Global.dataTransferComplete) {
+      UserModel userModel = UserModel.emptyUser;
+      debugPrint("Adding listeners for Chart and User");
 
-      debugPrint("GOT HERE");
+      GetIt.instance
+          .get<UserManager>()
+          .addListener((FirebaseAuth.instance.currentUser?.uid as String))
+          .then(
+            (value) => {
+              userModel = value,
+              GetIt.instance.get<UserManager>().currUser.value = userModel,
+              debugPrint(value.toString()),
 
-      Global.dataTransferComplete = true;
+              // Refresh when charts are retrieved
+              getCharts(currUser).then(
+                (value) => {
+                  setState(() {}),
+                  Global.getIt
+                      .get<ChartList>()
+                      .addListenersForChartsFromFirebase(userModel),
+                },
+              ),
+              debugPrint("Did data Transfer"),
+              Global.dataTransferComplete = true,
+            },
+          );
     }
 
     return ValueListenableBuilder(
@@ -442,10 +440,9 @@ class _HomeScreen extends State<HomeScreen>
                         : PopupMenuButton<int>(
                             icon: (chartChanges.any((element) =>
                                         element != null && element > 0) &&
-                                    (isEditor(tabsController.index,
-                                            listOfUser.first) ||
-                                        isOwner(tabsController.index,
-                                            listOfUser.first)))
+                                    (isEditor(tabsController.index, currUser) ||
+                                        isOwner(
+                                            tabsController.index, currUser)))
                                 ? Badge(
                                     badgeContent: const Text(''),
                                     child: Icon(
@@ -473,10 +470,8 @@ class _HomeScreen extends State<HomeScreen>
                                         .fontSizeToAdd -
                                     2),
                             itemBuilder: (context) => [
-                              if (isEditor(
-                                      tabsController.index, listOfUser.first) ||
-                                  isOwner(
-                                      tabsController.index, listOfUser.first))
+                              if (isEditor(tabsController.index, currUser) ||
+                                  isOwner(tabsController.index, currUser))
                                 PopupMenuItem<int>(
                                   value: 0,
                                   child: ListTile(
@@ -515,10 +510,8 @@ class _HomeScreen extends State<HomeScreen>
                                     },
                                   ),
                                 ),
-                              if (isEditor(
-                                      tabsController.index, listOfUser.first) ||
-                                  isOwner(
-                                      tabsController.index, listOfUser.first))
+                              if (isEditor(tabsController.index, currUser) ||
+                                  isOwner(tabsController.index, currUser))
                                 PopupMenuItem<int>(
                                   value: 1,
                                   child: ListTile(
@@ -556,16 +549,13 @@ class _HomeScreen extends State<HomeScreen>
                                           arguments: CreateChartArguments(
                                             tabsController.index,
                                             chartData as Chart,
-                                            listOfUser.elementAt(0),
                                             isInEditMode: true,
                                           ));
                                     },
                                   ),
                                 ),
-                              if (isEditor(
-                                      tabsController.index, listOfUser.first) ||
-                                  isOwner(
-                                      tabsController.index, listOfUser.first))
+                              if (isEditor(tabsController.index, currUser) ||
+                                  isOwner(tabsController.index, currUser))
                                 PopupMenuItem<int>(
                                   value: 2,
                                   child: ListTile(
@@ -597,13 +587,11 @@ class _HomeScreen extends State<HomeScreen>
                                       ),
                                     ),
                                     onTap: () {
-                                      ChartDao.removeListener(listOfUser
-                                              .elementAt(0)
-                                              .chartIDs
+                                      ChartDao.removeListener(currUser.chartIDs
                                               ?.indexOf((chartData as Chart).id)
                                           as int);
-                                      Provider.of<CurrUserProvider>(context,
-                                              listen: false)
+                                      Global.getIt
+                                          .get<UserManager>()
                                           .deleteChartIDForUser(
                                               (chartData as Chart).id,
                                               tabsController.index);
@@ -617,10 +605,8 @@ class _HomeScreen extends State<HomeScreen>
                                     },
                                   ),
                                 ),
-                              if (isEditor(
-                                      tabsController.index, listOfUser.first) ||
-                                  isOwner(
-                                      tabsController.index, listOfUser.first))
+                              if (isEditor(tabsController.index, currUser) ||
+                                  isOwner(tabsController.index, currUser))
                                 PopupMenuItem<int>(
                                   value: 3,
                                   child: ListTile(
@@ -636,9 +622,9 @@ class _HomeScreen extends State<HomeScreen>
                                                               .index)! >
                                                       0) &&
                                               (isEditor(tabsController.index,
-                                                      listOfUser.first) ||
+                                                      currUser) ||
                                                   isOwner(tabsController.index,
-                                                      listOfUser.first)))
+                                                      currUser)))
                                           ? Badge(
                                               badgeContent: const Text(''),
                                               position: BadgePosition.topEnd(
@@ -690,14 +676,12 @@ class _HomeScreen extends State<HomeScreen>
                                         arguments: ConnectedUserArguments(
                                           tabsController.index,
                                           chartData as Chart,
-                                          listOfUser.first,
                                         ),
                                       );
                                     },
                                   ),
                                 ),
-                              if (!isOwner(
-                                  tabsController.index, listOfUser.first))
+                              if (!isOwner(tabsController.index, currUser))
                                 PopupMenuItem<int>(
                                   value: 4,
                                   child: ListTile(
@@ -731,13 +715,11 @@ class _HomeScreen extends State<HomeScreen>
                                       ),
                                     ),
                                     onTap: () {
-                                      ChartDao.removeListener(listOfUser
-                                              .elementAt(0)
-                                              .chartIDs
+                                      ChartDao.removeListener(currUser.chartIDs
                                               ?.indexOf((chartData as Chart).id)
                                           as int);
-                                      Provider.of<CurrUserProvider>(context,
-                                              listen: false)
+                                      Global.getIt
+                                          .get<UserManager>()
                                           .deleteChartIDForUser(
                                               (chartData as Chart).id,
                                               tabsController.index);
@@ -745,7 +727,7 @@ class _HomeScreen extends State<HomeScreen>
                                       chartData = (chartData as Chart)
                                           .removeUserFromChart(
                                         chartData as Chart,
-                                        listOfUser.first.id,
+                                        currUser.id,
                                       );
                                       ChartDao.updateChart(chartData as Chart);
 

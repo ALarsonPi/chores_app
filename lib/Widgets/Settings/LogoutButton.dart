@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../Providers/TextSizeProvider.dart';
 import '../../Services/ChartManager.dart';
+import '../../Services/UserManager.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
@@ -17,6 +18,7 @@ class LogoutButton extends StatelessWidget {
       onPressed: () => {
         ChartDao.endListeningToCharts(),
         Global.getIt.get<ChartList>().setChartsToEmpty(),
+        Global.getIt.get<UserManager>().endListening(),
         Provider.of<TabNumberProvider>(context, listen: false)
             .changeCurrTabNum(0),
         FirebaseAuth.instance.signOut(),

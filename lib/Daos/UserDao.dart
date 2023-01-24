@@ -6,6 +6,26 @@ class UserDao {
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
 
+  static DocumentReference getUserDocByID(String id) {
+    return currUserCollection.doc(id);
+  }
+
+  static Future<UserModel> getUserByID(String id) async {
+    UserModel UserModelFromDatabase = UserModel.emptyUser;
+    await currUserCollection
+        .where("id", isEqualTo: id)
+        .limit(1)
+        .get()
+        .then((QuerySnapshot value) => {
+              if (value.docs.isNotEmpty)
+                {
+                  UserModelFromDatabase =
+                      UserModel.fromSnapshot(value.docs.elementAt(0)),
+                }
+            });
+    return UserModelFromDatabase;
+  }
+
   static Future<void> addUser(UserModel currUser) async {
     currUser = currUser.copyWith(
       email: currUser.email!.toLowerCase(),

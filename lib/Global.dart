@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:chore_app/Models/constant/Settings.dart';
 import 'package:chore_app/Services/ChartManager.dart';
+import 'package:chore_app/Services/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:get_it/get_it.dart';
@@ -24,6 +25,7 @@ class Global {
 
   static void setupGetIt() {
     getIt.registerSingleton<ChartList>(ChartList());
+    getIt.registerSingleton<UserManager>(UserManager());
   }
 
   static void makeSnackbar(String message) {
