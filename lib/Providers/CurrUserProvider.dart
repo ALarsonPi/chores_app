@@ -13,13 +13,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../Models/frozen/User.dart';
+import '../Models/frozen/UserModel.dart';
 
 class CurrUserProvider extends ChangeNotifier {
-  User currUser = User(id: "ID");
+  UserModel currUser = UserModel(id: "ID");
 
   // Used on Register
-  setCurrUser(User newUser) {
+  setCurrUser(UserModel newUser) {
     if (currUser == newUser) return;
     currUser = newUser.copyWith(
         id: newUser.id,
@@ -30,12 +30,14 @@ class CurrUserProvider extends ChangeNotifier {
   }
 
   addChartIDToUser(String newChartID, int newTabNum) async {
-    User user = await UserDao.addChartIDToUser(currUser, newChartID, newTabNum);
+    UserModel user =
+        await UserDao.addChartIDToUser(currUser, newChartID, newTabNum);
     currUser = user;
   }
 
   deleteChartIDForUser(String oldChartID, int oldTabNum) {
-    User user = UserDao.removeChartIDForUser(currUser, oldChartID, oldTabNum);
+    UserModel user =
+        UserDao.removeChartIDForUser(currUser, oldChartID, oldTabNum);
     currUser = user;
   }
 
@@ -76,8 +78,8 @@ class CurrUserProvider extends ChangeNotifier {
   }
 
   // Used on Sign-in and refresh
-  Future<User> getCurrUser(String email) async {
-    User newUser = await UserDao.getCurrUser(email);
+  Future<UserModel> getCurrUser(String email) async {
+    UserModel newUser = await UserDao.getCurrUser(email);
     if (currUser == newUser) return currUser;
     currUser = newUser;
     Global.currUserID = currUser.id;
@@ -190,7 +192,7 @@ class CurrUserProvider extends ChangeNotifier {
       // In case list is not empty
       if (list.isNotEmpty) {
         // Return true because there is an existing
-        // user using the email address
+        // UserModel using the email address
         return true;
       } else {
         // Return false because email adress is not in use
@@ -252,7 +254,7 @@ class CurrUserProvider extends ChangeNotifier {
   }
 
   _addUser(String id, String? fullName, String? email, String? password) async {
-    User newUser = User(
+    UserModel newUser = UserModel(
       id: id,
       name: fullName,
       email: email?.toLowerCase(),

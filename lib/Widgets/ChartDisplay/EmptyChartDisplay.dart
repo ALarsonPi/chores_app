@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../ColorControl/AppColors.dart';
 import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Models/frozen/User.dart';
+import '../../Models/frozen/UserModel.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
 import '../../Services/ChartManager.dart';
 
@@ -27,7 +27,7 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
   String? chartId;
   Chart? chart;
 
-  int? isChartAlreadyUsed(User currUser, String? id) {
+  int? isChartAlreadyUsed(UserModel currUser, String? id) {
     if (currUser.chartIDs == null) return -1;
     for (int i = 0; i < (currUser.chartIDs as List<String>).length; i++) {
       if (currUser.chartIDs?.elementAt(i).contains(id as String) as bool) {
@@ -39,7 +39,8 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    List<User> currUserList = Provider.of<List<User>>(context, listen: true);
+    List<UserModel> currUserList =
+        Provider.of<List<UserModel>>(context, listen: true);
     if (currUserList.isEmpty) {
       return const SizedBox(
         height: 50,
@@ -47,7 +48,7 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
         child: CircularProgressIndicator(),
       );
     }
-    User currUser = currUserList.first;
+    UserModel currUser = currUserList.first;
     int num;
     return Stack(
       alignment: Alignment.center,

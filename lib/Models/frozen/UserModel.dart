@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'User.freezed.dart';
-part 'User.g.dart';
+part 'UserModel.freezed.dart';
+part 'UserModel.g.dart';
 
 @freezed
-class User with _$User {
-  User._();
+class UserModel with _$UserModel {
+  UserModel._();
 
   @JsonSerializable(explicitToJson: true)
-  factory User({
+  factory UserModel({
     required String id,
     String? name,
     String? email,
@@ -17,9 +17,9 @@ class User with _$User {
     List<String>? correlatedUserIDs,
     List<String>? chartIDs,
     List<int>? associatedTabNums,
-  }) = _User;
+  }) = _UserModel;
 
-  User addTabToUser(int tabNum, String chartIDToAdd, User currUser) {
+  UserModel addTabToUser(int tabNum, String chartIDToAdd, UserModel currUser) {
     List<int> currTabs = List.empty(growable: true);
     if (currUser.associatedTabNums != null) {
       currTabs.addAll(currUser.associatedTabNums as List<int>);
@@ -35,7 +35,7 @@ class User with _$User {
     return currUser.copyWith(associatedTabNums: currTabs, chartIDs: currIds);
   }
 
-  User removeTabFromUser(int tabNum, String chartID, User currUser) {
+  UserModel removeTabFromUser(int tabNum, String chartID, UserModel currUser) {
     List<int> currTabs = List.empty(growable: true);
     if (currUser.associatedTabNums != null) {
       currTabs.addAll(currUser.associatedTabNums as List<int>);
@@ -51,10 +51,12 @@ class User with _$User {
     return currUser.copyWith(associatedTabNums: currTabs, chartIDs: currIds);
   }
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
-  factory User.fromSnapshot(DocumentSnapshot snapshot) {
-    User newUser = User.fromJson(snapshot.data() as Map<String, dynamic>);
+  factory UserModel.fromSnapshot(DocumentSnapshot snapshot) {
+    UserModel newUser =
+        UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
     return newUser;
   }
 }

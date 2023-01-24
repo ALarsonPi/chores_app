@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../Daos/ChartDao.dart';
 import '../Daos/UserDao.dart';
 import '../Models/frozen/Chart.dart';
-import '../Models/frozen/User.dart';
+import '../Models/frozen/UserModel.dart';
 
 class ChartList {
   // ValueNotifier<List<Chart>> userCharts = ValueNotifier<List<Chart>>(
@@ -45,7 +45,7 @@ class ChartList {
     Global.streamMap[indexToRemove]?.cancel();
   }
 
-  addListenersForChartsFromFirebase(User currUser) {
+  addListenersForChartsFromFirebase(UserModel currUser) {
     if (currUser.chartIDs == null) {
       debugPrint("No chartIDs");
       return;
@@ -57,12 +57,12 @@ class ChartList {
     }
   }
 
-  addListenerByPartID(int indexToAdd, String partID, User currUser) async {
+  addListenerByPartID(int indexToAdd, String partID, UserModel currUser) async {
     Chart currChart = await ChartDao.getChartFromSubstringID(partID);
     addListenerByFullID(indexToAdd, currChart.id, currUser);
   }
 
-  addListenerByFullID(int indexToAdd, String fullID, User currUser) {
+  addListenerByFullID(int indexToAdd, String fullID, UserModel currUser) {
     final DocumentReference docRef = ChartDao.getChartDocByID(fullID);
     Chart updatedChart = Chart.emptyChart;
     var subscription = docRef.snapshots().listen((event) {

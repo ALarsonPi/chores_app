@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
-import '../Models/frozen/User.dart';
+import '../Models/frozen/UserModel.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Services/ChartManager.dart';
 
@@ -217,7 +217,7 @@ class _ChartScreenState extends State<ChartScreen> {
   final formKey = GlobalKey<FormState>();
 
   late Chart newChart;
-  late User currUser;
+  late UserModel currUser;
 
   @override
   Widget build(BuildContext context) {
@@ -618,16 +618,6 @@ class _ChartScreenState extends State<ChartScreen> {
                                                       args.index)
                                                   .value =
                                               newChart.copyWith(id: id),
-
-                                          // debugPrint(currUser.toString()),
-
-                                          // Global.getIt
-                                          //     .get<ChartList>()
-                                          //     .(
-                                          //       args.index,
-                                          //       id,
-                                          //       currUser,
-                                          //     ),
 
                                           Global.getIt
                                               .get<ChartList>()

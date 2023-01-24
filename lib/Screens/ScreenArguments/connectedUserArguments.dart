@@ -1,10 +1,10 @@
 import '../../Models/frozen/Chart.dart';
-import '../../Models/frozen/User.dart';
+import '../../Models/frozen/UserModel.dart';
 
 class ConnectedUserArguments {
   final int index;
   Chart chartData;
-  User currUser;
+  UserModel currUser;
 
   ConnectedUserArguments(this.index, this.chartData, this.currUser);
 }

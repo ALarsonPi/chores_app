@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Models/frozen/User.dart';
+import '../../Models/frozen/UserModel.dart';
 import '../ConcentricChart/ConcentricChart.dart';
 
 class CreatedChartDisplay extends StatelessWidget {
@@ -16,7 +16,8 @@ class CreatedChartDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     // debugPrint("Chart data: " + currChart.toString());
 
-    List<User> currUserList = Provider.of<List<User>>(context, listen: true);
+    List<UserModel> currUserList =
+        Provider.of<List<UserModel>>(context, listen: true);
     if (currUserList.isEmpty) {
       return const SizedBox(
         height: 50,
@@ -24,7 +25,7 @@ class CreatedChartDisplay extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
     }
-    User currUser = currUserList.first;
+    UserModel currUser = currUserList.first;
 
     double screenWidth = MediaQuery.of(context).size.width;
     String currUserId = currUser.id;

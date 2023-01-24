@@ -19,9 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'package:provider/provider.dart';
-import 'package:chore_app/Models/frozen/User.dart' as UserModel;
-
 import '../Global.dart';
+import '../Models/frozen/UserModel.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
@@ -243,9 +242,9 @@ class _HomeScreen extends State<HomeScreen>
     );
   }
 
-  Future<UserModel.User> getCurrUserFromProvider() async {
+  Future<UserModel> getCurrUserFromProvider() async {
     final user = FirebaseAuth.instance.currentUser;
-    UserModel.User updatedUser = UserModel.User(id: "id");
+    UserModel updatedUser = UserModel(id: "id");
     if (user != null) {
       Global.currUserID = user.uid;
       updatedUser = await Provider.of<CurrUserProvider>(context, listen: false)
@@ -275,7 +274,7 @@ class _HomeScreen extends State<HomeScreen>
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (c, snapshot) {
         if (snapshot.hasData) {
-          return StreamProvider<List<UserModel.User>>(
+          return StreamProvider<List<UserModel>>(
             create: (BuildContext c) => UserDao.getUserDataViaStream(
                 FirebaseAuth.instance.currentUser?.uid as String),
             initialData: const [],
@@ -307,7 +306,7 @@ class _HomeScreen extends State<HomeScreen>
     });
   }
 
-  bool isPending(int index, UserModel.User user) {
+  bool isPending(int index, UserModel user) {
     return (Global.getIt
             .get<ChartList>()
             .getCurrNotifierByIndex(tabsController.index)
@@ -316,7 +315,7 @@ class _HomeScreen extends State<HomeScreen>
         .contains(user.id);
   }
 
-  bool isViewer(int index, UserModel.User user) {
+  bool isViewer(int index, UserModel user) {
     return (Global.getIt
             .get<ChartList>()
             .getCurrNotifierByIndex(tabsController.index)
@@ -325,7 +324,7 @@ class _HomeScreen extends State<HomeScreen>
         .contains(user.id);
   }
 
-  bool isEditor(int index, UserModel.User user) {
+  bool isEditor(int index, UserModel user) {
     return (Global.getIt
             .get<ChartList>()
             .getCurrNotifierByIndex(tabsController.index)
@@ -334,7 +333,7 @@ class _HomeScreen extends State<HomeScreen>
         .contains(user.id);
   }
 
-  bool isOwner(int index, UserModel.User user) {
+  bool isOwner(int index, UserModel user) {
     return (Global.getIt
                 .get<ChartList>()
                 .getCurrNotifierByIndex(tabsController.index)
@@ -350,9 +349,9 @@ class _HomeScreen extends State<HomeScreen>
     return currChart.chartTitle;
   }
 
-  UserModel.User emptyUserModel = UserModel.User(id: "ID");
+  UserModel emptyUserModel = UserModel(id: "ID");
 
-  Future<void> getCharts(UserModel.User user) async {
+  Future<void> getCharts(UserModel user) async {
     List<Chart> charts = await ChartDao.getChartsForUser(user);
     for (Chart chart in charts) {
       int? currIndex = user.chartIDs?.indexOf(chart.id);
@@ -368,8 +367,7 @@ class _HomeScreen extends State<HomeScreen>
 
   // ignore: non_constant_identifier_names
   Widget HomePageWidget(BuildContext c) {
-    List<UserModel.User> listOfUser =
-        Provider.of<List<UserModel.User>>(c, listen: true);
+    List<UserModel> listOfUser = Provider.of<List<UserModel>>(c, listen: true);
 
     // Initial Retrival of chart data happens only once
     // and listeners are also set here

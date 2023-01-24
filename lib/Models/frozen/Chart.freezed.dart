@@ -222,7 +222,7 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Chart extends _Chart {
+class _$_Chart extends _Chart with DiagnosticableTreeMixin {
   _$_Chart(
       {required this.id,
       required this.chartTitle,
@@ -307,8 +307,26 @@ class _$_Chart extends _Chart {
   }
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerID: $ownerID, tabNumForOwner: $tabNumForOwner, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleThreeText: $circleThreeText)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'Chart'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('chartTitle', chartTitle))
+      ..add(DiagnosticsProperty('numberOfRings', numberOfRings))
+      ..add(DiagnosticsProperty('circleOneText', circleOneText))
+      ..add(DiagnosticsProperty('circleTwoText', circleTwoText))
+      ..add(DiagnosticsProperty('ownerID', ownerID))
+      ..add(DiagnosticsProperty('tabNumForOwner', tabNumForOwner))
+      ..add(DiagnosticsProperty('editorIDs', editorIDs))
+      ..add(DiagnosticsProperty('viewerIDs', viewerIDs))
+      ..add(DiagnosticsProperty('pendingIDs', pendingIDs))
+      ..add(DiagnosticsProperty('circleThreeText', circleThreeText));
   }
 
   @override

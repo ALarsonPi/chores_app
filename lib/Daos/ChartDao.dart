@@ -1,18 +1,14 @@
 import 'dart:async';
-import 'dart:collection';
 
-import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
-import 'package:chore_app/Models/frozen/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../Global.dart';
+import '../Models/frozen/UserModel.dart';
 
 class ChartDao {
   static final CollectionReference currChartCollection =
       FirebaseFirestore.instance.collection('charts');
-  static final CollectionReference currUserCollection =
-      FirebaseFirestore.instance.collection('users');
 
   static Future<Chart> getChartFromSubstringID(String subStringId) async {
     final chartDoc = await currChartCollection
@@ -49,7 +45,7 @@ class ChartDao {
         .update(desiredChart.copyWith(pendingIDs: allPendingUserIds).toJson());
   }
 
-  static Future<List<Chart>> getChartsForUser(User user) async {
+  static Future<List<Chart>> getChartsForUser(UserModel user) async {
     List<Chart> chartList = List.empty(growable: true);
 
     if (user.chartIDs != null) {
