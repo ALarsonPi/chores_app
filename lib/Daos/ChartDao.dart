@@ -10,6 +10,10 @@ class ChartDao {
   static final CollectionReference currChartCollection =
       FirebaseFirestore.instance.collection('charts');
 
+  static getChartStreamFromFirestore() {
+    return currChartCollection.snapshots();
+  }
+
   static Future<Chart> getChartFromSubstringID(String subStringId) async {
     final chartDoc = await currChartCollection
         .where("id", isGreaterThanOrEqualTo: subStringId)

@@ -128,4 +128,45 @@ class ChartList {
       getCurrNotifierByIndex(i).value = Chart.emptyChart;
     }
   }
+
+  int? isChartAlreadyUsed(UserModel currUser, String? id) {
+    if (currUser.chartIDs == null) return -1;
+    for (int i = 0; i < (currUser.chartIDs as List<String>).length; i++) {
+      if (currUser.chartIDs?.elementAt(i).contains(id as String) as bool) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  processChartJoinRequest(Chart chartToJoin, UserModel currUser) async {
+    if (chartToJoin == Chart.emptyChart) {
+      Global.makeSnackbar("ERROR: Unable to join chart");
+      return;
+    }
+
+    int num = isChartAlreadyUsed(currUser, chartToJoin.id) as int;
+    if (num != -1) {
+      Global.makeSnackbar(
+        "You are already a part of that chart\nIt is your Chart ${num + 1}",
+      );
+    } else {
+      Chart currChart = await ChartDao.getChartFromSubstringID(chartToJoin.id);
+      if (currChart == Chart.emptyChart) {
+        Global.makeSnackbar("No Chart found with that code. Please make " +
+            "sure you have the correct code and try again");
+        return;
+      }
+
+      await ChartDao.addPendingRequest(currUser.id, chartToJoin.id);
+      currChart = currChart.addPendingID(currChart, currUser.id);
+
+      Global.getIt.get<UserManager>().addTabToUser(0, currChart.id);
+
+      UserDao.updateUserInFirebase(
+          Global.getIt.get<UserManager>().currUser.value);
+
+      Global.getIt.get<ChartList>().addListenerByFullID(0, currChart.id);
+    }
+  }
 }

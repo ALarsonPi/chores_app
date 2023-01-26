@@ -3,6 +3,8 @@ import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Services/UserManager.dart';
+import 'package:chore_app/Widgets/ChartDisplay/JoinChartDialogPopup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
 import 'package:provider/provider.dart';
@@ -27,16 +29,6 @@ class EmptyChartDisplay extends StatefulWidget {
 class EmptyChartDisplayState extends State<EmptyChartDisplay> {
   String? chartId;
   Chart? chart;
-
-  int? isChartAlreadyUsed(UserModel currUser, String? id) {
-    if (currUser.chartIDs == null) return -1;
-    for (int i = 0; i < (currUser.chartIDs as List<String>).length; i++) {
-      if (currUser.chartIDs?.elementAt(i).contains(id as String) as bool) {
-        return i;
-      }
-    }
-    return -1;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,62 +123,71 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        chartId = await prompt(
-                          Global.scaffoldKey.currentContext as BuildContext,
-                          title: const Text('Please enter Chart Code:'),
-                          initialValue: '',
-                          isSelectedInitialValue: false,
-                          textOK: const Text('OK'),
-                          textCancel: const Text('Cancel'),
-                          hintText: '',
-                          validator: (String? value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.length != 8) {
-                              String errorString = 'Invalid Chart Code Entered';
-                              return errorString;
-                            }
-                            return null;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const JoinChartPopupContent();
                           },
-                          minLines: 1,
-                          maxLines: 1,
-                          autoFocus: true,
-                          barrierDismissible: true,
-                          textCapitalization: TextCapitalization.none,
-                          textAlign: TextAlign.left,
                         );
-                        if (chartId != null) {
-                          num = isChartAlreadyUsed(currUser, chartId) as int;
-                          if (num != -1) {
-                            Global.makeSnackbar(
-                              "You are already a part of that chart\nIt is your Chart ${num + 1}",
-                            );
-                          } else {
-                            Chart currChart =
-                                await ChartDao.getChartFromSubstringID(
-                                    chartId as String);
-                            if (currChart == Chart.emptyChart) {
-                              Global.makeSnackbar(
-                                  "No Chart found with that code. Please make " +
-                                      "sure you have the correct code and try again");
-                              return;
-                            }
-
-                            await ChartDao.addPendingRequest(
-                                currUser.id, chartId as String);
-                            currChart =
-                                currChart.addPendingID(currChart, currUser.id);
-
-                            Global.getIt.get<UserManager>().addTabToUser(
-                                widget.currTabIndex, currChart.id);
-
-                            UserDao.updateUserInFirebase(
-                                Global.getIt.get<UserManager>().currUser.value);
-
-                            Global.getIt.get<ChartList>().addListenerByFullID(
-                                widget.currTabIndex, currChart.id);
-                          }
-                        }
+                        // chartId = await prompt(
+                        //   Global.scaffoldKey.currentContext as BuildContext,
+                        //   title: const Text('Please enter Chart Code:'),
+                        //   initialValue: '',
+                        //   isSelectedInitialValue: false,
+                        //   textOK: const Text('OK'),
+                        //   textCancel: const Text('Cancel'),
+                        //   hintText: '',
+                        //   validator: (String? value) {
+                        //     if (value == null ||
+                        //         value.isEmpty ||
+                        //         value.length != 8) {
+                        //       String errorString = 'Invalid Chart Code Entered';
+                        //       return errorString;
+                        //     }
+                        //     return null;
+                        //   },
+                        //   minLines: 1,
+                        //   maxLines: 1,
+                        //   autoFocus: true,
+                        //   barrierDismissible: true,
+                        //   textCapitalization: TextCapitalization.none,
+                        //   textAlign: TextAlign.left,
+                        // );
+                        // showGeneralDialog(
+                        //     context: context,
+                        //     barrierDismissible: true,
+                        //     barrierLabel: MaterialLocalizations.of(context)
+                        //         .modalBarrierDismissLabel,
+                        //     barrierColor: Colors.black45,
+                        //     transitionDuration:
+                        //         const Duration(milliseconds: 200),
+                        //     pageBuilder: (BuildContext buildContext,
+                        //         Animation animation,
+                        //         Animation secondaryAnimation) {
+                        //       return Center(
+                        //         child: Container(
+                        //           width: MediaQuery.of(context).size.width - 10,
+                        //           height:
+                        //               MediaQuery.of(context).size.height - 80,
+                        //           padding: EdgeInsets.all(20),
+                        //           color: Colors.white,
+                        //           child: Column(
+                        //             children: [
+                        //               ElevatedButton(
+                        //                 onPressed: () {
+                        //                   Navigator.of(context).pop();
+                        //                 },
+                        //                 child: Text(
+                        //                   "Save",
+                        //                   style: TextStyle(color: Colors.white),
+                        //                 ),
+                        //                 // color: const Color(0xFF1BC0C5),
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       );
+                        //     });
                       },
                       child: Padding(
                         padding: EdgeInsets.all(Provider.of<TextSizeProvider>(
