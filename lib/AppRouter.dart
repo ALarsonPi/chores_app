@@ -3,6 +3,7 @@ import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
+import 'package:chore_app/Screens/SettingsScreen.dart';
 import 'package:chore_app/Screens/homeScreen.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,7 @@ class _AppRouter extends State<AppRouter> {
                     const ConnectedUsersScreen(),
                 ChartScreen.routeName: (context) => const ChartScreen(),
                 'home': (context) => HomeScreen(),
+                'settings': (context) => const SettingsScreen()
               },
             ),
           );

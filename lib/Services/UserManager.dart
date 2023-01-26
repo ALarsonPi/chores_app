@@ -16,7 +16,7 @@ class UserManager {
     UserModel updatedUser = await UserDao.getUserByID(id);
     var subscription = docRef.snapshots().listen((event) {
       // Listening to changes to user
-      debugPrint("Setting User to " + UserModel.fromSnapshot(event).toString());
+      // debugPrint("Setting User to " + UserModel.fromSnapshot(event).toString());
 
       Global.getIt.get<UserManager>().currUser.value =
           UserModel.fromSnapshot(event);

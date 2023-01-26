@@ -625,14 +625,14 @@ class _ChartScreenState extends State<ChartScreen> {
                                             id,
                                             args.index,
                                           ),
-                                          debugPrint(
-                                            "USER OBTAINED" +
-                                                Global.getIt
-                                                    .get<UserManager>()
-                                                    .currUser
-                                                    .value
-                                                    .toString(),
-                                          ),
+                                          // debugPrint(
+                                          //   "USER OBTAINED" +
+                                          //       Global.getIt
+                                          //           .get<UserManager>()
+                                          //           .currUser
+                                          //           .value
+                                          //           .toString(),
+                                          // ),
 
                                           Global.getIt
                                               .get<ChartList>()

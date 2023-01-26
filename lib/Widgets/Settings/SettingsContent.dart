@@ -42,20 +42,19 @@ class _SettingsContent extends State<SettingsContent> {
         const Padding(
           padding: EdgeInsets.only(
             bottom: 8.0,
-            left: 8.0,
+            left: 16.0,
             right: 8.0,
           ),
           child: TextSizeChangerWidget(),
         ),
-        const SettingsChartController(),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 16.0,
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: ContactCreatorButton(),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.only(
+        //     top: 16.0,
+        //     left: 8.0,
+        //     right: 8.0,
+        //   ),
+        //   child: ContactCreatorButton(),
+        // ),
         const Padding(
           padding: EdgeInsets.only(
             top: 16.0,

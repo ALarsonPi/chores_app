@@ -63,6 +63,35 @@ class CreatedChartDisplay extends StatelessWidget {
               ],
             ),
           ),
+        if (isOnlyViewer)
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.width * 0.075,
+                left: MediaQuery.of(context).size.width * 0.075,
+              ),
+              child: SizedBox(
+                height: 50,
+                width: 150,
+                child: Center(
+                  child: Text(
+                    "VIEW ONLY",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: (Theme.of(context)
+                              .textTheme
+                              .displayLarge
+                              ?.fontSize as double) +
+                          Provider.of<TextSizeProvider>(context, listen: false)
+                              .fontSizeToAdd,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         if (!isStillPending)
           Positioned(
             top: 0,

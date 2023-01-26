@@ -18,38 +18,36 @@ class SettingsColorSwitch extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          Container(
-            padding: const EdgeInsets.only(
-              left: 15,
-            ),
-            color: Colors.grey.withOpacity(0.25),
-            child: ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Change Theme Color",
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.displaySmall?.color,
-                  fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
-                          as double) +
-                      Provider.of<TextSizeProvider>(context, listen: true)
-                          .fontSizeToAdd,
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Change Theme Color",
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.displaySmall?.color,
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: true)
+                            .fontSizeToAdd,
+                  ),
                 ),
               ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 8.0,
-                    right: 15,
-                  ),
-                  child: ThemeSwitcher(75, setStateForParent),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 8.0,
+                  right: 15,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
-                  child: PrimaryColorSwitcher(75, setStateForParent),
-                ),
-              ],
-            ),
+                child: ThemeSwitcher(75, setStateForParent),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: PrimaryColorSwitcher(75, setStateForParent),
+              ),
+            ],
           ),
         ],
       ),

@@ -41,92 +41,91 @@ class _TextSizeChangerWidgetState extends State<TextSizeChangerWidget> {
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          Container(
-            padding: const EdgeInsets.only(
-              left: 15,
-            ),
-            color: Colors.grey.withOpacity(0.25),
-            child: ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Change Text Size",
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.displaySmall?.color,
-                  fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
-                          as double) +
-                      Provider.of<TextSizeProvider>(context, listen: true)
-                          .fontSizeToAdd,
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Change Text Size",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.displaySmall?.color,
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: true)
+                            .fontSizeToAdd,
+                  ),
                 ),
               ),
-              children: [
-                RadioListTile<String>(
-                  title: Text(
-                    'Small',
-                    style: TextStyle(
-                      fontSize: (Theme.of(context)
-                              .textTheme
-                              .displayMedium
-                              ?.fontSize as double) +
-                          Provider.of<TextSizeProvider>(context, listen: true)
-                              .fontSizeToAdd,
-                    ),
+              RadioListTile<String>(
+                title: Text(
+                  'Small',
+                  style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: true)
+                            .fontSizeToAdd,
                   ),
-                  value: TextSize.SMALL.toString(),
-                  groupValue: radioValue,
-                  onChanged: (String? value) {
-                    setState(() {
-                      radioValue = value as String;
-                      Provider.of<TextSizeProvider>(context, listen: false)
-                          .setCurrTextSize(TextSize.SMALL);
-                    });
-                  },
                 ),
-                RadioListTile<String>(
-                  title: Text(
-                    'Normal',
-                    style: TextStyle(
-                      fontSize: (Theme.of(context)
-                              .textTheme
-                              .displayMedium
-                              ?.fontSize as double) +
-                          Provider.of<TextSizeProvider>(context, listen: true)
-                              .fontSizeToAdd,
-                    ),
+                value: TextSize.SMALL.toString(),
+                groupValue: radioValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    radioValue = value as String;
+                    Provider.of<TextSizeProvider>(context, listen: false)
+                        .setCurrTextSize(TextSize.SMALL);
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: Text(
+                  'Normal',
+                  style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: true)
+                            .fontSizeToAdd,
                   ),
-                  value: TextSize.MEDIUM.toString(),
-                  groupValue: radioValue,
-                  onChanged: (String? value) {
-                    setState(() {
-                      radioValue = value as String;
-                      Provider.of<TextSizeProvider>(context, listen: false)
-                          .setCurrTextSize(TextSize.MEDIUM);
-                    });
-                  },
                 ),
-                RadioListTile<String>(
-                  title: Text(
-                    'Large',
-                    style: TextStyle(
-                      fontSize: (Theme.of(context)
-                              .textTheme
-                              .displayMedium
-                              ?.fontSize as double) +
-                          Provider.of<TextSizeProvider>(context, listen: true)
-                              .fontSizeToAdd,
-                    ),
+                value: TextSize.MEDIUM.toString(),
+                groupValue: radioValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    radioValue = value as String;
+                    Provider.of<TextSizeProvider>(context, listen: false)
+                        .setCurrTextSize(TextSize.MEDIUM);
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: Text(
+                  'Large',
+                  style: TextStyle(
+                    fontSize: (Theme.of(context)
+                            .textTheme
+                            .displayMedium
+                            ?.fontSize as double) +
+                        Provider.of<TextSizeProvider>(context, listen: true)
+                            .fontSizeToAdd,
                   ),
-                  value: TextSize.LARGE.toString(),
-                  groupValue: radioValue,
-                  onChanged: (String? value) {
-                    setState(() {
-                      radioValue = value as String;
-                      Provider.of<TextSizeProvider>(context, listen: false)
-                          .setCurrTextSize(TextSize.LARGE);
-                    });
-                  },
                 ),
-              ],
-            ),
+                value: TextSize.LARGE.toString(),
+                groupValue: radioValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    radioValue = value as String;
+                    Provider.of<TextSizeProvider>(context, listen: false)
+                        .setCurrTextSize(TextSize.LARGE);
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
