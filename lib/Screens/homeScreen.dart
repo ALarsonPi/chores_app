@@ -26,6 +26,7 @@ import '../Providers/TextSizeProvider.dart';
 import '../Providers/ThemeProvider.dart';
 import '../Widgets/Settings/SettingsContent.dart';
 import '../Widgets/ChartDisplay/TabContent.dart';
+import 'package:badges/badges.dart' as badges;
 
 /// @nodoc
 class HomeScreen extends StatefulWidget with GetItStatefulWidgetMixin {
@@ -123,8 +124,8 @@ class _HomeScreen extends State<HomeScreen>
       Tab(
         text: chartTitle1,
         icon: (chart1Changes != 0)
-            ? Badge(
-                badgeColor: badgeColor,
+            ? badges.Badge(
+                badgeStyle: badges.BadgeStyle(badgeColor: badgeColor),
                 badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
@@ -149,8 +150,8 @@ class _HomeScreen extends State<HomeScreen>
       Tab(
         text: chartTitle2,
         icon: (chart2Changes != 0)
-            ? Badge(
-                badgeColor: badgeColor,
+            ? badges.Badge(
+                badgeStyle: badges.BadgeStyle(badgeColor: badgeColor),
                 badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
@@ -175,8 +176,8 @@ class _HomeScreen extends State<HomeScreen>
       Tab(
         text: chartTitle3,
         icon: (chart3Changes != 0)
-            ? Badge(
-                badgeColor: badgeColor,
+            ? badges.Badge(
+                badgeStyle: badges.BadgeStyle(badgeColor: badgeColor),
                 badgeContent: const Text(
                   badgeText,
                   style: TextStyle(
@@ -443,7 +444,7 @@ class _HomeScreen extends State<HomeScreen>
                                     (isEditor(tabsController.index, currUser) ||
                                         isOwner(
                                             tabsController.index, currUser)))
-                                ? Badge(
+                                ? badges.Badge(
                                     badgeContent: const Text(''),
                                     child: Icon(
                                       Icons.menu,
@@ -625,7 +626,7 @@ class _HomeScreen extends State<HomeScreen>
                                                       currUser) ||
                                                   isOwner(tabsController.index,
                                                       currUser)))
-                                          ? Badge(
+                                          ? badges.Badge(
                                               badgeContent: const Text(''),
                                               position: BadgePosition.topEnd(
                                                 top: 1,
