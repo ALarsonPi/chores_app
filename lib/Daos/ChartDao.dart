@@ -112,4 +112,76 @@ class ChartDao {
     String idFromFirebase = await ChartDao.addChart(newChart);
     return idFromFirebase;
   }
+
+  static Future<void> addViewerID(String chartID, String viewerID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> viewerIDs = currChart.viewerIDs;
+      if (!viewerIDs.contains(viewerID)) {
+        viewerIDs.add(viewerID);
+      }
+      updateChart(currChart.copyWith(viewerIDs: viewerIDs));
+    }
+  }
+
+  static Future<void> removeViewerID(String chartID, String viewerID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> viewerIDs = currChart.viewerIDs;
+      if (viewerIDs.contains(viewerID)) {
+        viewerIDs.remove(viewerID);
+        updateChart(currChart.copyWith(viewerIDs: viewerIDs));
+      }
+    }
+  }
+
+  static Future<void> addEditorID(String chartID, String editorID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> editorIDs = currChart.editorIDs;
+      if (!editorIDs.contains(editorID)) {
+        editorIDs.add(editorID);
+      }
+      updateChart(currChart.copyWith(editorIDs: editorIDs));
+    }
+  }
+
+  static Future<void> removeEditorID(String chartID, String editorID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> editorIDs = currChart.editorIDs;
+      if (editorIDs.contains(editorID)) {
+        editorIDs.remove(editorID);
+        updateChart(currChart.copyWith(editorIDs: editorIDs));
+      }
+    }
+  }
+
+  static Future<void> addOwnerID(String chartID, String ownerID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> ownerIDs = currChart.ownerIDs;
+      if (!ownerIDs.contains(ownerID)) {
+        ownerIDs.add(ownerID);
+      }
+      updateChart(currChart.copyWith(ownerIDs: ownerIDs));
+    }
+  }
+
+  static Future<void> removeOwnerID(String chartID, String ownerID) async {
+    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
+    if (doc.exists) {
+      Chart currChart = Chart.fromSnapshot(doc);
+      List<String> ownerIDs = currChart.ownerIDs;
+      if (ownerIDs.contains(ownerID)) {
+        ownerIDs.remove(ownerID);
+        updateChart(currChart.copyWith(ownerIDs: ownerIDs));
+      }
+    }
+  }
 }

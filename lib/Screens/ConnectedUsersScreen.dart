@@ -1,6 +1,11 @@
+import 'package:chore_app/Models/frozen/UserModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import '../Daos/ChartDao.dart';
+import '../Global.dart';
 import '../Providers/TextSizeProvider.dart';
+import '../Services/UserManager.dart';
 import 'ScreenArguments/connectedUserArguments.dart';
 
 class ConnectedUsersScreen extends StatefulWidget {
@@ -29,212 +34,211 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     // Or maybe just Listen to the Provider?
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  Future<void> _showEditUserDialog(String userID) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit User Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Viewer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Editor'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Owner'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  Padding buildTitleText(String titleText) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          titleText,
-          style: TextStyle(
-            fontSize: (Theme.of(context).textTheme.displayMedium?.fontSize
-                    as double) +
-                Provider.of<TextSizeProvider>(context, listen: false)
-                    .fontSizeToAdd,
+  Future<void> _showAcceptUserDialog(String userID) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
           ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showEditUserDialog(userID);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget makeCustomTile({
+    required String title,
+    required Icon icon,
+    required Color color,
+    required String userID,
+    String? subtitle,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, left: 6.0, right: 8.0),
+      child: ListTile(
+        onTap: () => {
+          _showAcceptUserDialog(userID),
+        },
+        title: Text(
+          title,
+          textScaleFactor: 1.25,
+        ),
+        subtitle: (subtitle != null) ? Text(subtitle) : null,
+        tileColor: color,
+        leading: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            icon,
+          ],
         ),
       ),
     );
   }
 
-  Widget buildDisplaySkeleton(
-    String name,
-    List<IconData> icons,
-    List<Color> iconColors,
-    Function iconOneFunction,
-    Function iconTwoFunction,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 4.0,
-        bottom: 8.0,
-      ),
-      child: GridView.count(
-        shrinkWrap: true,
-        childAspectRatio: 4 / 1,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: (Theme.of(context).textTheme.displaySmall?.fontSize
-                        as double) +
-                    Provider.of<TextSizeProvider>(context, listen: false)
-                        .fontSizeToAdd,
-              ),
-            ),
-          ),
-          Align(
-              alignment: Alignment.topLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icons.first,
-                      color: iconColors.first,
-                      size: (Theme.of(context).iconTheme.size as double) +
-                          Provider.of<TextSizeProvider>(context, listen: false)
-                              .iconSizeToAdd),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.03),
-                    child: Icon(icons.last,
-                        color: iconColors.last,
-                        size: (Theme.of(context).iconTheme.size as double) +
-                            Provider.of<TextSizeProvider>(context,
-                                    listen: false)
-                                .iconSizeToAdd),
-                  ),
-                ],
-              )),
-        ],
-      ),
-    );
-  }
-
-  Widget buildPendingWidget(int index) {
-    return buildDisplaySkeleton(
-      "DUDE Guy",
-      [
-        Icons.clear,
-        Icons.check,
-      ],
-      [
-        Colors.red,
-        Colors.green,
-      ],
-      () => {},
-      () => {},
-    );
-  }
-
-  Widget buildViewerWidget(int index) {
-    return buildDisplaySkeleton(
-      "BRO Man",
-      [
-        Icons.clear,
-        Icons.edit,
-      ],
-      [
-        Colors.red,
-        Colors.orangeAccent,
-      ],
-      () => {},
-      () => {},
-    );
-  }
-
-  Widget buildEditorWidget(int index) {
-    return buildDisplaySkeleton(
-      "BROTHER Bear",
-      [
-        Icons.clear,
-        Icons.edit,
-      ],
-      [
-        Colors.red,
-        Colors.orangeAccent,
-      ],
-      () => {},
-      () => {},
-    );
-  }
-
-  Widget buildOwnerWidget(int index) {
-    return buildDisplaySkeleton(
-      "OWNER Person",
-      [
-        Icons.clear,
-        Icons.edit,
-      ],
-      [
-        Colors.transparent,
-        Colors.transparent,
-      ],
-      () => {},
-      () => {},
-    );
+  getUserRole(UserModel user) {
+    if (args.chartData.ownerIDs.contains(user.id)) {
+      return "Owner";
+    } else if (args.chartData.editorIDs.contains(user.id)) {
+      return "Editor";
+    } else if (args.chartData.viewerIDs.contains(user.id)) {
+      return "Viewer";
+    } else {
+      return "User";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    UserModel user1 =
+        UserModel.emptyUser.copyWith(id: "123", name: "Jeff Bezos");
+    UserModel user2 =
+        UserModel.emptyUser.copyWith(id: "124", name: "Dr. Frankenstein");
+    UserModel user3 =
+        UserModel.emptyUser.copyWith(id: "125", name: "James Peach");
+    UserModel user4 =
+        UserModel.emptyUser.copyWith(id: "126", name: "Chad Viewer");
+    UserModel user5 =
+        UserModel.emptyUser.copyWith(id: "127", name: "Stephen Einstein");
+    UserModel user6 =
+        UserModel.emptyUser.copyWith(id: "128", name: "James Veitch");
+
+    List<UserModel> requestingUsers = List.empty(growable: true);
+    requestingUsers.add(user1);
+    requestingUsers.add(user2);
+    requestingUsers.add(user3);
+
+    List<UserModel> connectedUsers = List.empty(growable: true);
+    connectedUsers.add(user4);
+    connectedUsers.add(user5);
+    connectedUsers.add(user6);
+    connectedUsers.add(Global.getIt.get<UserManager>().currUser.value);
+
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: Text(args.chartData.chartTitle),
-          centerTitle: true,
-        ),
-        body: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          // physics: const NeverScrollableScrollPhysics(),
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      buildTitleText("Pending:"),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) =>
-                            buildPendingWidget(index),
-                        itemCount: 3,
-                      ),
-                      buildTitleText("Viewers:"),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) =>
-                            buildViewerWidget(index),
-                        itemCount: 3,
-                      ),
-                      buildTitleText("Editors:"),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) =>
-                            buildEditorWidget(index),
-                        itemCount: 3,
-                      ),
-                      buildTitleText("Owner:"),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) =>
-                            buildOwnerWidget(index),
-                        itemCount: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: Text(args.chartData.chartTitle),
+        centerTitle: true,
+      ),
+      body: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: [
+          const SizedBox(height: 30),
+          Text(
+            "Users Requesting Access (${requestingUsers.length})",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
             ),
-          ],
-        ));
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: requestingUsers.length,
+            itemBuilder: (BuildContext context, int index) {
+              return makeCustomTile(
+                title: requestingUsers[index].name as String,
+                icon: const Icon(Icons.add),
+                color: const Color(0xffffcccb),
+                userID: requestingUsers[index].id,
+              );
+            },
+          ),
+          const SizedBox(height: 30),
+          Text(
+            "Connected Users (${connectedUsers.length})",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: connectedUsers.length,
+            itemBuilder: (BuildContext context, int index) {
+              return makeCustomTile(
+                title: connectedUsers[index].name as String,
+                subtitle: getUserRole(connectedUsers[index]),
+                icon: const Icon(Icons.view_array_sharp),
+                color: const Color(0xffe4f2fd),
+                userID: connectedUsers[index].id,
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

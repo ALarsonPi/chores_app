@@ -76,7 +76,7 @@ class ChartList {
       if (!updatedChart.pendingIDs.contains(currUser.id) &&
           !updatedChart.viewerIDs.contains(currUser.id) &&
           !updatedChart.editorIDs.contains(currUser.id) &&
-          updatedChart.ownerID != currUser.id) {
+          !updatedChart.ownerIDs.contains(currUser.id)) {
         Global.streamMap[indexToAdd]?.cancel();
         debugPrint(currUser.toString());
         debugPrint("CANCELLING to changes for : " + updatedChart.chartTitle);

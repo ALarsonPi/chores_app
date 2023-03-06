@@ -17,8 +17,7 @@ class Chart with _$Chart {
     required int numberOfRings,
     required List<String> circleOneText,
     required List<String> circleTwoText,
-    required String ownerID,
-    required int tabNumForOwner,
+    required List<String> ownerIDs,
     required List<String> editorIDs,
     required List<String> viewerIDs,
     required List<String> pendingIDs,
@@ -28,8 +27,7 @@ class Chart with _$Chart {
   static Chart emptyChart = Chart(
     id: "",
     chartTitle: "",
-    ownerID: "",
-    tabNumForOwner: 0,
+    ownerIDs: List.empty(growable: true),
     editorIDs: List.empty(growable: true),
     viewerIDs: List.empty(growable: true),
     pendingIDs: List.empty(growable: true),
@@ -59,10 +57,6 @@ class Chart with _$Chart {
     List<String> currPendingIDs = List.empty(growable: true);
     List<String> currviewIDs = List.empty(growable: true);
     List<String> currEditingIDs = List.empty(growable: true);
-
-    if (userToRemoveID == chart.ownerID) {
-      debugPrint("Error - trying to remove owner from chart");
-    }
 
     currPendingIDs.addAll(chart.pendingIDs);
     currviewIDs.addAll(chart.viewerIDs);

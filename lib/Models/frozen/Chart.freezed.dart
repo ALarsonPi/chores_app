@@ -25,8 +25,7 @@ mixin _$Chart {
   int get numberOfRings => throw _privateConstructorUsedError;
   List<String> get circleOneText => throw _privateConstructorUsedError;
   List<String> get circleTwoText => throw _privateConstructorUsedError;
-  String get ownerID => throw _privateConstructorUsedError;
-  int get tabNumForOwner => throw _privateConstructorUsedError;
+  List<String> get ownerIDs => throw _privateConstructorUsedError;
   List<String> get editorIDs => throw _privateConstructorUsedError;
   List<String> get viewerIDs => throw _privateConstructorUsedError;
   List<String> get pendingIDs => throw _privateConstructorUsedError;
@@ -48,8 +47,7 @@ abstract class $ChartCopyWith<$Res> {
       int numberOfRings,
       List<String> circleOneText,
       List<String> circleTwoText,
-      String ownerID,
-      int tabNumForOwner,
+      List<String> ownerIDs,
       List<String> editorIDs,
       List<String> viewerIDs,
       List<String> pendingIDs,
@@ -74,8 +72,7 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
     Object? numberOfRings = null,
     Object? circleOneText = null,
     Object? circleTwoText = null,
-    Object? ownerID = null,
-    Object? tabNumForOwner = null,
+    Object? ownerIDs = null,
     Object? editorIDs = null,
     Object? viewerIDs = null,
     Object? pendingIDs = null,
@@ -102,14 +99,10 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
           ? _value.circleTwoText
           : circleTwoText // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      ownerID: null == ownerID
-          ? _value.ownerID
-          : ownerID // ignore: cast_nullable_to_non_nullable
-              as String,
-      tabNumForOwner: null == tabNumForOwner
-          ? _value.tabNumForOwner
-          : tabNumForOwner // ignore: cast_nullable_to_non_nullable
-              as int,
+      ownerIDs: null == ownerIDs
+          ? _value.ownerIDs
+          : ownerIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       editorIDs: null == editorIDs
           ? _value.editorIDs
           : editorIDs // ignore: cast_nullable_to_non_nullable
@@ -142,8 +135,7 @@ abstract class _$$_ChartCopyWith<$Res> implements $ChartCopyWith<$Res> {
       int numberOfRings,
       List<String> circleOneText,
       List<String> circleTwoText,
-      String ownerID,
-      int tabNumForOwner,
+      List<String> ownerIDs,
       List<String> editorIDs,
       List<String> viewerIDs,
       List<String> pendingIDs,
@@ -164,8 +156,7 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
     Object? numberOfRings = null,
     Object? circleOneText = null,
     Object? circleTwoText = null,
-    Object? ownerID = null,
-    Object? tabNumForOwner = null,
+    Object? ownerIDs = null,
     Object? editorIDs = null,
     Object? viewerIDs = null,
     Object? pendingIDs = null,
@@ -192,14 +183,10 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
           ? _value._circleTwoText
           : circleTwoText // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      ownerID: null == ownerID
-          ? _value.ownerID
-          : ownerID // ignore: cast_nullable_to_non_nullable
-              as String,
-      tabNumForOwner: null == tabNumForOwner
-          ? _value.tabNumForOwner
-          : tabNumForOwner // ignore: cast_nullable_to_non_nullable
-              as int,
+      ownerIDs: null == ownerIDs
+          ? _value._ownerIDs
+          : ownerIDs // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       editorIDs: null == editorIDs
           ? _value._editorIDs
           : editorIDs // ignore: cast_nullable_to_non_nullable
@@ -229,14 +216,14 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       required this.numberOfRings,
       required final List<String> circleOneText,
       required final List<String> circleTwoText,
-      required this.ownerID,
-      required this.tabNumForOwner,
+      required final List<String> ownerIDs,
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
       required final List<String> pendingIDs,
       final List<String>? circleThreeText})
       : _circleOneText = circleOneText,
         _circleTwoText = circleTwoText,
+        _ownerIDs = ownerIDs,
         _editorIDs = editorIDs,
         _viewerIDs = viewerIDs,
         _pendingIDs = pendingIDs,
@@ -268,10 +255,14 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
     return EqualUnmodifiableListView(_circleTwoText);
   }
 
+  final List<String> _ownerIDs;
   @override
-  final String ownerID;
-  @override
-  final int tabNumForOwner;
+  List<String> get ownerIDs {
+    if (_ownerIDs is EqualUnmodifiableListView) return _ownerIDs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ownerIDs);
+  }
+
   final List<String> _editorIDs;
   @override
   List<String> get editorIDs {
@@ -308,7 +299,7 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerID: $ownerID, tabNumForOwner: $tabNumForOwner, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleThreeText: $circleThreeText)';
+    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerIDs: $ownerIDs, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleThreeText: $circleThreeText)';
   }
 
   @override
@@ -321,8 +312,7 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('numberOfRings', numberOfRings))
       ..add(DiagnosticsProperty('circleOneText', circleOneText))
       ..add(DiagnosticsProperty('circleTwoText', circleTwoText))
-      ..add(DiagnosticsProperty('ownerID', ownerID))
-      ..add(DiagnosticsProperty('tabNumForOwner', tabNumForOwner))
+      ..add(DiagnosticsProperty('ownerIDs', ownerIDs))
       ..add(DiagnosticsProperty('editorIDs', editorIDs))
       ..add(DiagnosticsProperty('viewerIDs', viewerIDs))
       ..add(DiagnosticsProperty('pendingIDs', pendingIDs))
@@ -343,9 +333,7 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
                 .equals(other._circleOneText, _circleOneText) &&
             const DeepCollectionEquality()
                 .equals(other._circleTwoText, _circleTwoText) &&
-            (identical(other.ownerID, ownerID) || other.ownerID == ownerID) &&
-            (identical(other.tabNumForOwner, tabNumForOwner) ||
-                other.tabNumForOwner == tabNumForOwner) &&
+            const DeepCollectionEquality().equals(other._ownerIDs, _ownerIDs) &&
             const DeepCollectionEquality()
                 .equals(other._editorIDs, _editorIDs) &&
             const DeepCollectionEquality()
@@ -365,8 +353,7 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       numberOfRings,
       const DeepCollectionEquality().hash(_circleOneText),
       const DeepCollectionEquality().hash(_circleTwoText),
-      ownerID,
-      tabNumForOwner,
+      const DeepCollectionEquality().hash(_ownerIDs),
       const DeepCollectionEquality().hash(_editorIDs),
       const DeepCollectionEquality().hash(_viewerIDs),
       const DeepCollectionEquality().hash(_pendingIDs),
@@ -393,8 +380,7 @@ abstract class _Chart extends Chart {
       required final int numberOfRings,
       required final List<String> circleOneText,
       required final List<String> circleTwoText,
-      required final String ownerID,
-      required final int tabNumForOwner,
+      required final List<String> ownerIDs,
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
       required final List<String> pendingIDs,
@@ -414,9 +400,7 @@ abstract class _Chart extends Chart {
   @override
   List<String> get circleTwoText;
   @override
-  String get ownerID;
-  @override
-  int get tabNumForOwner;
+  List<String> get ownerIDs;
   @override
   List<String> get editorIDs;
   @override

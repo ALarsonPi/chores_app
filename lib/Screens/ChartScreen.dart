@@ -588,12 +588,13 @@ class _ChartScreenState extends State<ChartScreen> {
                                             chartTitle:
                                                 chartTitleController.text,
                                             numberOfRings: currNumRings,
-                                            ownerID: Global.getIt
-                                                .get<UserManager>()
-                                                .currUser
-                                                .value
-                                                .id,
-                                            tabNumForOwner: args.index,
+                                            ownerIDs: [
+                                              Global.getIt
+                                                  .get<UserManager>()
+                                                  .currUser
+                                                  .value
+                                                  .id
+                                            ],
                                             editorIDs:
                                                 List.empty(growable: true),
                                             viewerIDs:
@@ -640,11 +641,13 @@ class _ChartScreenState extends State<ChartScreen> {
                                                   args.index)
                                               .value = newChart.copyWith(
                                             id: id,
-                                            ownerID: Global.getIt
-                                                .get<UserManager>()
-                                                .currUser
-                                                .value
-                                                .id,
+                                            ownerIDs: [
+                                              Global.getIt
+                                                  .get<UserManager>()
+                                                  .currUser
+                                                  .value
+                                                  .id,
+                                            ],
                                           ),
 
                                           Global.getIt

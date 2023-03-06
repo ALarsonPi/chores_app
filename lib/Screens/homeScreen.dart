@@ -148,7 +148,7 @@ class _HomeScreen extends State<HomeScreen>
       builder: (context, chartData, child) {
         // Don't show Chart Edit Menu if chart is empty or settings screen
 
-        bool isOwner = (chartData as Chart).ownerID == currUser.id;
+        bool isOwner = (chartData as Chart).ownerIDs.contains(currUser.id);
         bool isEditor = chartData.editorIDs.contains(currUser.id);
         // bool isPending = chartData.pendingIDs.contains(currUser.id);
         // bool isViewer = chartData.viewerIDs.contains(currUser.id);
