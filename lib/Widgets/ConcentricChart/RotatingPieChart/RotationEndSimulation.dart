@@ -1,15 +1,18 @@
 import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
 
 class RotationEndSimulation extends Simulation {
   final double initialVelocity;
   final double initialPosition;
   final double accelleration;
   final List<double> bounds;
+  final Function onRotationEnd;
 
   RotationEndSimulation({
     required this.initialVelocity,
     required double decelleration,
     required this.initialPosition,
+    required this.onRotationEnd,
     required this.bounds,
   }) : accelleration = decelleration * -1.0;
 
@@ -20,6 +23,9 @@ class RotationEndSimulation extends Simulation {
   bool isDone(double time) {
     bool hasFinishedRotation =
         initialVelocity > 0 ? dx(time) < 0.001 : dx(time) > -0.001;
+    if (hasFinishedRotation) {
+      onRotationEnd();
+    }
     return hasFinishedRotation;
   }
 

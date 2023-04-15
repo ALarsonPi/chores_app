@@ -7,10 +7,15 @@ import '../../Models/frozen/Chart.dart';
 import '../../Models/frozen/UserModel.dart';
 import '../ConcentricChart/ConcentricChart.dart';
 
+// ignore: must_be_immutable
 class CreatedChartDisplay extends StatelessWidget {
   CreatedChartDisplay(this.currTabIndex, this.currChart, {super.key});
   int currTabIndex;
   Chart currChart;
+
+  notifyOfChartUpdate(int ringNum, List<String> values) {
+    debugPrint("Update occurred");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +144,7 @@ class CreatedChartDisplay extends StatelessWidget {
         if (!isStillPending)
           ConcentricChart(
             // Specific To each Circle
+            onChanged: notifyOfChartUpdate,
             numberOfRings: currChart.numberOfRings,
             circleOneText: currChart.circleOneText,
             circleTwoText: currChart.circleTwoText,

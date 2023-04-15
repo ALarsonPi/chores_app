@@ -38,6 +38,7 @@ void main() {
           body: Stack(
             children: [
               ConcentricChart(
+                onChanged: () => {},
                 numberOfRings: 3,
                 width: 1080,
                 spaceBetweenLines: 15,

@@ -5,6 +5,7 @@ class PieChartItem {
   final num val;
   final String name;
   final Color color;
+  final int position;
 
   @override
   String toString() {
@@ -16,12 +17,14 @@ class PieChartItem {
     return stringToReturn;
   }
 
-  PieChartItem(
-      {this.val = 1,
-      this.name = "defaultName",
-      this.color = Colors.black,
-      this.key = const ValueKey("Default")})
-      : assert(val != 0);
+  PieChartItem({
+    this.val = 1,
+    this.name = "defaultName",
+    this.color = Colors.black,
+    this.key = const ValueKey("Default"),
+    this.position = 0,
+  }) : assert(val != 0);
 }
 
+// ignore: prefer_generic_function_type_aliases
 typedef TextPainter PieChartItemToText(PieChartItem item, double total);

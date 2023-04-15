@@ -7,6 +7,7 @@ import 'RotatingPieChart/RotatingPieChart.dart';
 /// A series of two or three concentric pie charts that can hold text
 /// One use for it (the one I've used it for) is to simulate a concentric
 /// circle chore chart
+// ignore: must_be_immutable
 class ConcentricChart extends StatefulWidget {
   /// Number of Rings in the chart, must be either TWO or THREE
   int numberOfRings;
@@ -93,6 +94,7 @@ class ConcentricChart extends StatefulWidget {
 
   final bool shouldIgnoreTouch;
   final bool shouldBold;
+  final Function onChanged;
 
   /// Constructor for concentric chart
   /// Required - [width], [numberOfRings], and all the general info about each
@@ -111,6 +113,7 @@ class ConcentricChart extends StatefulWidget {
     required this.circleThreeText,
     required this.circleThreeColor,
     required this.circleThreeFontColor,
+    required this.onChanged,
     this.circleOneTextRadiusProportion = 0.6,
     this.circleOneFontSize = 8.0,
     this.circleTwoFontSize = 14.0,
@@ -216,6 +219,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
           pie: pie,
           isOuterRing: isOuterRing,
           linesColor: pie.linesColor,
+          hasChangedPosition: widget.onChanged,
           spaceBetweenLines: widget.spaceBetweenLines,
           overflowLineLimit: widget.overflowLineLimit,
           chunkOverflowLimitProportion: widget.chunkOverflowLimitProportion,
