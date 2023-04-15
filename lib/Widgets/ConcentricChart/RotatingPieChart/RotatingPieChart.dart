@@ -79,7 +79,7 @@ class RotatingPieChartState extends State<RotatingPieChart>
       widget.chunkOverflowLimitProportion,
       widget.pie.textStyle,
     );
-    rotationService = RotationService(lastDirection);
+    rotationService = RotationService(const Offset(0, 0));
     textParsingService.clearAllTextLists();
     if (!(widget.pie.ringNum == 1)) {
       textParsingService.setUpPhraseChunks(widget.items.length, widget.items);
@@ -92,9 +92,6 @@ class RotatingPieChartState extends State<RotatingPieChart>
     _controller.dispose();
     super.dispose();
   }
-
-  /// The dirction last dragged by the user
-  Offset lastDirection = const Offset(0, 0);
 
   /// Variable to record when the chart is being rotated and when it's still
   bool isNotBeingRotated = true;
@@ -148,18 +145,15 @@ class RotatingPieChartState extends State<RotatingPieChart>
             ignoring: widget.shouldIgnoreTouch,
             child: GestureDetector(
               onPanDown: (details) {
-                debugPrint("On pan down");
-
-                lastDirection = rotationService.getDirection(
-                    details.globalPosition, context);
+                rotationService.setDirection(rotationService.getDirection(
+                    details.globalPosition, context));
               },
               onPanUpdate: (details) {
-                // debugPrint("On pan update");
-                lastDirection = rotationService.getLastDirectionPanned(
+                rotationService.getLastDirectionPanned(
                     details, context, _controller);
               },
               onPanStart: (details) => {
-                // startWheelRotation(),
+                startWheelRotation(),
               },
               onPanEnd: (details) {
                 rotationService.animateEndPanning(

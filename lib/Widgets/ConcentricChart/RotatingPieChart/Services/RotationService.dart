@@ -4,10 +4,10 @@ import 'dart:math';
 import '../RotationEndSimulation.dart';
 
 class RotationService {
-  RotationService(this.lastDirection);
+  RotationService(this.direction);
 
   /// The dirction last dragged by the user
-  late Offset lastDirection;
+  late Offset direction;
 
   int translateAnimationPositionToChunkPosition(
       double animationPosition, int numChunks) {
@@ -25,7 +25,7 @@ class RotationService {
     return (animationPosition % (1 / numChunks)).floor();
   }
 
-  /// Gets the last direction to set [lastDirection]
+  /// Gets the last direction to set [ direction]
   Offset getDirection(Offset globalPosition, BuildContext context) {
     RenderBox? box = context.findRenderObject() as RenderBox?;
     Offset? offset = box?.globalToLocal(globalPosition);
@@ -34,15 +34,19 @@ class RotationService {
     return offset! - center;
   }
 
+  void setDirection(Offset direction) {
+    this.direction = direction;
+  }
+
   // Returns new Direction based on direction user is panning
   Offset getLastDirectionPanned(DragUpdateDetails details, BuildContext context,
       AnimationController controller) {
     Offset newDirection = getDirection(details.globalPosition, context);
-    double diff = newDirection.direction - lastDirection.direction;
+    double diff = newDirection.direction - direction.direction;
 
     var value = controller.value + (diff / pi / 2);
     controller.value = value % 1.0;
-    lastDirection = newDirection;
+    direction = newDirection;
     return newDirection;
   }
 
@@ -55,10 +59,8 @@ class RotationService {
     // non-angular velocity
     Offset velocity = details.velocity.pixelsPerSecond;
 
-    var top =
-        (lastDirection.dx * velocity.dy) - (lastDirection.dy * velocity.dx);
-    var bottom = (lastDirection.dx * lastDirection.dx) +
-        (lastDirection.dy * lastDirection.dy);
+    var top = (direction.dx * velocity.dy) - (direction.dy * velocity.dx);
+    var bottom = (direction.dx * direction.dx) + (direction.dy * direction.dy);
 
     var angularVelocity = top / bottom;
     var angularRotation = angularVelocity / pi / 2;
