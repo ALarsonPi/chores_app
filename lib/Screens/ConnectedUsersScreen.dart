@@ -1,11 +1,7 @@
 import 'package:chore_app/Models/frozen/UserModel.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
-import '../Daos/ChartDao.dart';
-import '../Global.dart';
-import '../Providers/TextSizeProvider.dart';
-import '../Services/UserManager.dart';
+
 import 'ScreenArguments/connectedUserArguments.dart';
 
 class ConnectedUsersScreen extends StatefulWidget {
@@ -180,7 +176,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     connectedUsers.add(user4);
     connectedUsers.add(user5);
     connectedUsers.add(user6);
-    connectedUsers.add(Global.getIt.get<UserManager>().currUser.value);
+    connectedUsers.add(ListenService.userNotifier.value);
 
     return Scaffold(
       appBar: AppBar(

@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/constant/RingCharLimit.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
-import 'package:chore_app/Services/UserManager.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ import '../Global.dart';
 import '../Models/frozen/Chart.dart';
 import '../Models/frozen/UserModel.dart';
 import '../Providers/TextSizeProvider.dart';
-import '../Services/ChartManager.dart';
 
 class ChartScreen extends StatefulWidget {
   const ChartScreen({super.key});
@@ -223,6 +222,7 @@ class _ChartScreenState extends State<ChartScreen> {
 
   late Chart newChart;
   late UserModel currUser;
+  UserDao userdao = UserDao();
 
   @override
   Widget build(BuildContext context) {
@@ -597,11 +597,8 @@ class _ChartScreenState extends State<ChartScreen> {
                                                 chartTitleController.text,
                                             numberOfRings: currNumRings,
                                             ownerIDs: [
-                                              Global.getIt
-                                                  .get<UserManager>()
-                                                  .currUser
-                                                  .value
-                                                  .id
+                                              ListenService
+                                                  .userNotifier.value.id,
                                             ],
                                             editorIDs:
                                                 List.empty(growable: true),
@@ -625,48 +622,23 @@ class _ChartScreenState extends State<ChartScreen> {
                                           await ChartDao.updateChart(
                                             newChart.copyWith(id: id),
                                           ),
-                                          Global.getIt
-                                                  .get<UserManager>()
-                                                  .currUser
-                                                  .value =
-                                              await UserDao.addChartIDToUser(
-                                            Global.getIt
-                                                .get<UserManager>()
-                                                .currUser
-                                                .value,
-                                            id,
-                                            args.index,
-                                          ),
-                                          // debugPrint(
-                                          //   "USER OBTAINED" +
-                                          //       Global.getIt
-                                          //           .get<UserManager>()
-                                          //           .currUser
-                                          //           .value
-                                          //           .toString(),
-                                          // ),
+                                          UserDao().removeChartIDForUser(
+                                              id, currUser.id),
+                                          UserDao().addTabNumToUser(
+                                              args.index, currUser.id),
 
-                                          Global.getIt
-                                              .get<ChartList>()
-                                              .getCurrNotifierByIndex(
-                                                  args.index)
+                                          ListenService.chartsNotifiers
+                                              .elementAt(args.index)
                                               .value = newChart.copyWith(
                                             id: id,
                                             ownerIDs: [
-                                              Global.getIt
-                                                  .get<UserManager>()
-                                                  .currUser
-                                                  .value
-                                                  .id,
+                                              ListenService
+                                                  .userNotifier.value.id
                                             ],
                                           ),
-
-                                          Global.getIt
-                                              .get<ChartList>()
-                                              .addListenerByFullID(
-                                                args.index,
-                                                id,
-                                              ),
+                                          ListenService
+                                              .addChartListenerByFullID(
+                                                  args.index, id),
                                           Navigator.pop(context),
                                         }
                                     }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Daos/ChartDao.dart';
-import '../../Daos/UserDao.dart';
 import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
 import '../../Models/frozen/UserModel.dart';

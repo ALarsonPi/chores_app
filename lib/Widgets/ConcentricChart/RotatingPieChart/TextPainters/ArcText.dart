@@ -1,7 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 
 class ArcTextPainter extends CustomPainter {
   ArcTextPainter({

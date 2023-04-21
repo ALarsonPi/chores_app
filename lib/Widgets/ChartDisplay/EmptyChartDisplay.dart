@@ -1,20 +1,14 @@
-import 'package:chore_app/Daos/ChartDao.dart';
-import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
-import 'package:chore_app/Services/UserManager.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/JoinChartDialogPopup.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:prompt_dialog/prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../ColorControl/AppColors.dart';
-import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
 import '../../Models/frozen/UserModel.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
-import '../../Services/ChartManager.dart';
 
 class EmptyChartDisplay extends StatefulWidget {
   EmptyChartDisplay(this.currTabIndex, {super.key});
@@ -32,7 +26,7 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel currUser = Global.getIt.get<UserManager>().currUser.value;
+    UserModel currUser = ListenService.userNotifier.value;
     int num;
     return Stack(
       alignment: Alignment.center,

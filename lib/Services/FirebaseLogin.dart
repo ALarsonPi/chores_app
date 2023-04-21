@@ -2,20 +2,27 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+// Used to get ssa key and nonce for apple
+// ignore: depend_on_referenced_packages
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-// Used to get ssa key and nonce for apple
-// ignore: depend_on_referenced_packages
-import 'package:crypto/crypto.dart';
 
 import '../Daos/UserDao.dart';
 import '../Global.dart';
 import '../Models/frozen/UserModel.dart';
 
 class FirebaseLogin {
+  static logout() {
+    if (FirebaseAuth.instance.currentUser!.providerData.contains('Google')) {
+      GoogleSignIn googleSignIn = GoogleSignIn();
+      googleSignIn.signOut();
+    }
+    FirebaseAuth.instance.signOut();
+  }
+
   static isEmailBeingUsedByOtherProvider(String proposedEmail) async {
     bool emailIsInUse = await isEmailAlreadyInUse(proposedEmail);
     if (emailIsInUse) {
@@ -224,7 +231,7 @@ class FirebaseLogin {
       email: email?.toLowerCase(),
       password: password,
     );
-    await UserDao.addUser(newUser);
+    await UserDao().addUser(newUser);
   }
 
   static makeSnackBarWithText(String message) {

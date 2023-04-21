@@ -1,11 +1,10 @@
-import 'package:chore_app/Global.dart';
-import 'package:chore_app/Services/UserManager.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../Daos/ChartDao.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Services/ChartManager.dart';
+import '../../Services/ChartService.dart';
 
 class JoinChartPopupContent extends StatefulWidget {
   const JoinChartPopupContent({super.key});
@@ -69,14 +68,10 @@ class _JoinChartPopupContentState extends State<JoinChartPopupContent> {
                       onPressed: (chartToJoin == Chart.emptyChart)
                           ? null
                           : () {
-                              Global.getIt
-                                  .get<ChartList>()
-                                  .processChartJoinRequest(
-                                      chartToJoin,
-                                      Global.getIt
-                                          .get<UserManager>()
-                                          .currUser
-                                          .value);
+                              ChartService().processChartJoinRequest(
+                                chartToJoin,
+                                ListenService.userNotifier.value,
+                              );
                               Navigator.of(context, rootNavigator: true).pop();
                             },
                       child: const Text(
@@ -131,6 +126,7 @@ class _JoinChartPopupContentState extends State<JoinChartPopupContent> {
                     .toList();
                 filteredCharts.addAll(matchingChartsByID);
                 filteredCharts.addAll(matchingChartsByTitle);
+                filteredCharts = filteredCharts.toSet().toList();
 
                 return Expanded(
                   child: ListView.builder(

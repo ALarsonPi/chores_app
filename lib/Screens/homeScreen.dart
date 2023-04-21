@@ -1,29 +1,26 @@
-import 'dart:async';
-
 import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:chore_app/Daos/ChartDao.dart';
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/Chart.dart';
+import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
 import 'package:chore_app/Screens/ScreenArguments/connectedUserArguments.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
-import 'package:chore_app/Screens/ChartScreen.dart';
-import 'package:chore_app/Services/ChartManager.dart';
-import 'package:chore_app/Services/UserManager.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:get_it/get_it.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'package:provider/provider.dart';
+
 import '../Global.dart';
 import '../Models/frozen/UserModel.dart';
 import '../Providers/TextSizeProvider.dart';
 import '../Widgets/ChartDisplay/TabContent.dart';
-import 'package:badges/badges.dart' as badges;
 
 /// @nodoc
 class HomeScreen extends StatefulWidget with GetItStatefulWidgetMixin {
@@ -52,8 +49,9 @@ class _HomeScreen extends State<HomeScreen>
     ConnectivityResult network =
         Provider.of<ConnectivityResult>(context, listen: true);
     if (network != ConnectivityResult.wifi) {
-      ChartDao.endListeningToCharts();
-      Global.getIt.get<UserManager>().endListening();
+      ListenService.cancelListeningToCharts();
+      ListenService.cancelListeningToUser();
+      Global.dataTransferComplete = false;
       return Center(
         child: Image.asset("assets/images/dino_dark.png"),
       );
@@ -64,7 +62,7 @@ class _HomeScreen extends State<HomeScreen>
       builder: (c, snapshot) {
         if (snapshot.hasData && snapshot.data?.uid != null) {
           return StreamProvider<List<UserModel>>(
-            create: (BuildContext c) => UserDao.getUserDataViaStream(
+            create: (BuildContext c) => UserDao().getUserDataViaStream(
                 FirebaseAuth.instance.currentUser?.uid as String),
             initialData: const [],
             builder: (context, child) => HomePageWidget(context),
@@ -85,8 +83,7 @@ class _HomeScreen extends State<HomeScreen>
   }
 
   endEdit(Chart chartData, String finalString) {
-    Global.getIt.get<ChartList>().updateChartTitle(0, finalString);
-    ChartDao.updateChart(chartData.copyWith(chartTitle: finalString));
+    ChartDao().updateTitle(finalString, chartData.id);
 
     setState(() {
       isEditingTitle = false;
@@ -95,56 +92,25 @@ class _HomeScreen extends State<HomeScreen>
 
   UserModel emptyUserModel = UserModel(id: "ID");
 
-  Future<void> getCharts(UserModel user) async {
-    List<Chart> charts = await ChartDao.getChartsForUser(user);
-    for (Chart chart in charts) {
-      int? currIndex = user.chartIDs?.indexOf(chart.id);
-      if (currIndex == null) {
-        debugPrint("ERROR - CHART NOT FOUND");
-      }
-      int tabNum = user.associatedTabNums?.elementAt(currIndex as int) as int;
-
-      Global.getIt.get<ChartList>().getCurrNotifierByIndex(tabNum).value =
-          chart;
-    }
-  }
-
   // ignore: non_constant_identifier_names
   Widget HomePageWidget(BuildContext c) {
-    UserModel currUser = Global.getIt.get<UserManager>().currUser.value;
+    UserModel currUser = ListenService.userNotifier.value;
 
     // Initial Retrival of chart data happens only once
     // and listeners are also set here
     if (!Global.dataTransferComplete) {
-      UserModel userModel = UserModel.emptyUser;
       debugPrint("Adding listeners for Chart and User");
-
-      GetIt.instance
-          .get<UserManager>()
-          .addListener((FirebaseAuth.instance.currentUser?.uid as String))
-          .then(
-            (value) => {
-              userModel = value,
-              GetIt.instance.get<UserManager>().currUser.value = userModel,
-              // debugPrint(value.toString()),
-
-              // Refresh when charts are retrieved
-              getCharts(currUser).then(
-                (value) => {
-                  setState(() {}),
-                  Global.getIt
-                      .get<ChartList>()
-                      .addListenersForChartsFromFirebase(userModel),
-                },
-              ),
-              debugPrint("Did data Transfer"),
-              Global.dataTransferComplete = true,
-            },
-          );
+      UserDao()
+          .getUserByID(FirebaseAuth.instance.currentUser?.uid as String)
+          .then((userRetrieved) => {
+                ListenService.initializeListeners(userRetrieved),
+                Global.dataTransferComplete = true,
+              });
+      Global.dataTransferComplete = true;
     }
 
     return ValueListenableBuilder(
-      valueListenable: Global.getIt.get<ChartList>().getCurrNotifierByIndex(0),
+      valueListenable: ListenService.chartsNotifiers.elementAt(0),
       builder: (context, chartData, child) {
         // Don't show Chart Edit Menu if chart is empty or settings screen
 
@@ -162,7 +128,7 @@ class _HomeScreen extends State<HomeScreen>
         return KeyboardVisibilityBuilder(
           builder: (context, isKeyboardVisible) {
             return Scaffold(
-              key: Global.scaffoldKey,
+              // key: Global.scaffoldKey,
               resizeToAvoidBottomInset: false,
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(Global.toolbarHeight +
@@ -359,15 +325,11 @@ class _HomeScreen extends State<HomeScreen>
                                     ChartDao.removeListener(currUser.chartIDs
                                             ?.indexOf((chartData as Chart).id)
                                         as int);
-                                    Global.getIt
-                                        .get<UserManager>()
-                                        .deleteChartIDForUser(
-                                            (chartData as Chart).id, 0);
+                                    UserDao().removeChartIDForUser(
+                                        (chartData as Chart).id, currUser.id);
                                     ChartDao.deleteChart(chartData as Chart);
-                                    Global.getIt
-                                        .get<ChartList>()
-                                        .getCurrNotifierByIndex(0)
-                                        .value = Chart.emptyChart;
+                                    ListenService.chartsNotifiers[0].value =
+                                        Chart.emptyChart;
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -471,10 +433,8 @@ class _HomeScreen extends State<HomeScreen>
                                     ChartDao.removeListener(currUser.chartIDs
                                             ?.indexOf((chartData as Chart).id)
                                         as int);
-                                    Global.getIt
-                                        .get<UserManager>()
-                                        .deleteChartIDForUser(
-                                            (chartData as Chart).id, 0);
+                                    UserDao().removeChartIDForUser(
+                                        (chartData as Chart).id, currUser.id);
 
                                     chartData = (chartData as Chart)
                                         .removeUserFromChart(
@@ -483,10 +443,8 @@ class _HomeScreen extends State<HomeScreen>
                                     );
                                     ChartDao.updateChart(chartData as Chart);
 
-                                    Global.getIt
-                                        .get<ChartList>()
-                                        .getCurrNotifierByIndex(0)
-                                        .value = Chart.emptyChart;
+                                    ListenService.chartsNotifiers[0].value =
+                                        Chart.emptyChart;
                                     Navigator.pop(context);
                                   },
                                 ),

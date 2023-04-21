@@ -1,11 +1,7 @@
 import 'package:chore_app/Models/constant/Settings.dart';
 import 'package:chore_app/Providers/TextSizeProvider.dart';
-import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../ColorControl/PrimaryColorSwitcher.dart';
-import '../../ColorControl/ThemeSwitcher.dart';
 
 class TextSizeChangerWidget extends StatefulWidget {
   const TextSizeChangerWidget({super.key});

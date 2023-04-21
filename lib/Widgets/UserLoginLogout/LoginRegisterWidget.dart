@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:chore_app/Services/FirebaseLogin.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/ForgotPassword.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+
 import 'UI_Helpers.dart';
 
 class LoginRegisterWidget extends StatefulWidget {

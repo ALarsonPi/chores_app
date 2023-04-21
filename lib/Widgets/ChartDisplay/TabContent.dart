@@ -1,10 +1,9 @@
-import 'package:chore_app/Global.dart';
 import 'package:chore_app/Widgets/ChartDisplay/EmptyChartDisplay.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
+
 import '../../Models/frozen/Chart.dart';
-import '../../Services/ChartManager.dart';
+import '../../Services/ListenService.dart';
 import 'CreatedChartDisplay.dart';
 
 // ignore: must_be_immutable
@@ -23,8 +22,7 @@ class TabContent extends StatelessWidget with GetItMixin {
               )
             : EmptyChartDisplay(circleDataIndex);
       },
-      valueListenable:
-          Global.getIt.get<ChartList>().getCurrNotifierByIndex(circleDataIndex),
+      valueListenable: ListenService.chartsNotifiers.elementAt(circleDataIndex),
     );
   }
 }

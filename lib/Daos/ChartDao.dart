@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chore_app/Models/frozen/Chart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+
 import '../Global.dart';
 import '../Models/frozen/UserModel.dart';
 import 'ParentDao.dart';
@@ -62,14 +63,6 @@ class ChartDao extends ParentDao {
     Global.streamMap[indexToRemove]?.cancel();
   }
 
-  static endListeningToCharts() {
-    // debugPrint("ENDING LISTEN TO ALL");
-    for (int i = 0; i < Global.streamMap.length; i++) {
-      Global.streamMap.values.elementAt(i).cancel();
-    }
-    Global.streamMap.clear();
-  }
-
   static Future<String> addChart(Chart currChart) async {
     DocumentReference docRef =
         await currChartCollection.add(currChart.toJson());
@@ -107,6 +100,10 @@ class ChartDao extends ParentDao {
   static Future<String> addChartToFirebase(Chart newChart, int index) async {
     String idFromFirebase = await ChartDao.addChart(newChart);
     return idFromFirebase;
+  }
+
+  Future<void> updateTitle(String newTitle, String chartID) async {
+    await updateValue('chartTitle', newTitle, chartID);
   }
 
   Future<void> addViewerID(String chartID, String viewerID) async {

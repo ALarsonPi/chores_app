@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../Objects/PieChartItem.dart';
-import 'dart:math';
 
 class TextParsingService {
   TextParsingService(

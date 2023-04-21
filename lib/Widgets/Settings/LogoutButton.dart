@@ -1,13 +1,10 @@
-import 'package:chore_app/Daos/ChartDao.dart';
-import 'package:chore_app/Global.dart';
 import 'package:chore_app/Providers/TabNumberProvider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chore_app/Services/FirebaseLogin.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/TextSizeProvider.dart';
-import '../../Services/ChartManager.dart';
-import '../../Services/UserManager.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
@@ -16,12 +13,13 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => {
-        ChartDao.endListeningToCharts(),
-        Global.getIt.get<ChartList>().setChartsToEmpty(),
-        Global.getIt.get<UserManager>().endListening(),
+        ListenService.cancelListeningToCharts(),
+        ListenService.cancelListeningToUser(),
         Provider.of<TabNumberProvider>(context, listen: false)
             .changeCurrTabNum(0),
-        FirebaseAuth.instance.signOut(),
+        FirebaseLogin.logout(),
+        // Just to ensure that everything works
+        Navigator.pushNamed(context, 'home'),
       },
       child: Padding(
         padding: EdgeInsets.all(

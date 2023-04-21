@@ -2,8 +2,8 @@ import 'package:chore_app/Services/FirebaseLogin.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
-import 'UI_Helpers.dart';
 import 'CheckEmail.dart';
+import 'UI_Helpers.dart';
 
 class ForgotPassword extends StatefulWidget {
   Function setStateBackToLoginScreen;

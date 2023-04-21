@@ -8,6 +8,7 @@ import 'package:chore_app/Screens/homeScreen.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'ColorControl/GlobalThemes.dart';
 import 'Global.dart';
 import 'Screens/SplashScreen.dart';

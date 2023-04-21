@@ -5,14 +5,10 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:chore_app/AppRouter.dart';
 import 'package:chore_app/Global.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
-import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:chore_app/main.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -60,7 +56,8 @@ void main() {
                 circleThreeRadiusProportion: 0.9,
                 circleThreeColor: Global.currentTheme.tertiaryColor,
                 circleThreeFontColor: Colors.white,
-                circleThreeFontSize: 14.0,
+                circleThreeFontSize: 14.0, currRingOneAngle: 0,
+                currRingThreeAngle: 0, currRingTwoAngle: 0,
               ),
             ],
           ),

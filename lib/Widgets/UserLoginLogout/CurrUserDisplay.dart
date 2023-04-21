@@ -1,9 +1,7 @@
 import 'package:chore_app/Providers/TextSizeProvider.dart';
+import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../Global.dart';
-import '../../Services/UserManager.dart';
 
 class CurrUserDisplay extends StatelessWidget {
   const CurrUserDisplay({super.key});
@@ -27,7 +25,7 @@ class CurrUserDisplay extends StatelessWidget {
           ),
         ),
         Text(
-          Global.getIt.get<UserManager>().currUser.value.name ?? "No name",
+          ListenService.userNotifier.value.name ?? "No name",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize:
@@ -39,7 +37,7 @@ class CurrUserDisplay extends StatelessWidget {
           ),
         ),
         Text(
-          "(${Global.getIt.get<UserManager>().currUser.value.email})",
+          "(${ListenService.userNotifier.value.email})",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize:

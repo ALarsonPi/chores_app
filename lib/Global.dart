@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:chore_app/Models/constant/Settings.dart';
-import 'package:chore_app/Services/ChartManager.dart';
-import 'package:chore_app/Services/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:get_it/get_it.dart';
+
 import 'ColorControl/AppColors.dart';
 import 'Models/constant/CircleSettings.dart';
 import 'Models/constant/RingCharLimit.dart';
@@ -20,13 +19,12 @@ class Global {
   static bool isPhone = Device.get().isPhone;
   static bool isHighPixelRatio = (Device.devicePixelRatio > 2);
   static double toolbarHeight = (isPhone) ? 65.0 : 85.0;
-
   static final getIt = GetIt.instance;
 
-  static void setupGetIt() {
-    getIt.registerSingleton<ChartList>(ChartList());
-    getIt.registerSingleton<UserManager>(UserManager());
-  }
+  // ignore: constant_identifier_names
+  static const int NUM_CHARTS = 1;
+
+  static void setupGetIt() {}
 
   static void makeSnackbar(String message) {
     rootScaffoldMessengerKey.currentState?.showSnackBar(

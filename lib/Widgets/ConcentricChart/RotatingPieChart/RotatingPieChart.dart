@@ -1,12 +1,13 @@
 import 'dart:math';
+
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieChartItem.dart';
 import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/PiePainter.dart';
 import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Services/TextParsingService.dart';
 import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/TextPainters/ArcText.dart';
-import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieChartItem.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+
 import 'Services/RotationService.dart';
 import 'TextPainters/NameTextPainter.dart';
 
