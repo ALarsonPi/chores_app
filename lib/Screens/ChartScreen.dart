@@ -358,6 +358,9 @@ class _ChartScreenState extends State<ChartScreen> {
                     circleThreeText: ring3Strings,
                     shouldIgnoreTouch: true,
                     shouldBold: true,
+                    currRingOneAngle: 0,
+                    currRingTwoAngle: 0,
+                    currRingThreeAngle: 0,
 
                     // Theme
                     linesColors: Global.currentTheme.lineColors,
@@ -609,6 +612,9 @@ class _ChartScreenState extends State<ChartScreen> {
                                             circleOneText: nameStrings,
                                             circleTwoText: ring2Strings,
                                             circleThreeText: ring3Strings,
+                                            circleOneAngle: 0,
+                                            circleTwoAngle: 0,
+                                            circleThreeAngle: 0,
                                           ),
                                           // Add chart to firebase
                                           id =

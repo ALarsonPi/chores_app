@@ -2,6 +2,8 @@ import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Daos/ChartDao.dart';
+import '../../Daos/UserDao.dart';
 import '../../Global.dart';
 import '../../Models/frozen/Chart.dart';
 import '../../Models/frozen/UserModel.dart';
@@ -36,8 +38,15 @@ class CreatedChartDisplay extends StatelessWidget {
     String currUserId = currUser.id;
     bool isStillPending = currChart.pendingIDs.contains(currUserId);
     bool isOnlyViewer = currChart.viewerIDs.contains(currUserId);
+    ChartDao chartDao = ChartDao();
     return Stack(
       children: [
+        ElevatedButton(
+          onPressed: () => {
+            chartDao.updateChartAngle(0, 3.1415, "0WKUXU4PW5662l2i2Tsd"),
+          },
+          child: const Text("Update angle of circle"),
+        ),
         if (isStillPending)
           Center(
             child: Column(
@@ -151,6 +160,9 @@ class CreatedChartDisplay extends StatelessWidget {
             circleThreeText: currChart.circleThreeText ?? [],
             shouldBold: true,
             shouldIgnoreTouch: isOnlyViewer,
+            currRingOneAngle: currChart.circleOneAngle,
+            currRingTwoAngle: currChart.circleTwoAngle,
+            currRingThreeAngle: currChart.circleThreeAngle,
 
             // Theme
             linesColors: Global.currentTheme.lineColors,

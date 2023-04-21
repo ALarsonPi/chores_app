@@ -96,6 +96,10 @@ class ConcentricChart extends StatefulWidget {
   final bool shouldBold;
   final Function onChanged;
 
+  final double currRingOneAngle;
+  final double currRingTwoAngle;
+  final double currRingThreeAngle;
+
   /// Constructor for concentric chart
   /// Required - [width], [numberOfRings], and all the general info about each
   /// ring including (text, general background color, and font color)
@@ -114,6 +118,9 @@ class ConcentricChart extends StatefulWidget {
     required this.circleThreeColor,
     required this.circleThreeFontColor,
     required this.onChanged,
+    required this.currRingOneAngle,
+    required this.currRingTwoAngle,
+    required this.currRingThreeAngle,
     this.circleOneTextRadiusProportion = 0.6,
     this.circleOneFontSize = 8.0,
     this.circleTwoFontSize = 14.0,
@@ -333,6 +340,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
       textSize: widget.circleOneFontSize,
       textColor: widget.circleOneFontColor,
       isBold: widget.shouldBold,
+      currAngle: widget.currRingOneAngle,
     );
 
     circleTwoPie = PieInfo(
@@ -347,6 +355,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
         ringTwowidth / 2,
       ],
       isBold: widget.shouldBold,
+      currAngle: widget.currRingTwoAngle,
     );
 
     rotatablePies.clear();
@@ -364,6 +373,7 @@ class _ConcentricChartState extends State<ConcentricChart> {
           ringThreewidth / 2,
         ],
         isBold: widget.shouldBold,
+        currAngle: widget.currRingThreeAngle,
       );
       rotatablePies
           .add(makePieChart(circleThreePie, circleThreeBounds, isOuterRing));

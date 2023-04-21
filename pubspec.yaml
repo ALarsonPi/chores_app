@@ -46,7 +46,7 @@ dependencies:
   firebase_auth: ^4.2.1
   cloud_firestore: ^4.2.0
   freezed_annotation: ^2.2.0
-  json_annotation: ^4.7.0
+  json_annotation: ^4.8.0
   auth_buttons: ^3.0.0
   flutter_facebook_auth: ^5.0.6
   google_sign_in: ^5.4.2

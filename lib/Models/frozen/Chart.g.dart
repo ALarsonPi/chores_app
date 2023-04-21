@@ -25,6 +25,9 @@ _$_Chart _$$_ChartFromJson(Map<String, dynamic> json) => _$_Chart(
       pendingIDs: (json['pendingIDs'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      circleOneAngle: (json['circleOneAngle'] as num).toDouble(),
+      circleTwoAngle: (json['circleTwoAngle'] as num).toDouble(),
+      circleThreeAngle: (json['circleThreeAngle'] as num).toDouble(),
       circleThreeText: (json['circleThreeText'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -40,5 +43,8 @@ Map<String, dynamic> _$$_ChartToJson(_$_Chart instance) => <String, dynamic>{
       'editorIDs': instance.editorIDs,
       'viewerIDs': instance.viewerIDs,
       'pendingIDs': instance.pendingIDs,
+      'circleOneAngle': instance.circleOneAngle,
+      'circleTwoAngle': instance.circleTwoAngle,
+      'circleThreeAngle': instance.circleThreeAngle,
       'circleThreeText': instance.circleThreeText,
     };

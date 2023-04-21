@@ -8,6 +8,7 @@ class PieInfo {
   int ringNum;
   Color linesColor;
   bool isBold;
+  double currAngle;
 
   late List<double> ringBorders;
   late TextStyle textStyle;
@@ -24,6 +25,7 @@ class PieInfo {
     this.ringBorders = const [0.0, 0.0],
     this.textProportion = 0.0,
     this.isBold = false,
+    this.currAngle = 0.0,
   }) {
     textStyle = TextStyle(
       fontSize: textSize,

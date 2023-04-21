@@ -5,10 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../Global.dart';
 import '../Models/frozen/UserModel.dart';
+import 'ParentDao.dart';
 
-class ChartDao {
+class ChartDao extends ParentDao {
   static final CollectionReference currChartCollection =
       FirebaseFirestore.instance.collection('charts');
+
+  @override
+  CollectionReference<Object?> getCollection() {
+    return currChartCollection;
+  }
 
   static getChartStreamFromFirestore() {
     return currChartCollection.snapshots();
@@ -35,18 +41,8 @@ class ChartDao {
     return currChartCollection.doc(id);
   }
 
-  static addPendingRequest(String pendingUserID, String chartID) async {
-    Chart desiredChart = await getChartFromSubstringID(chartID);
-
-    List<String> allPendingUserIds = List.empty(growable: true);
-    allPendingUserIds.addAll(desiredChart.pendingIDs);
-    if (!allPendingUserIds.contains(pendingUserID)) {
-      allPendingUserIds.add(pendingUserID);
-    }
-
-    currChartCollection
-        .doc(desiredChart.id)
-        .update(desiredChart.copyWith(pendingIDs: allPendingUserIds).toJson());
+  addPendingRequest(String pendingUserID, String chartID) async {
+    await updateList('pendingIDs', pendingUserID, chartID, ListAction.ADD);
   }
 
   static Future<List<Chart>> getChartsForUser(UserModel user) async {
@@ -113,75 +109,38 @@ class ChartDao {
     return idFromFirebase;
   }
 
-  static Future<void> addViewerID(String chartID, String viewerID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> viewerIDs = currChart.viewerIDs;
-      if (!viewerIDs.contains(viewerID)) {
-        viewerIDs.add(viewerID);
-      }
-      updateChart(currChart.copyWith(viewerIDs: viewerIDs));
-    }
+  Future<void> addViewerID(String chartID, String viewerID) async {
+    await updateList('viewerIDs', viewerID, chartID, ListAction.ADD);
   }
 
-  static Future<void> removeViewerID(String chartID, String viewerID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> viewerIDs = currChart.viewerIDs;
-      if (viewerIDs.contains(viewerID)) {
-        viewerIDs.remove(viewerID);
-        updateChart(currChart.copyWith(viewerIDs: viewerIDs));
-      }
-    }
+  Future<void> removeViewerID(String chartID, String viewerID) async {
+    await updateList('viewerIDs', viewerID, chartID, ListAction.REMOVE);
   }
 
-  static Future<void> addEditorID(String chartID, String editorID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> editorIDs = currChart.editorIDs;
-      if (!editorIDs.contains(editorID)) {
-        editorIDs.add(editorID);
-      }
-      updateChart(currChart.copyWith(editorIDs: editorIDs));
-    }
+  Future<void> addEditorID(String chartID, String editorID) async {
+    await updateList('editorIDs', editorID, chartID, ListAction.ADD);
   }
 
-  static Future<void> removeEditorID(String chartID, String editorID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> editorIDs = currChart.editorIDs;
-      if (editorIDs.contains(editorID)) {
-        editorIDs.remove(editorID);
-        updateChart(currChart.copyWith(editorIDs: editorIDs));
-      }
-    }
+  Future<void> removeEditorID(String chartID, String editorID) async {
+    await updateList('editorIDs', editorID, chartID, ListAction.REMOVE);
   }
 
-  static Future<void> addOwnerID(String chartID, String ownerID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> ownerIDs = currChart.ownerIDs;
-      if (!ownerIDs.contains(ownerID)) {
-        ownerIDs.add(ownerID);
-      }
-      updateChart(currChart.copyWith(ownerIDs: ownerIDs));
-    }
+  Future<void> addOwnerID(String chartID, String ownerID) async {
+    await updateList('ownerIDs', ownerID, chartID, ListAction.ADD);
   }
 
-  static Future<void> removeOwnerID(String chartID, String ownerID) async {
-    DocumentSnapshot doc = await currChartCollection.doc(chartID).get();
-    if (doc.exists) {
-      Chart currChart = Chart.fromSnapshot(doc);
-      List<String> ownerIDs = currChart.ownerIDs;
-      if (ownerIDs.contains(ownerID)) {
-        ownerIDs.remove(ownerID);
-        updateChart(currChart.copyWith(ownerIDs: ownerIDs));
-      }
+  Future<void> removeOwnerID(String chartID, String ownerID) async {
+    await updateList('ownerIDs', ownerID, chartID, ListAction.REMOVE);
+  }
+
+  Future<void> updateChartAngle(
+      int chartRingNum, double angleValue, String chartID) async {
+    String parameterToUpdate = 'circleOneAngle';
+    if (chartRingNum == 2) {
+      parameterToUpdate = 'circleTwoAngle';
+    } else if (chartRingNum == 3) {
+      parameterToUpdate = 'circleThreeAngle';
     }
+    await updateValue(parameterToUpdate, angleValue, chartID);
   }
 }

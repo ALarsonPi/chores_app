@@ -1,10 +1,16 @@
+import 'package:chore_app/Daos/ParentDao.dart';
 import 'package:chore_app/Models/frozen/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
-class UserDao {
+class UserDao extends ParentDao {
   static final CollectionReference currUserCollection =
       FirebaseFirestore.instance.collection('users');
+
+  @override
+  CollectionReference<Object?> getCollection() {
+    return currUserCollection;
+  }
 
   static DocumentReference getUserDocByID(String id) {
     return currUserCollection.doc(id);

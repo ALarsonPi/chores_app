@@ -7,6 +7,7 @@ import '../../Models/frozen/Chart.dart';
 import '../../Services/ChartManager.dart';
 import 'CreatedChartDisplay.dart';
 
+// ignore: must_be_immutable
 class TabContent extends StatelessWidget with GetItMixin {
   TabContent(this.circleDataIndex, {super.key});
   int circleDataIndex;

@@ -29,6 +29,9 @@ mixin _$Chart {
   List<String> get editorIDs => throw _privateConstructorUsedError;
   List<String> get viewerIDs => throw _privateConstructorUsedError;
   List<String> get pendingIDs => throw _privateConstructorUsedError;
+  double get circleOneAngle => throw _privateConstructorUsedError;
+  double get circleTwoAngle => throw _privateConstructorUsedError;
+  double get circleThreeAngle => throw _privateConstructorUsedError;
   List<String>? get circleThreeText => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,6 +54,9 @@ abstract class $ChartCopyWith<$Res> {
       List<String> editorIDs,
       List<String> viewerIDs,
       List<String> pendingIDs,
+      double circleOneAngle,
+      double circleTwoAngle,
+      double circleThreeAngle,
       List<String>? circleThreeText});
 }
 
@@ -76,6 +82,9 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
     Object? editorIDs = null,
     Object? viewerIDs = null,
     Object? pendingIDs = null,
+    Object? circleOneAngle = null,
+    Object? circleTwoAngle = null,
+    Object? circleThreeAngle = null,
     Object? circleThreeText = freezed,
   }) {
     return _then(_value.copyWith(
@@ -115,6 +124,18 @@ class _$ChartCopyWithImpl<$Res, $Val extends Chart>
           ? _value.pendingIDs
           : pendingIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      circleOneAngle: null == circleOneAngle
+          ? _value.circleOneAngle
+          : circleOneAngle // ignore: cast_nullable_to_non_nullable
+              as double,
+      circleTwoAngle: null == circleTwoAngle
+          ? _value.circleTwoAngle
+          : circleTwoAngle // ignore: cast_nullable_to_non_nullable
+              as double,
+      circleThreeAngle: null == circleThreeAngle
+          ? _value.circleThreeAngle
+          : circleThreeAngle // ignore: cast_nullable_to_non_nullable
+              as double,
       circleThreeText: freezed == circleThreeText
           ? _value.circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
@@ -139,6 +160,9 @@ abstract class _$$_ChartCopyWith<$Res> implements $ChartCopyWith<$Res> {
       List<String> editorIDs,
       List<String> viewerIDs,
       List<String> pendingIDs,
+      double circleOneAngle,
+      double circleTwoAngle,
+      double circleThreeAngle,
       List<String>? circleThreeText});
 }
 
@@ -160,6 +184,9 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
     Object? editorIDs = null,
     Object? viewerIDs = null,
     Object? pendingIDs = null,
+    Object? circleOneAngle = null,
+    Object? circleTwoAngle = null,
+    Object? circleThreeAngle = null,
     Object? circleThreeText = freezed,
   }) {
     return _then(_$_Chart(
@@ -199,6 +226,18 @@ class __$$_ChartCopyWithImpl<$Res> extends _$ChartCopyWithImpl<$Res, _$_Chart>
           ? _value._pendingIDs
           : pendingIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      circleOneAngle: null == circleOneAngle
+          ? _value.circleOneAngle
+          : circleOneAngle // ignore: cast_nullable_to_non_nullable
+              as double,
+      circleTwoAngle: null == circleTwoAngle
+          ? _value.circleTwoAngle
+          : circleTwoAngle // ignore: cast_nullable_to_non_nullable
+              as double,
+      circleThreeAngle: null == circleThreeAngle
+          ? _value.circleThreeAngle
+          : circleThreeAngle // ignore: cast_nullable_to_non_nullable
+              as double,
       circleThreeText: freezed == circleThreeText
           ? _value._circleThreeText
           : circleThreeText // ignore: cast_nullable_to_non_nullable
@@ -220,6 +259,9 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
       required final List<String> pendingIDs,
+      required this.circleOneAngle,
+      required this.circleTwoAngle,
+      required this.circleThreeAngle,
       final List<String>? circleThreeText})
       : _circleOneText = circleOneText,
         _circleTwoText = circleTwoText,
@@ -287,6 +329,12 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
     return EqualUnmodifiableListView(_pendingIDs);
   }
 
+  @override
+  final double circleOneAngle;
+  @override
+  final double circleTwoAngle;
+  @override
+  final double circleThreeAngle;
   final List<String>? _circleThreeText;
   @override
   List<String>? get circleThreeText {
@@ -299,7 +347,7 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerIDs: $ownerIDs, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleThreeText: $circleThreeText)';
+    return 'Chart(id: $id, chartTitle: $chartTitle, numberOfRings: $numberOfRings, circleOneText: $circleOneText, circleTwoText: $circleTwoText, ownerIDs: $ownerIDs, editorIDs: $editorIDs, viewerIDs: $viewerIDs, pendingIDs: $pendingIDs, circleOneAngle: $circleOneAngle, circleTwoAngle: $circleTwoAngle, circleThreeAngle: $circleThreeAngle, circleThreeText: $circleThreeText)';
   }
 
   @override
@@ -316,6 +364,9 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('editorIDs', editorIDs))
       ..add(DiagnosticsProperty('viewerIDs', viewerIDs))
       ..add(DiagnosticsProperty('pendingIDs', pendingIDs))
+      ..add(DiagnosticsProperty('circleOneAngle', circleOneAngle))
+      ..add(DiagnosticsProperty('circleTwoAngle', circleTwoAngle))
+      ..add(DiagnosticsProperty('circleThreeAngle', circleThreeAngle))
       ..add(DiagnosticsProperty('circleThreeText', circleThreeText));
   }
 
@@ -340,6 +391,12 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
                 .equals(other._viewerIDs, _viewerIDs) &&
             const DeepCollectionEquality()
                 .equals(other._pendingIDs, _pendingIDs) &&
+            (identical(other.circleOneAngle, circleOneAngle) ||
+                other.circleOneAngle == circleOneAngle) &&
+            (identical(other.circleTwoAngle, circleTwoAngle) ||
+                other.circleTwoAngle == circleTwoAngle) &&
+            (identical(other.circleThreeAngle, circleThreeAngle) ||
+                other.circleThreeAngle == circleThreeAngle) &&
             const DeepCollectionEquality()
                 .equals(other._circleThreeText, _circleThreeText));
   }
@@ -357,6 +414,9 @@ class _$_Chart extends _Chart with DiagnosticableTreeMixin {
       const DeepCollectionEquality().hash(_editorIDs),
       const DeepCollectionEquality().hash(_viewerIDs),
       const DeepCollectionEquality().hash(_pendingIDs),
+      circleOneAngle,
+      circleTwoAngle,
+      circleThreeAngle,
       const DeepCollectionEquality().hash(_circleThreeText));
 
   @JsonKey(ignore: true)
@@ -384,6 +444,9 @@ abstract class _Chart extends Chart {
       required final List<String> editorIDs,
       required final List<String> viewerIDs,
       required final List<String> pendingIDs,
+      required final double circleOneAngle,
+      required final double circleTwoAngle,
+      required final double circleThreeAngle,
       final List<String>? circleThreeText}) = _$_Chart;
   _Chart._() : super._();
 
@@ -407,6 +470,12 @@ abstract class _Chart extends Chart {
   List<String> get viewerIDs;
   @override
   List<String> get pendingIDs;
+  @override
+  double get circleOneAngle;
+  @override
+  double get circleTwoAngle;
+  @override
+  double get circleThreeAngle;
   @override
   List<String>? get circleThreeText;
   @override

@@ -65,7 +65,6 @@ class RotatingPieChartState extends State<RotatingPieChart>
     super.initState();
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
-    _controller.animateTo(2 * pi, duration: const Duration(seconds: 5));
     flipStatusArray.clear();
     for (int i = 0; i < widget.pie.items.length; i++) {
       flipStatusArray.add(false);
@@ -84,6 +83,13 @@ class RotatingPieChartState extends State<RotatingPieChart>
     if (!(widget.pie.ringNum == 1)) {
       textParsingService.setUpPhraseChunks(widget.items.length, widget.items);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.animateTo(widget.pie.currAngle,
+        duration: const Duration(seconds: 5));
   }
 
   /// Closes the controller / disploses of it

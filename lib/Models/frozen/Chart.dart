@@ -21,6 +21,9 @@ class Chart with _$Chart {
     required List<String> editorIDs,
     required List<String> viewerIDs,
     required List<String> pendingIDs,
+    required double circleOneAngle,
+    required double circleTwoAngle,
+    required double circleThreeAngle,
     List<String>? circleThreeText,
   }) = _Chart;
 
@@ -35,6 +38,9 @@ class Chart with _$Chart {
     circleOneText: List.empty(growable: true),
     circleTwoText: List.empty(growable: true),
     circleThreeText: List.empty(growable: true),
+    circleOneAngle: 0,
+    circleTwoAngle: 0,
+    circleThreeAngle: 0,
   );
 
   factory Chart.fromJson(Map<String, dynamic> json) => _$ChartFromJson(json);

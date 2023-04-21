@@ -157,8 +157,8 @@ class ChartList {
             "sure you have the correct code and try again");
         return;
       }
-
-      await ChartDao.addPendingRequest(currUser.id, chartToJoin.id);
+      ChartDao chartDao = ChartDao();
+      await chartDao.addPendingRequest(currUser.id, chartToJoin.id);
       currChart = currChart.addPendingID(currChart, currUser.id);
 
       Global.getIt.get<UserManager>().addTabToUser(0, currChart.id);
