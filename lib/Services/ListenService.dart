@@ -22,9 +22,7 @@ class ListenService {
       debugPrint("Initializing user listener");
       setUpUserListener(currUser);
     }
-    if (chartsNotifiers.isEmpty) {
-      setUpChartListeners(currUser);
-    }
+    setUpChartListeners(currUser);
   }
 
   static void setUpUserListener(UserModel currUser) {
@@ -41,11 +39,8 @@ class ListenService {
       debugPrint("Initializing chart listeners");
       List<String> charts = (userNotifier.value.chartIDs as List<String>);
       for (int i = 0; i < charts.length; i++) {
-        chartsNotifiers.add(
-          ValueNotifier(
-            addChartListenerByFullID(i, charts[i]),
-          ),
-        );
+        debugPrint("Initializing Chart listener(${i}");
+        chartsNotifiers[i].value = addChartListenerByFullID(i, charts[i]);
       }
     } else {
       debugPrint("User had no chart ids to listen to");
@@ -153,7 +148,10 @@ class ListenService {
   static Chart addChartListenerByFullID(int indexToAdd, String fullID) {
     final DocumentReference docRef = ChartDao.getChartDocByID(fullID);
     Chart updatedChart = Chart.emptyChart;
-    var subscription = docRef.snapshots().listen((event) {});
+    var subscription = docRef.snapshots().listen((event) {
+      Chart chart = Chart.fromSnapshot(event);
+      chartsNotifiers[indexToAdd].value = chart;
+    });
     // debugPrint("Adding new listener");
     Global.streamMap.putIfAbsent(indexToAdd, () => subscription);
     return updatedChart;

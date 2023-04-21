@@ -18,7 +18,7 @@ class TabContent extends StatelessWidget with GetItMixin {
         return (!(value == Chart.emptyChart))
             ? CreatedChartDisplay(
                 circleDataIndex,
-                value as Chart,
+                value,
               )
             : EmptyChartDisplay(circleDataIndex);
       },

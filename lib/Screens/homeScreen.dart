@@ -431,18 +431,11 @@ class _HomeScreen extends State<HomeScreen>
                                   ),
                                   onTap: () {
                                     ChartDao.removeListener(currUser.chartIDs
-                                            ?.indexOf((chartData as Chart).id)
-                                        as int);
+                                        ?.indexOf(chartData.id) as int);
+                                    ChartDao().removePendingID(
+                                        chartData.id, currUser.id);
                                     UserDao().removeChartIDForUser(
-                                        (chartData as Chart).id, currUser.id);
-
-                                    chartData = (chartData as Chart)
-                                        .removeUserFromChart(
-                                      chartData as Chart,
-                                      currUser.id,
-                                    );
-                                    ChartDao.updateChart(chartData as Chart);
-
+                                        chartData.id, currUser.id);
                                     ListenService.chartsNotifiers[0].value =
                                         Chart.emptyChart;
                                     Navigator.pop(context);
