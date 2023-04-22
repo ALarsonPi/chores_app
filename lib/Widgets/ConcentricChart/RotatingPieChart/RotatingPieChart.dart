@@ -125,18 +125,8 @@ class RotatingPieChartState extends State<RotatingPieChart>
     stopWheelRotation();
 
     if (positionBeforeRotation != positionAfterRotation) {
-      debugPrint("Position changed");
-      int currChunk1Position =
-          rotationService.translateAnimationPositionToChunkPosition(
-              _controller.value, widget.items.length);
-      debugPrint("Position: " + currChunk1Position.toString());
+      widget.hasChangedPosition(widget.pie.ringNum, _controller.value);
     }
-
-    // debugPrint("Ended rotation");
-    // debugPrint(textParsingService.getChunkPhraseList().toString());
-    // debugPrint(textParsingService.getReversePhraseChunkList().toString());
-
-    // if();
   }
 
   handleChangesByOtherUsers() {
@@ -146,7 +136,7 @@ class RotatingPieChartState extends State<RotatingPieChart>
       textParsingService.setNumChunks(widget.pie.items.length);
     }
     if (!(widget.pie.ringNum == 1)) {
-      debugPrint("Text changed");
+      // debugPrint("Text changed");
       textParsingService.setUpPhraseChunks(
           widget.pie.items.length, widget.pie.items);
       textParsingService.setItems(widget.pie.items);

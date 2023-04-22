@@ -195,10 +195,6 @@ class _ChartScreenState extends State<ChartScreen> {
     GlobalKey(),
   ];
 
-  notifyOfChartUpdate(int ringNum, List<String> values) {
-    debugPrint("Update occurred");
-  }
-
   int validateAllActiveFields() {
     for (int i = 0; i < currNumSections; i++) {
       // If the key state is not valid, then we can just check the text
@@ -351,7 +347,7 @@ class _ChartScreenState extends State<ChartScreen> {
                 child: SizedBox(
                   height: sizeOfChart,
                   child: ConcentricChart(
-                    onChanged: notifyOfChartUpdate,
+                    onChanged: () => {},
                     numberOfRings: currNumRings,
                     circleOneText: nameStrings,
                     circleTwoText: ring2Strings,

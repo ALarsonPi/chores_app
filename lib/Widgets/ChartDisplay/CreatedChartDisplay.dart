@@ -10,12 +10,26 @@ import '../ConcentricChart/ConcentricChart.dart';
 
 // ignore: must_be_immutable
 class CreatedChartDisplay extends StatelessWidget {
-  CreatedChartDisplay(this.currTabIndex, this.currChart, {super.key});
+  CreatedChartDisplay(
+      this.currTabIndex, this.currChart, this.notifyParentOfChangedData,
+      {super.key});
   int currTabIndex;
   Chart currChart;
+  Function notifyParentOfChangedData;
 
-  notifyOfChartUpdate(int ringNum, List<String> values) {
-    debugPrint("Update occurred");
+  notifyOfChartUpdate(int ringNum, double newPosition) {
+    double currRingAngle = 0;
+    if (ringNum == 1) {
+      currRingAngle = currChart.circleOneAngle;
+    } else if (ringNum == 2) {
+      currRingAngle = currChart.circleTwoAngle;
+    } else if (ringNum == 3) {
+      currRingAngle = currChart.circleThreeAngle;
+    } else {
+      debugPrint("ERROR: RingNum incorrect in notifyParent function");
+    }
+    notifyParentOfChangedData(
+        ringNum, newPosition != currRingAngle, newPosition);
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:chore_app/Global.dart';
 import 'package:chore_app/Services/ListenService.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../Daos/ChartDao.dart';
 import '../Daos/UserDao.dart';
@@ -7,6 +8,8 @@ import '../Models/frozen/Chart.dart';
 import '../Models/frozen/UserModel.dart';
 
 class ChartService {
+  ChartDao chartDao = ChartDao();
+
   int? isChartAlreadyUsed(UserModel currUser, String? id) {
     if (currUser.chartIDs == null) return -1;
     for (int i = 0; i < (currUser.chartIDs as List<String>).length; i++) {
@@ -15,6 +18,32 @@ class ChartService {
       }
     }
     return -1;
+  }
+
+  static List<TabSaveStatus> tabSaveStatuses =
+      List.filled(Global.NUM_CHARTS, TabSaveStatus());
+
+  static void prepareSavedChartData(
+      int tabNum, int ringNum, bool hasChanged, double newPosition) {
+    if (ringNum == 1) {
+      tabSaveStatuses.elementAt(tabNum).circleOneHasChanged = hasChanged;
+      tabSaveStatuses.elementAt(tabNum).newPositionOne = newPosition;
+    } else if (ringNum == 2) {
+      tabSaveStatuses.elementAt(tabNum).circleTwoHasChanged = hasChanged;
+      tabSaveStatuses.elementAt(tabNum).newPositionTwo = newPosition;
+    } else if (ringNum == 3) {
+      tabSaveStatuses.elementAt(tabNum).circleThreeHasChanged = hasChanged;
+      tabSaveStatuses.elementAt(tabNum).newPositionThree = newPosition;
+    } else {
+      debugPrint("Error in indexes of prepare saved chart data");
+    }
+  }
+
+  static bool tabHasDataToSave(int tabNum) {
+    TabSaveStatus saveStatus = tabSaveStatuses.elementAt(tabNum);
+    return saveStatus.circleOneHasChanged ||
+        saveStatus.circleTwoHasChanged ||
+        saveStatus.circleThreeHasChanged;
   }
 
   void processChartJoinRequest(Chart chartToJoin, UserModel currUser) async {
@@ -39,5 +68,19 @@ class ChartService {
       await UserDao().addChartIDForUser(currChart.id, currUser.id);
       ListenService.addChartListenerByFullID(0, currChart.id);
     }
+  }
+}
+
+class TabSaveStatus {
+  bool circleOneHasChanged = false;
+  double newPositionOne = 0.0;
+  bool circleTwoHasChanged = false;
+  double newPositionTwo = 0.0;
+  bool circleThreeHasChanged = false;
+  double newPositionThree = 0.0;
+
+  @override
+  String toString() {
+    return "TabSaveStatus\n=============\n${circleOneHasChanged} | ${circleTwoHasChanged} | ${circleThreeHasChanged}\n(${newPositionOne}) | (${newPositionTwo}) | (${newPositionThree})";
   }
 }

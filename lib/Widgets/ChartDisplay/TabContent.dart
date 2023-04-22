@@ -1,3 +1,4 @@
+import 'package:chore_app/Services/ChartService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/EmptyChartDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
@@ -8,23 +9,32 @@ import 'CreatedChartDisplay.dart';
 
 // ignore: must_be_immutable
 class TabContent extends StatelessWidget with GetItMixin {
-  TabContent(this.circleDataIndex, {super.key});
-  int circleDataIndex;
+  TabContent(this.tabNum, this.notifyParentOfChangedContent, {super.key});
+  int tabNum;
+  Function notifyParentOfChangedContent;
+
+  hasChangedData(int ringNum, bool hasChanged, double newPosition) {
+    ChartService.prepareSavedChartData(
+        tabNum, ringNum, hasChanged, newPosition);
+    notifyParentOfChangedContent(
+      ChartService.tabHasDataToSave(tabNum),
+      tabNum,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       builder: (context, value, child) {
-        // debugPrint("Building chart" + value.circleTwoText.toString());
-
         return (!(value == Chart.emptyChart))
             ? CreatedChartDisplay(
-                circleDataIndex,
+                tabNum,
                 value,
+                hasChangedData,
               )
-            : EmptyChartDisplay(circleDataIndex);
+            : EmptyChartDisplay(tabNum);
       },
-      valueListenable: ListenService.chartsNotifiers.elementAt(circleDataIndex),
+      valueListenable: ListenService.chartsNotifiers.elementAt(tabNum),
     );
   }
 }

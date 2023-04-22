@@ -7,6 +7,7 @@ import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
 import 'package:chore_app/Screens/ScreenArguments/connectedUserArguments.dart';
 import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
+import 'package:chore_app/Services/ChartService.dart';
 import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
@@ -90,6 +91,14 @@ class _HomeScreen extends State<HomeScreen>
     });
   }
 
+  List<bool> tabsSaveStatus = List.filled(Global.NUM_CHARTS, false);
+
+  notifyParentOfChangedContent(bool shouldAllowSave, int tabNum) {
+    setState(() {
+      tabsSaveStatus[tabNum] = shouldAllowSave;
+    });
+  }
+
   UserModel emptyUserModel = UserModel(id: "ID");
 
   // ignore: non_constant_identifier_names
@@ -109,8 +118,10 @@ class _HomeScreen extends State<HomeScreen>
       Global.dataTransferComplete = true;
     }
 
+    int currTabNum = 0;
+
     return ValueListenableBuilder(
-      valueListenable: ListenService.chartsNotifiers.elementAt(0),
+      valueListenable: ListenService.chartsNotifiers.elementAt(currTabNum),
       builder: (context, chartData, child) {
         // Don't show Chart Edit Menu if chart is empty or settings screen
 
@@ -138,6 +149,22 @@ class _HomeScreen extends State<HomeScreen>
                   toolbarHeight: Global.toolbarHeight,
                   centerTitle: true,
                   actions: [
+                    if (tabsSaveStatus[currTabNum])
+                      Padding(
+                        padding: const EdgeInsets.only(right: 0.0),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.save,
+                            size: (Theme.of(context).iconTheme.size as double) +
+                                Provider.of<TextSizeProvider>(context,
+                                        listen: false)
+                                    .iconSizeToAdd,
+                          ),
+                          onPressed: () {
+                            debugPrint("Save pressed");
+                          },
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: IconButton(
@@ -164,7 +191,7 @@ class _HomeScreen extends State<HomeScreen>
                             oldTitle: currChartTitle,
                             currTabIndex: 0,
                             updateParent: endEdit,
-                            currChart: chartData as Chart,
+                            currChart: chartData,
                           ),
                         )
                       : Text(
@@ -446,7 +473,10 @@ class _HomeScreen extends State<HomeScreen>
                         ),
                 ),
               ),
-              body: TabContent(0),
+              body: TabContent(
+                0,
+                notifyParentOfChangedContent,
+              ),
             );
           },
         );
