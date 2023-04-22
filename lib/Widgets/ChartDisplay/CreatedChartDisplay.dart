@@ -20,8 +20,6 @@ class CreatedChartDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint("Chart data: " + currChart.toString());
-
     List<UserModel> currUserList =
         Provider.of<List<UserModel>>(context, listen: true);
     if (currUserList.isEmpty) {

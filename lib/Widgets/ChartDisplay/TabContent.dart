@@ -15,6 +15,8 @@ class TabContent extends StatelessWidget with GetItMixin {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       builder: (context, value, child) {
+        // debugPrint("Building chart" + value.circleTwoText.toString());
+
         return (!(value == Chart.emptyChart))
             ? CreatedChartDisplay(
                 circleDataIndex,

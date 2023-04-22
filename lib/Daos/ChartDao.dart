@@ -63,11 +63,15 @@ class ChartDao extends ParentDao {
     Global.streamMap[indexToRemove]?.cancel();
   }
 
-  static Future<String> addChart(Chart currChart) async {
+  Future<String> addChart(Chart currChart) async {
     DocumentReference docRef =
         await currChartCollection.add(currChart.toJson());
-    updateChart(currChart.copyWith(id: docRef.id));
+    await updateChartID(docRef.id, docRef.id);
     return docRef.id;
+  }
+
+  updateChartID(String newID, String chartID) async {
+    await updateValue('id', newID, chartID);
   }
 
   static Future<void> updateChart(Chart currChart) async {
@@ -95,11 +99,6 @@ class ChartDao extends ParentDao {
                 }
             });
     return ChartFromDatabase;
-  }
-
-  static Future<String> addChartToFirebase(Chart newChart, int index) async {
-    String idFromFirebase = await ChartDao.addChart(newChart);
-    return idFromFirebase;
   }
 
   Future<void> updateTitle(String newTitle, String chartID) async {

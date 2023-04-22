@@ -66,6 +66,8 @@ class RotatingPieChartState extends State<RotatingPieChart>
     super.initState();
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
+    _controller.animateTo(widget.pie.currAngle,
+        duration: const Duration(seconds: 5));
     flipStatusArray.clear();
     for (int i = 0; i < widget.pie.items.length; i++) {
       flipStatusArray.add(false);
@@ -79,18 +81,19 @@ class RotatingPieChartState extends State<RotatingPieChart>
       widget.chunkOverflowLimitProportion,
       widget.pie.textStyle,
     );
+    textParsingService.setItems(widget.pie.items);
     rotationService = RotationService(const Offset(0, 0));
+    rotationService.setLastAngle(widget.pie.currAngle);
     textParsingService.clearAllTextLists();
-    if (!(widget.pie.ringNum == 1)) {
-      textParsingService.setUpPhraseChunks(widget.items.length, widget.items);
+    if (widget.pie.ringNum != 1) {
+      textParsingService.setUpPhraseChunks(
+          widget.pie.items.length, widget.pie.items);
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.animateTo(widget.pie.currAngle,
-        duration: const Duration(seconds: 5));
   }
 
   /// Closes the controller / disploses of it
@@ -136,8 +139,34 @@ class RotatingPieChartState extends State<RotatingPieChart>
     // if();
   }
 
+  handleChangesByOtherUsers() {
+    if (textParsingService.numChunks != widget.pie.items.length) {
+      debugPrint("Num items changed");
+
+      textParsingService.setNumChunks(widget.pie.items.length);
+    }
+    if (!(widget.pie.ringNum == 1)) {
+      debugPrint("Text changed");
+      textParsingService.setUpPhraseChunks(
+          widget.pie.items.length, widget.pie.items);
+      textParsingService.setItems(widget.pie.items);
+    }
+    if (widget.pie.currAngle != rotationService.getLastAngle()) {
+      debugPrint("Angle changed");
+      rotationService.setLastAngle(widget.pie.currAngle);
+
+      setState(() {
+        _controller.animateTo(rotationService.getLastAngle(),
+            duration: const Duration(seconds: 1));
+        // _controller.value = rotationService.getLastAngle();
+        // debugPrint(_controller.value.toString());
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    handleChangesByOtherUsers();
     return Center(
       child: Container(
         decoration: BoxDecoration(

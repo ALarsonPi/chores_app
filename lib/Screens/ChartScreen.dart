@@ -7,6 +7,7 @@ import 'package:chore_app/Screens/ScreenArguments/newChartArguments.dart';
 import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChartItemInput.dart';
 import 'package:chore_app/Widgets/ConcentricChart/ConcentricChart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -221,7 +222,6 @@ class _ChartScreenState extends State<ChartScreen> {
   final formKey = GlobalKey<FormState>();
 
   late Chart newChart;
-  late UserModel currUser;
   UserDao userdao = UserDao();
 
   @override
@@ -614,18 +614,18 @@ class _ChartScreenState extends State<ChartScreen> {
                                             circleThreeAngle: 0,
                                           ),
                                           // Add chart to firebase
-                                          id =
-                                              await ChartDao.addChartToFirebase(
-                                            newChart,
-                                            args.index,
-                                          ),
-                                          await ChartDao.updateChart(
-                                            newChart.copyWith(id: id),
-                                          ),
-                                          UserDao().removeChartIDForUser(
-                                              id, currUser.id),
+
+                                          id = await ChartDao()
+                                              .addChart(newChart),
+                                          UserDao().addChartIDForUser(
+                                              id,
+                                              FirebaseAuth.instance.currentUser
+                                                  ?.uid as String),
                                           UserDao().addTabNumToUser(
-                                              args.index, currUser.id),
+                                            args.index,
+                                            FirebaseAuth.instance.currentUser
+                                                ?.uid as String,
+                                          ),
 
                                           ListenService.chartsNotifiers
                                               .elementAt(args.index)

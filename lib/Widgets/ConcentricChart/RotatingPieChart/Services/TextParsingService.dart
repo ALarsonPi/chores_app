@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:chore_app/Widgets/ConcentricChart/RotatingPieChart/Objects/PieInfo.dart';
 import 'package:flutter/material.dart';
 
 import '../Objects/PieChartItem.dart';
@@ -23,6 +24,24 @@ class TextParsingService {
   TextStyle pieTextStyle;
   late double middleVeritcalRadius;
 
+  late List<PieChartItem> items;
+
+  setItems(List<PieChartItem> items) {
+    this.items = items;
+  }
+
+  List<PieChartItem> getItems() {
+    return items;
+  }
+
+  int getNumChunks() {
+    return numChunks;
+  }
+
+  void setNumChunks(int newNum) {
+    numChunks = newNum;
+  }
+
   List<List<String>> chunkPhraseList = List.empty(growable: true);
   List<List<String>> reversePhraseChunkList = List.empty(growable: true);
   List<List<double>> forwardAlphaList = List.empty(growable: true);
@@ -40,11 +59,10 @@ class TextParsingService {
     reverseAlphaList.clear();
   }
 
-  void initializeLists() {}
-
   /// Sets up all the lists - phrases and alpha lists for upper and lower quadrants
   setUpPhraseChunks(int numChunks, List<PieChartItem> items) {
     assert(numChunks > 0);
+    clearAllTextLists();
     for (int i = 0; i < numChunks; i++) {
       setUpPhraseChunkAndAddToLists(items[i].name);
     }

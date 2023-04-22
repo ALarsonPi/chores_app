@@ -48,10 +48,9 @@ class ListenService {
   }
 
   static void onChanged(Chart chart, int index) {
-    if (chart == chartsNotifiers.elementAt(index).value) {
-      debugPrint("Already listening");
-      return;
-    }
+    // if (chart == chartsNotifiers.elementAt(index).value) {
+    //   return;
+    // }
 
     // int index = chartsNotifiers
     //     .toList()
@@ -150,7 +149,18 @@ class ListenService {
     Chart updatedChart = Chart.emptyChart;
     var subscription = docRef.snapshots().listen((event) {
       Chart chart = Chart.fromSnapshot(event);
-      chartsNotifiers[indexToAdd].value = chart;
+      updatedChart = chart;
+      if (chart == chartsNotifiers.elementAt(indexToAdd).value) {
+        debugPrint("Already listening and no change");
+        return;
+      } else {
+        if (chartsNotifiers[indexToAdd].value == Chart.emptyChart) {
+          debugPrint("Initializing Chart Data");
+        } else {
+          onChanged(chart, indexToAdd);
+        }
+        chartsNotifiers[indexToAdd].value = chart;
+      }
     });
     // debugPrint("Adding new listener");
     Global.streamMap.putIfAbsent(indexToAdd, () => subscription);

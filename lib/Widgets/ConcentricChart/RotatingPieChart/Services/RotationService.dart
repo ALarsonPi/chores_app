@@ -9,21 +9,31 @@ class RotationService {
 
   /// The dirction last dragged by the user
   late Offset direction;
+  late double lastAngle;
+
+  setLastAngle(double angle) {
+    lastAngle = angle;
+  }
+
+  double getLastAngle() {
+    return lastAngle;
+  }
 
   int translateAnimationPositionToChunkPosition(
       double animationPosition, int numChunks) {
-    debugPrint("AnimationPosition: " + animationPosition.toString());
-    debugPrint("numChunks: " + numChunks.toString());
+    // debugPrint("AnimationPosition: " + animationPosition.toString());
+    // debugPrint("numChunks: " + numChunks.toString());
     // 0.25 * 4 = 1;
     // 0.5 * 4 = 2;
     // 0.75 * 4 = 3
     // 1 * 4 = 4;;
 
-    0.16666666666 * 6;
-    double thing = (animationPosition / (1 / numChunks));
-    debugPrint("What about: " + thing.toString());
+    // 0.16666666666 * 6;
+    // double thing = (animationPosition / (1 / numChunks));
+    // debugPrint("What about: " + thing.toString());
 
-    return (animationPosition % (1 / numChunks)).floor();
+    // return (animationPosition % (1 / numChunks)).floor();
+    return 0;
   }
 
   /// Gets the last direction to set [ direction]
