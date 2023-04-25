@@ -11,7 +11,7 @@ import '../Models/frozen/Chart.dart';
 import '../Models/frozen/UserModel.dart';
 
 class ListenService {
-  static late StreamSubscription userListener;
+  static late StreamSubscription? userListener;
   static ValueNotifier<UserModel> userNotifier =
       ValueNotifier<UserModel>(UserModel.emptyUser);
   static List<ValueNotifier<Chart>> chartsNotifiers =
@@ -108,8 +108,7 @@ class ListenService {
   }
 
   static void cancelListeningToUser() {
-    debugPrint("Cancelling user listener");
-    userListener.cancel();
+    userListener?.cancel();
   }
 
   static cancelListeningToCharts() {

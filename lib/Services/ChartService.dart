@@ -46,6 +46,20 @@ class ChartService {
         saveStatus.circleThreeHasChanged;
   }
 
+  static void saveTabData(int tabNum, String chartID) {
+    TabSaveStatus saveStatus = tabSaveStatuses.elementAt(tabNum);
+    if (saveStatus.circleOneHasChanged) {
+      ChartDao().updateChartAngle(1, saveStatus.newPositionOne, chartID);
+    } else if (saveStatus.circleTwoHasChanged) {
+      ChartDao().updateChartAngle(2, saveStatus.newPositionTwo, chartID);
+    } else if (saveStatus.circleThreeHasChanged) {
+      ChartDao().updateChartAngle(3, saveStatus.newPositionThree, chartID);
+    } else {
+      debugPrint("Error in Sae Tab Data function");
+    }
+    tabSaveStatuses[tabNum] = TabSaveStatus();
+  }
+
   void processChartJoinRequest(Chart chartToJoin, UserModel currUser) async {
     if (chartToJoin == Chart.emptyChart) {
       Global.makeSnackbar("ERROR: Unable to join chart");

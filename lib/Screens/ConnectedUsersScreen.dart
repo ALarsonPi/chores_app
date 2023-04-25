@@ -1,7 +1,9 @@
+import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/UserModel.dart';
 import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/material.dart';
 
+import '../Models/frozen/Chart.dart';
 import 'ScreenArguments/connectedUserArguments.dart';
 
 class ConnectedUsersScreen extends StatefulWidget {
@@ -16,18 +18,12 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
   late final args =
       ModalRoute.of(context)!.settings.arguments as ConnectedUserArguments;
 
+  List<UserModel> requestingUsers = List.empty(growable: true);
+  List<UserModel> connectedUsers = List.empty(growable: true);
+
   @override
   void initState() {
     super.initState();
-
-    // Create a listener pointing to this currentChart (ID sent in in args)
-    // and listens to see if any changes are made to this chart
-    // and if any of those changes affect any of these Lists
-    // [pending, viewers, editors, owners] it will
-    // setState and rebuild based on the new data
-
-    // Changes would be made in ChartDao? or here?
-    // Or maybe just Listen to the Provider?
   }
 
   Future<void> _showEditUserDialog(String userID) async {
@@ -152,89 +148,104 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     }
   }
 
+  List<String> getRequestingUsers(Chart chart) {
+    return chart.pendingIDs;
+  }
+
+  List<String> getConnectedUsers(Chart chart) {
+    List<String> connectedUserIDs = List.empty(growable: true);
+    connectedUserIDs.addAll(chart.ownerIDs);
+    connectedUserIDs.addAll(chart.editorIDs);
+    connectedUserIDs.addAll(chart.viewerIDs);
+    return connectedUserIDs;
+  }
+
+  Future<List<UserModel>> getBatchOfUsers(List<String> ids) async {
+    return await UserDao().getBatchOfUserModels(ids);
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserModel user1 =
-        UserModel.emptyUser.copyWith(id: "123", name: "Jeff Bezos");
-    UserModel user2 =
-        UserModel.emptyUser.copyWith(id: "124", name: "Dr. Frankenstein");
-    UserModel user3 =
-        UserModel.emptyUser.copyWith(id: "125", name: "James Peach");
-    UserModel user4 =
-        UserModel.emptyUser.copyWith(id: "126", name: "Chad Viewer");
-    UserModel user5 =
-        UserModel.emptyUser.copyWith(id: "127", name: "Stephen Einstein");
-    UserModel user6 =
-        UserModel.emptyUser.copyWith(id: "128", name: "James Veitch");
+    return ValueListenableBuilder(
+      builder: (context, chart, child) {
+        List<String> requestingUserIDs = getRequestingUsers(chart);
+        List<String> connectedUserIDs = getConnectedUsers(chart);
 
-    List<UserModel> requestingUsers = List.empty(growable: true);
-    requestingUsers.add(user1);
-    requestingUsers.add(user2);
-    requestingUsers.add(user3);
+        // If there are some Users to fetch
+        // and they haven't been fetched yet, fetch them
+        if (requestingUserIDs.isNotEmpty &&
+            requestingUsers.length != requestingUserIDs.length) {
+          getBatchOfUsers(requestingUserIDs).then((listOfUsers) => {
+                setState(() => requestingUsers = listOfUsers),
+              });
+        }
+        if (connectedUserIDs.isNotEmpty &&
+            connectedUsers.length != connectedUserIDs.length) {
+          getBatchOfUsers(connectedUserIDs).then((listOfUsers) => {
+                setState(() => connectedUsers = listOfUsers),
+              });
+        }
 
-    List<UserModel> connectedUsers = List.empty(growable: true);
-    connectedUsers.add(user4);
-    connectedUsers.add(user5);
-    connectedUsers.add(user6);
-    connectedUsers.add(ListenService.userNotifier.value);
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(args.chartData.chartTitle),
-        centerTitle: true,
-      ),
-      body: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        children: [
-          const SizedBox(height: 30),
-          Text(
-            "Users Requesting Access (${requestingUsers.length})",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
-              color: Theme.of(context).textTheme.bodyMedium?.color,
-            ),
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+            title: Text(chart.chartTitle),
+            centerTitle: true,
           ),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
+          body: ListView(
             shrinkWrap: true,
-            itemCount: requestingUsers.length,
-            itemBuilder: (BuildContext context, int index) {
-              return makeCustomTile(
-                title: requestingUsers[index].name as String,
-                icon: const Icon(Icons.add),
-                color: const Color(0xffffcccb),
-                userID: requestingUsers[index].id,
-              );
-            },
+            padding: EdgeInsets.zero,
+            children: [
+              const SizedBox(height: 30),
+              Text(
+                "Users Requesting Access (${requestingUsers.length})",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: requestingUsers.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return makeCustomTile(
+                    title: requestingUsers[index].name as String,
+                    icon: const Icon(Icons.add),
+                    color: const Color(0xffffcccb),
+                    userID: requestingUsers[index].id,
+                  );
+                },
+              ),
+              const SizedBox(height: 30),
+              Text(
+                "Connected Users (${connectedUsers.length})",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: connectedUsers.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return makeCustomTile(
+                    title: connectedUsers[index].name as String,
+                    subtitle: getUserRole(connectedUsers[index]),
+                    icon: const Icon(Icons.view_array_sharp),
+                    color: const Color(0xffe4f2fd),
+                    userID: connectedUsers[index].id,
+                  );
+                },
+              ),
+            ],
           ),
-          const SizedBox(height: 30),
-          Text(
-            "Connected Users (${connectedUsers.length})",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.headlineLarge?.fontSize,
-              color: Theme.of(context).textTheme.bodyMedium?.color,
-            ),
-          ),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: connectedUsers.length,
-            itemBuilder: (BuildContext context, int index) {
-              return makeCustomTile(
-                title: connectedUsers[index].name as String,
-                subtitle: getUserRole(connectedUsers[index]),
-                icon: const Icon(Icons.view_array_sharp),
-                color: const Color(0xffe4f2fd),
-                userID: connectedUsers[index].id,
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      },
+      valueListenable: ListenService.chartsNotifiers.elementAt(args.index),
     );
   }
 }

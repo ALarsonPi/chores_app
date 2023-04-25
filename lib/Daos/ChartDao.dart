@@ -109,6 +109,13 @@ class ChartDao extends ParentDao {
     await updateList('pendingIDs', pendingID, chartID, ListAction.ADD);
   }
 
+  Future<void> removeUserIDFromChart(String userID, chartID) async {
+    await updateList('pendingIDs', userID, chartID, ListAction.REMOVE);
+    await updateList('viewerIDs', userID, chartID, ListAction.REMOVE);
+    await updateList('editorIDs', userID, chartID, ListAction.REMOVE);
+    await updateList('ownerIDs', userID, chartID, ListAction.REMOVE);
+  }
+
   Future<void> removePendingID(String chartID, String pendingID) async {
     await updateList('pendingIDs', pendingID, chartID, ListAction.REMOVE);
   }

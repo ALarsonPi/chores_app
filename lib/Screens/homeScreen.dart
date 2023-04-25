@@ -51,7 +51,10 @@ class _HomeScreen extends State<HomeScreen>
         Provider.of<ConnectivityResult>(context, listen: true);
     if (network != ConnectivityResult.wifi) {
       ListenService.cancelListeningToCharts();
-      ListenService.cancelListeningToUser();
+      // This isn't needed as firebase will just update user object
+      // when wifi resumes, or when it does resume, home screen will fetch
+      // the user anyway
+      // ListenService.cancelListeningToUser();
       Global.dataTransferComplete = false;
       return Center(
         child: Image.asset("assets/images/dino_dark.png"),
@@ -140,342 +143,378 @@ class _HomeScreen extends State<HomeScreen>
           builder: (context, isKeyboardVisible) {
             return Scaffold(
               // key: Global.scaffoldKey,
+              body: TabContent(
+                0,
+                notifyParentOfChangedContent,
+              ),
               resizeToAvoidBottomInset: false,
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(Global.toolbarHeight +
                     Provider.of<TextSizeProvider>(context, listen: false)
                         .fontSizeToAdd),
-                child: AppBar(
-                  toolbarHeight: Global.toolbarHeight,
-                  centerTitle: true,
-                  actions: [
-                    if (tabsSaveStatus[currTabNum])
-                      Padding(
-                        padding: const EdgeInsets.only(right: 0.0),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.save,
-                            size: (Theme.of(context).iconTheme.size as double) +
-                                Provider.of<TextSizeProvider>(context,
-                                        listen: false)
-                                    .iconSizeToAdd,
+                child: ValueListenableBuilder(
+                  builder: (context, chart, child) {
+                    return AppBar(
+                      toolbarHeight: Global.toolbarHeight,
+                      centerTitle: true,
+                      actions: [
+                        if (tabsSaveStatus[currTabNum])
+                          Padding(
+                            padding: const EdgeInsets.only(right: 0.0),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.save,
+                                size: (Theme.of(context).iconTheme.size
+                                        as double) +
+                                    Provider.of<TextSizeProvider>(context,
+                                            listen: false)
+                                        .iconSizeToAdd,
+                              ),
+                              onPressed: () {
+                                ChartService.saveTabData(
+                                    currTabNum,
+                                    ListenService.chartsNotifiers
+                                        .elementAt(currTabNum)
+                                        .value
+                                        .id);
+                                setState(() {
+                                  tabsSaveStatus[currTabNum] = false;
+                                });
+                              },
+                            ),
                           ),
-                          onPressed: () {
-                            debugPrint("Save pressed");
-                          },
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          size: (Theme.of(context).iconTheme.size as double) +
-                              Provider.of<TextSizeProvider>(context,
-                                      listen: false)
-                                  .iconSizeToAdd,
-                        ),
-                        onPressed: () {
-                          Navigator.pushNamed(context, 'settings');
-                        },
-                      ),
-                    )
-                  ],
-                  title: (isEditingTitle)
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width * 0.1025,
-                          ),
-                          child: ChangeTitleWidget(
-                            key: Global.changeTitleWidgetKey,
-                            oldTitle: currChartTitle,
-                            currTabIndex: 0,
-                            updateParent: endEdit,
-                            currChart: chartData,
-                          ),
-                        )
-                      : Text(
-                          currChartTitle,
-                          style: TextStyle(
-                            fontSize: (Theme.of(context)
-                                    .textTheme
-                                    .headlineLarge
-                                    ?.fontSize as double) +
-                                Provider.of<TextSizeProvider>(context,
-                                        listen: true)
-                                    .fontSizeToAdd,
-                            color: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.color,
-                          ),
-                        ),
-                  leading: (isCurrChartEmpty)
-                      ? null
-                      : PopupMenuButton<int>(
-                          icon: (hasNewNotification && (isEditor || isOwner))
-                              ? badges.Badge(
-                                  badgeContent: const Text(''),
-                                  child: Icon(
-                                    Icons.menu,
-                                    size: (Theme.of(context).iconTheme.size
-                                            as double) +
-                                        Provider.of<TextSizeProvider>(context,
-                                                listen: false)
-                                            .iconSizeToAdd,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.menu,
-                                  size: (Theme.of(context).iconTheme.size
-                                          as double) +
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.settings,
+                              size:
+                                  (Theme.of(context).iconTheme.size as double) +
                                       Provider.of<TextSizeProvider>(context,
                                               listen: false)
                                           .iconSizeToAdd,
-                                ),
-                          offset: Offset(
-                              0.0,
-                              Global.toolbarHeight -
-                                  Provider.of<TextSizeProvider>(context,
-                                          listen: false)
-                                      .fontSizeToAdd -
-                                  2),
-                          itemBuilder: (context) => [
-                            if (isEditor || isOwner)
-                              PopupMenuItem<int>(
-                                value: 0,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: double.infinity,
-                                    child: Icon(
-                                      Icons.abc_outlined,
-                                      size: (Theme.of(context).iconTheme.size
-                                              as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .iconSizeToAdd,
-                                      color: Colors.amber,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    'Edit Title',
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .fontSizeToAdd,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    setState(() {
-                                      isEditingTitle = true;
-                                    });
-                                  },
-                                ),
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, 'settings');
+                            },
+                          ),
+                        )
+                      ],
+                      title: (isEditingTitle)
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                right:
+                                    MediaQuery.of(context).size.width * 0.1025,
                               ),
-                            if (isEditor || isOwner)
-                              PopupMenuItem<int>(
-                                value: 1,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: double.infinity,
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: (Theme.of(context).iconTheme.size
-                                              as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .iconSizeToAdd,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    'Edit Content',
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .fontSizeToAdd,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.pushNamed(
-                                        context, ChartScreen.routeName,
-                                        arguments: CreateChartArguments(
-                                          0,
-                                          chartData as Chart,
-                                          isInEditMode: true,
-                                        ));
-                                  },
-                                ),
+                              child: ChangeTitleWidget(
+                                key: Global.changeTitleWidgetKey,
+                                oldTitle: chart.chartTitle,
+                                currTabIndex: 0,
+                                updateParent: endEdit,
+                                currChart: chart,
                               ),
-                            if (isEditor || isOwner)
-                              PopupMenuItem<int>(
-                                value: 2,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: double.infinity,
-                                    child: Icon(
-                                      Icons.delete,
-                                      size: (Theme.of(context).iconTheme.size
-                                              as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .iconSizeToAdd,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    'Delete Chart',
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .fontSizeToAdd,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    ChartDao.removeListener(currUser.chartIDs
-                                            ?.indexOf((chartData as Chart).id)
-                                        as int);
-                                    UserDao().removeChartIDForUser(
-                                        (chartData as Chart).id, currUser.id);
-                                    ChartDao.deleteChart(chartData as Chart);
-                                    ListenService.chartsNotifiers[0].value =
-                                        Chart.emptyChart;
-                                    Navigator.pop(context);
-                                  },
-                                ),
+                            )
+                          : Text(
+                              chart.chartTitle,
+                              style: TextStyle(
+                                fontSize: (Theme.of(context)
+                                        .textTheme
+                                        .headlineLarge
+                                        ?.fontSize as double) +
+                                    Provider.of<TextSizeProvider>(context,
+                                            listen: true)
+                                        .fontSizeToAdd,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.color,
                               ),
-                            if (isEditor || isOwner)
-                              PopupMenuItem<int>(
-                                value: 3,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: double.infinity,
-                                    child: hasNewNotification &&
-                                            (isEditor || isOwner)
-                                        ? badges.Badge(
-                                            badgeContent: const Text(''),
-                                            position: BadgePosition.topEnd(
-                                              top: 1,
-                                              end: -1,
-                                            ),
-                                            child: Icon(
-                                              Icons.add_alert,
-                                              size: (Theme.of(context)
-                                                      .iconTheme
-                                                      .size as double) +
-                                                  Provider.of<TextSizeProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .iconSizeToAdd,
-                                              color: Colors.green,
-                                            ),
-                                          )
-                                        : Icon(
-                                            Icons.add_alert,
-                                            size: (Theme.of(context)
-                                                    .iconTheme
-                                                    .size as double) +
-                                                Provider.of<TextSizeProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .iconSizeToAdd,
-                                            color: Colors.green,
-                                          ),
-                                  ),
-                                  title: Text(
-                                    'Connected Users',
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .fontSizeToAdd,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.pushNamed(
-                                      context,
-                                      ConnectedUsersScreen.routeName,
-                                      arguments: ConnectedUserArguments(
-                                        0,
-                                        chartData as Chart,
+                            ),
+                      leading: (isCurrChartEmpty)
+                          ? null
+                          : PopupMenuButton<int>(
+                              icon: (hasNewNotification &&
+                                      (isEditor || isOwner))
+                                  ? badges.Badge(
+                                      badgeContent: const Text(''),
+                                      child: Icon(
+                                        Icons.menu,
+                                        size: (Theme.of(context).iconTheme.size
+                                                as double) +
+                                            Provider.of<TextSizeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .iconSizeToAdd,
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            if (!isOwner)
-                              PopupMenuItem<int>(
-                                value: 4,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: double.infinity,
-                                    child: Icon(
-                                      Icons.group_remove,
+                                    )
+                                  : Icon(
+                                      Icons.menu,
                                       size: (Theme.of(context).iconTheme.size
                                               as double) +
                                           Provider.of<TextSizeProvider>(context,
                                                   listen: false)
                                               .iconSizeToAdd,
-                                      color: const Color.fromARGB(
-                                          255, 253, 108, 127),
-                                      //Colors.orangeAccent,
+                                    ),
+                              offset: Offset(
+                                  0.0,
+                                  Global.toolbarHeight -
+                                      Provider.of<TextSizeProvider>(context,
+                                              listen: false)
+                                          .fontSizeToAdd -
+                                      2),
+                              itemBuilder: (context) => [
+                                if (isEditor || isOwner)
+                                  PopupMenuItem<int>(
+                                    value: 0,
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: SizedBox(
+                                        height: double.infinity,
+                                        child: Icon(
+                                          Icons.abc_outlined,
+                                          size: (Theme.of(context)
+                                                  .iconTheme
+                                                  .size as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .iconSizeToAdd,
+                                          color: Colors.amber,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Edit Title',
+                                        style: TextStyle(
+                                          fontSize: (Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.fontSize as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .fontSizeToAdd,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        setState(() {
+                                          isEditingTitle = true;
+                                        });
+                                      },
                                     ),
                                   ),
-                                  title: Text(
-                                    'Leave Chart',
-                                    style: TextStyle(
-                                      fontSize: (Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.fontSize as double) +
-                                          Provider.of<TextSizeProvider>(context,
-                                                  listen: false)
-                                              .fontSizeToAdd,
+                                if (isEditor || isOwner)
+                                  PopupMenuItem<int>(
+                                    value: 1,
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: SizedBox(
+                                        height: double.infinity,
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: (Theme.of(context)
+                                                  .iconTheme
+                                                  .size as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .iconSizeToAdd,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Edit Content',
+                                        style: TextStyle(
+                                          fontSize: (Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.fontSize as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .fontSizeToAdd,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        Navigator.pushNamed(
+                                            context, ChartScreen.routeName,
+                                            arguments: CreateChartArguments(
+                                              0,
+                                              chartData as Chart,
+                                              isInEditMode: true,
+                                            ));
+                                      },
                                     ),
                                   ),
-                                  onTap: () {
-                                    ChartDao.removeListener(currUser.chartIDs
-                                        ?.indexOf(chartData.id) as int);
-                                    ChartDao().removePendingID(
-                                        chartData.id, currUser.id);
-                                    UserDao().removeChartIDForUser(
-                                        chartData.id, currUser.id);
-                                    ListenService.chartsNotifiers[0].value =
-                                        Chart.emptyChart;
-                                    Navigator.pop(context);
-                                  },
+                                if (isEditor || isOwner)
+                                  PopupMenuItem<int>(
+                                    value: 2,
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: SizedBox(
+                                        height: double.infinity,
+                                        child: Icon(
+                                          Icons.delete,
+                                          size: (Theme.of(context)
+                                                  .iconTheme
+                                                  .size as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .iconSizeToAdd,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Delete Chart',
+                                        style: TextStyle(
+                                          fontSize: (Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.fontSize as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .fontSizeToAdd,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        ChartDao.removeListener(
+                                            currUser.chartIDs?.indexOf(
+                                                    (chartData as Chart).id)
+                                                as int);
+                                        UserDao().removeChartIDForUser(
+                                            (chartData as Chart).id,
+                                            currUser.id);
+                                        ChartDao.deleteChart(
+                                            chartData as Chart);
+                                        ListenService.chartsNotifiers[0].value =
+                                            Chart.emptyChart;
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                if (isEditor || isOwner)
+                                  PopupMenuItem<int>(
+                                    value: 3,
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: SizedBox(
+                                        height: double.infinity,
+                                        child: hasNewNotification &&
+                                                (isEditor || isOwner)
+                                            ? badges.Badge(
+                                                badgeContent: const Text(''),
+                                                position: BadgePosition.topEnd(
+                                                  top: 1,
+                                                  end: -1,
+                                                ),
+                                                child: Icon(
+                                                  Icons.add_alert,
+                                                  size: (Theme.of(context)
+                                                          .iconTheme
+                                                          .size as double) +
+                                                      Provider.of<TextSizeProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .iconSizeToAdd,
+                                                  color: Colors.green,
+                                                ),
+                                              )
+                                            : Icon(
+                                                Icons.add_alert,
+                                                size: (Theme.of(context)
+                                                        .iconTheme
+                                                        .size as double) +
+                                                    Provider.of<TextSizeProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .iconSizeToAdd,
+                                                color: Colors.green,
+                                              ),
+                                      ),
+                                      title: Text(
+                                        'Connected Users',
+                                        style: TextStyle(
+                                          fontSize: (Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.fontSize as double) +
+                                              Provider.of<TextSizeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .fontSizeToAdd,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        Navigator.pushNamed(
+                                          context,
+                                          ConnectedUsersScreen.routeName,
+                                          arguments: ConnectedUserArguments(
+                                            0,
+                                            chartData as Chart,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                // if (!isOwner)
+                                PopupMenuItem<int>(
+                                  value: 4,
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: SizedBox(
+                                      height: double.infinity,
+                                      child: Icon(
+                                        Icons.group_remove,
+                                        size: (Theme.of(context).iconTheme.size
+                                                as double) +
+                                            Provider.of<TextSizeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .iconSizeToAdd,
+                                        color: const Color.fromARGB(
+                                            255, 253, 108, 127),
+                                        //Colors.orangeAccent,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      'Leave Chart',
+                                      style: TextStyle(
+                                        fontSize: (Theme.of(context)
+                                                .textTheme
+                                                .displaySmall
+                                                ?.fontSize as double) +
+                                            Provider.of<TextSizeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .fontSizeToAdd,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      ChartDao.removeListener(currUser.chartIDs
+                                          ?.indexOf(chartData.id) as int);
+                                      ChartDao().removeUserIDFromChart(
+                                        currUser.id,
+                                        chartData.id,
+                                      );
+                                      UserDao().removeChartIDForUser(
+                                          chartData.id, currUser.id);
+                                      ListenService.chartsNotifiers[0].value =
+                                          Chart.emptyChart;
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
-                              ),
-                          ],
-                        ),
+                              ],
+                            ),
+                    );
+                  },
+                  valueListenable:
+                      ListenService.chartsNotifiers.elementAt(currTabNum),
                 ),
-              ),
-              body: TabContent(
-                0,
-                notifyParentOfChangedContent,
               ),
             );
           },

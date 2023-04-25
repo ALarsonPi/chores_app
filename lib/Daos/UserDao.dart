@@ -1,6 +1,7 @@
 import 'package:chore_app/Daos/ParentDao.dart';
 import 'package:chore_app/Models/frozen/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 class UserDao extends ParentDao {
   static final CollectionReference currUserCollection =
@@ -13,6 +14,22 @@ class UserDao extends ParentDao {
 
   DocumentReference getUserDocByID(String id) {
     return currUserCollection.doc(id);
+  }
+
+  Future<List<UserModel>> getBatchOfUserModels(List<String> ids) async {
+    List<UserModel> userModels = List.empty(growable: true);
+    // Can only get a batch of size 10
+    for (int i = ids.length; i > 0; i -= 10) {
+      await getCollection()
+          .where(FieldPath.documentId, whereIn: ids)
+          .get()
+          .then((querySnapshot) {
+        for (DocumentSnapshot doc in querySnapshot.docs) {
+          userModels.add(UserModel.fromSnapshot(doc));
+        }
+      });
+    }
+    return userModels;
   }
 
   Future<UserModel> getUserByID(String id) async {
