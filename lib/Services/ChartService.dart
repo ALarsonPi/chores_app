@@ -23,9 +23,24 @@ class ChartService {
 
   // Remove User from other lists
   // add User to correct list
-  void setUserRoleForChart(
-      String newRole, String userID, Chart chart, bool isJoiningChart) {
+  void setUserRoleForChart(String newRole, String userID, Chart chart,
+      bool isJoiningChart, int index) {
     String propertyToChange = "";
+    if (newRole == "Remove") {
+      if (chart.pendingIDs.contains(userID)) {
+        chartDao.updateList("pendingIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.viewerIDs.contains(userID)) {
+        chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.editorIDs.contains(userID)) {
+        chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.ownerIDs.contains(userID)) {
+        chartDao.updateList("ownerIDs", userID, chart.id, ListAction.REMOVE);
+      }
+      UserDao().updateList("chartIDs", chart.id, userID, ListAction.REMOVE);
+      UserDao()
+          .updateList("associatedTabNums", index, userID, ListAction.REMOVE);
+      return;
+    }
     if (newRole == "Viewer") {
       propertyToChange = "viewerIDs";
       if (chart.editorIDs.contains(userID)) {
@@ -54,6 +69,9 @@ class ChartService {
     if (isJoiningChart) {
       if (chart.pendingIDs.contains(userID)) {
         chartDao.updateList("pendingIDs", userID, chart.id, ListAction.REMOVE);
+        UserDao().updateList("chartIDs", chart.id, userID, ListAction.ADD);
+        UserDao()
+            .updateList("associatedTabNums", index, userID, ListAction.ADD);
       }
     }
     chartDao.updateList(propertyToChange, userID, chart.id, ListAction.ADD);
@@ -114,7 +132,8 @@ class ChartService {
     tabSaveStatuses[tabNum] = TabSaveStatus();
   }
 
-  void processChartJoinRequest(Chart chartToJoin, UserModel currUser) async {
+  void processChartJoinRequest(
+      Chart chartToJoin, UserModel currUser, int index) async {
     if (chartToJoin == Chart.emptyChart) {
       Global.makeSnackbar("ERROR: Unable to join chart");
       return;
@@ -134,6 +153,7 @@ class ChartService {
       }
       await ChartDao().addPendingRequest(currUser.id, chartToJoin.id);
       await UserDao().addChartIDForUser(currChart.id, currUser.id);
+      await UserDao().addTabNumToUser(index, currUser.id);
       ListenService.addChartListenerByFullID(0, currChart.id);
     }
   }

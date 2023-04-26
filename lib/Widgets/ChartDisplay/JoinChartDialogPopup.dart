@@ -6,8 +6,10 @@ import '../../Daos/ChartDao.dart';
 import '../../Models/frozen/Chart.dart';
 import '../../Services/ChartService.dart';
 
+// ignore: must_be_immutable
 class JoinChartPopupContent extends StatefulWidget {
-  const JoinChartPopupContent({super.key});
+  JoinChartPopupContent({super.key, this.index = 0});
+  int index;
 
   @override
   State<JoinChartPopupContent> createState() => _JoinChartPopupContentState();
@@ -71,6 +73,7 @@ class _JoinChartPopupContentState extends State<JoinChartPopupContent> {
                               ChartService().processChartJoinRequest(
                                 chartToJoin,
                                 ListenService.userNotifier.value,
+                                widget.index,
                               );
                               Navigator.of(context, rootNavigator: true).pop();
                             },

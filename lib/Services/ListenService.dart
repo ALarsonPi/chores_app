@@ -30,13 +30,39 @@ class ListenService {
     final DocumentReference docRef = UserDao().getUserDocByID(currUser.id);
     var subscription = docRef.snapshots().listen((event) {
       userNotifier.value = UserModel.fromSnapshot(event);
+      // Fix that only works for one tab
+      if (userNotifier.value.chartIDs != null &&
+          userNotifier.value.chartIDs!.isEmpty) {
+        debugPrint("User found charts empty");
+        for (var stream in Global.streamMap.entries) {
+          stream.value.cancel();
+        }
+        for (var notifiers in chartsNotifiers) {
+          notifiers.value = Chart.emptyChart;
+        }
+      }
     });
     userListener = subscription;
   }
 
+  static void updateChartListenersIfUserHasNoCharts() {
+    if (userNotifier.value.chartIDs!.isNotEmpty) {
+      debugPrint("Initializing chart listeners");
+      debugPrint((userNotifier.value.chartIDs as List<String>).toString());
+    } else {
+      // If user has no charts to listen to
+      // no charts should be shown
+      // hacky way at fixing bigger problem, but
+      // works for now
+      for (var notifier in chartsNotifiers) {
+        notifier.value = Chart.emptyChart;
+      }
+    }
+  }
+
   static void setUpChartListeners(UserModel currUser) {
     if (userNotifier.value.chartIDs != null) {
-      debugPrint("Initializing chart listeners");
+      // updateChartListenersIfUserHasNoCharts();
       List<String> charts = (userNotifier.value.chartIDs as List<String>);
       for (int i = 0; i < charts.length; i++) {
         debugPrint("Initializing Chart listener(${i}");
@@ -48,16 +74,6 @@ class ListenService {
   }
 
   static void onChanged(Chart chart, int index) {
-    // if (chart == chartsNotifiers.elementAt(index).value) {
-    //   return;
-    // }
-
-    // int index = chartsNotifiers
-    //     .toList()
-    //     .elemente((element) => element.value.id == chart.id)
-    //     .first
-    //     .value;
-
     debugPrint(
       "There wwas a change for listener: " +
           chart.chartTitle +
@@ -73,38 +89,33 @@ class ListenService {
         !chart.viewerIDs.contains(currUser.id) &&
         !chart.editorIDs.contains(currUser.id) &&
         !chart.ownerIDs.contains(currUser.id)) {
-      cancelListeningToChartAtIndex(index, chart.id);
+      // cancelListeningToChartAtIndex(
+      //   index,
+      //   chart.id,
+      //   currUser.id,
+      //   chart,
+      //   currUser,
+      // );
       return;
     }
-
-    // debugPrint("About to update value to " + updatedChart.toString());
-    // if (chart !=
-    //     Global.getIt.get<ChartList>().getCurrNotifierByIndex(index).value) {
-    //   // debugPrint("Weren't equal");
-    // } else {
-    //   // debugPrint("Were equal before");
-    // }
-    // Global.getIt.get<ChartList>().getCurrNotifierByIndex(indexToAdd).value =
-    //     updatedChart;
-    // if (updatedChart ==
-    //     Global.getIt
-    //         .get<ChartList>()
-    //         .getCurrNotifierByIndex(indexToAdd)
-    //         .value) {
-    //   // debugPrint("Now are equal");
-    // }
     return;
   }
 
-  static void cancelListeningToChartAtIndex(int index, String chartID) {
+  static void cancelListeningToChartAtIndex(
+    int index,
+    String chartID,
+    String userID,
+    Chart chart,
+    UserModel user,
+  ) {
     debugPrint("Cancelling listener at index " + index.toString());
     Global.streamMap[index]?.cancel();
 
     // Update Notifier to point to emptyChart
     chartsNotifiers.elementAt(index).value = Chart.emptyChart;
     UserDao userDao = UserDao();
-    userDao.updateList(
-        'associatedTabNums', chartID, chartID, ListAction.REMOVE);
+    userDao.updateList('chartIDs', chartID, userID, ListAction.REMOVE);
+    userDao.updateList('associatedTabNums', index, userID, ListAction.REMOVE);
   }
 
   static void cancelListeningToUser() {

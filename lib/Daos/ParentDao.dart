@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 abstract class ParentDao {
   CollectionReference getCollection();
@@ -26,6 +27,7 @@ abstract class ParentDao {
 
   updateList(
       String parameter, var value, String docID, ListAction action) async {
+    debugPrint("updating " + parameter);
     var doc = getCollection().doc(docID);
     await getCollection().doc(docID).update({
       parameter: (action == ListAction.ADD)

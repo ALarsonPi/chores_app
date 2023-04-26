@@ -126,6 +126,20 @@ class _HomeScreen extends State<HomeScreen>
     return ValueListenableBuilder(
       valueListenable: ListenService.chartsNotifiers.elementAt(currTabNum),
       builder: (context, chartData, child) {
+        // debugPrint("HERE");
+        // debugPrint(ListenService.userNotifier.value.toString());
+        // debugPrint(
+        //     (ListenService.userNotifier.value.chartIDs != null).toString());
+        // debugPrint(
+        //     (ListenService.userNotifier.value.chartIDs!.isNotEmpty).toString());
+        // if (ListenService.userNotifier.value.chartIDs == null ||
+        //     ListenService.userNotifier.value.chartIDs!.isEmpty ||
+        //     !ListenService.userNotifier.value.associatedTabNums!
+        //         .contains(currTabNum)) {
+        //   debugPrint("inside");
+        //   ListenService.chartsNotifiers[currTabNum].value = Chart.emptyChart;
+        // }
+        // ListenService.updateChartListenersIfUserHasNoCharts();
         // Don't show Chart Edit Menu if chart is empty or settings screen
         bool isOwner = chartData.ownerIDs.contains(currUserId);
         bool isEditor = chartData.editorIDs.contains(currUserId);
@@ -379,7 +393,7 @@ class _HomeScreen extends State<HomeScreen>
                                   },
                                 ),
                               ),
-                            if (isEditor || isOwner)
+                            if (isOwner)
                               PopupMenuItem<int>(
                                 value: 3,
                                 child: ListTile(

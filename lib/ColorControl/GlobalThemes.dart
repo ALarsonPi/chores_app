@@ -20,7 +20,10 @@ class GlobalThemes {
       iconTheme: getIconThemeData(isDarkMode),
       secondaryHeaderColor: getSecondaryColor(isDarkMode),
       chipTheme: ChipThemeData(
-          selectedColor: (isDarkMode) ? Colors.white : Colors.grey[800]),
+        selectedColor: (isDarkMode) ? Colors.white : Colors.grey[800],
+        selectedShadowColor: (isDarkMode) ? Colors.grey[800] : Colors.white,
+        secondarySelectedColor: Colors.grey[800],
+      ),
       listTileTheme: getListTileThemeData(isDarkMode),
       inputDecorationTheme: const InputDecorationTheme(
         enabledBorder: OutlineInputBorder(

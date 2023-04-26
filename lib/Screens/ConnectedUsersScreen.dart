@@ -1,5 +1,7 @@
 import 'package:chore_app/Daos/UserDao.dart';
 import 'package:chore_app/Models/frozen/UserModel.dart';
+import 'package:chore_app/Screens/widgets/customTileWidget.dart';
+import 'package:chore_app/Screens/widgets/roleInfoWidget.dart';
 import 'package:chore_app/Services/ChartService.dart';
 import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/material.dart';
@@ -22,28 +24,21 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
   List<UserModel> requestingUsers = List.empty(growable: true);
   List<UserModel> connectedUsers = List.empty(growable: true);
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<void> _showEditUserDialog({
+  Future<void> _showAssignUserRoleDialog({
     required UserModel userModel,
+    required String title,
   }) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit User Role'),
+          title: Text(title),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('What role should ${userModel.name} have?'),
-                const Text('Viewers can only see the chart'),
-                const Text('Editors can change the title and content'),
-                const Text(
-                    'Owners can add users to the chart, and delete the chart'),
+                const RoleInfoWidget(),
               ],
             ),
           ),
@@ -54,7 +49,9 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                 TextButton(
                   child: Text(
                     'Cancel',
-                    style: TextStyle(color: Colors.grey[800]),
+                    style: TextStyle(
+                      color: Theme.of(context).chipTheme.selectedShadowColor,
+                    ),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -78,6 +75,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .elementAt(args.index)
                                 .value,
                             true,
+                            args.index,
                           );
                         }
                         Navigator.of(context).pop();
@@ -98,6 +96,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .elementAt(args.index)
                                 .value,
                             true,
+                            args.index,
                           );
                         }
                         Navigator.of(context).pop();
@@ -118,108 +117,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .elementAt(args.index)
                                 .value,
                             true,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showJoinUserDialog({
-    required UserModel userModel,
-  }) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Assign User Role'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('What role should ${userModel.name} have?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.grey[800]),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      child: const Text('Viewer'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .viewerIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Viewer",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Editor'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .editorIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Editor",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Owner'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .ownerIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Owner",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
+                            args.index,
                           );
                         }
                         Navigator.of(context).pop();
@@ -252,7 +150,12 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).chipTheme.selectedShadowColor,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -261,7 +164,10 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
               child: const Text('Approve'),
               onPressed: () {
                 Navigator.of(context).pop();
-                _showJoinUserDialog(userModel: userModel);
+                _showAssignUserRoleDialog(
+                  userModel: userModel,
+                  title: 'Assign User Role',
+                );
               },
             ),
           ],
@@ -270,33 +176,49 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     );
   }
 
-  Widget makeCustomTile({
-    required UserModel user,
-    required Icon icon,
-    required Color color,
-    String? subtitle,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 6.0, right: 8.0),
-      child: ListTile(
-        onTap: () => {
-          (subtitle != null)
-              ? _showEditUserDialog(userModel: user)
-              : _showAcceptUserDialog(user),
-        },
-        title: Text(
-          user.name as String,
-          textScaleFactor: 1.25,
-        ),
-        subtitle: (subtitle != null) ? Text(subtitle) : null,
-        tileColor: color,
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            icon,
+  Future<void> _showDeleteUserDialog(UserModel userModel) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove User from Chart'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'Would you like to remove ${userModel.name} from the chart?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).chipTheme.selectedShadowColor,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Remove'),
+              onPressed: () {
+                ChartService().setUserRoleForChart(
+                  "Remove",
+                  userModel.id,
+                  ListenService.chartsNotifiers.elementAt(args.index).value,
+                  false,
+                  args.index,
+                );
+                Navigator.of(context).pop();
+              },
+            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -379,10 +301,12 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                 shrinkWrap: true,
                 itemCount: requestingUsers.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return makeCustomTile(
+                  return CustomTileWidget(
                     user: requestingUsers[index],
                     icon: const Icon(Icons.add),
                     color: const Color(0xffffcccb),
+                    showAcceptDialog: _showAcceptUserDialog,
+                    showDeleteDialog: _showDeleteUserDialog,
                   );
                 },
               ),
@@ -400,11 +324,13 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                 shrinkWrap: true,
                 itemCount: connectedUsers.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return makeCustomTile(
+                  return CustomTileWidget(
                     user: connectedUsers[index],
-                    subtitle: getUserRole(connectedUsers[index]),
                     icon: const Icon(Icons.view_array_sharp),
                     color: const Color(0xffe4f2fd),
+                    subtitle: getUserRole(connectedUsers[index]),
+                    showRoleDialog: _showAssignUserRoleDialog,
+                    showDeleteDialog: _showDeleteUserDialog,
                   );
                 },
               ),

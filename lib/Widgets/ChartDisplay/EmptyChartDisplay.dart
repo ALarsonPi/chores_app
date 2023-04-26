@@ -120,68 +120,11 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return const JoinChartPopupContent();
+                            return JoinChartPopupContent(
+                              index: widget.currTabIndex,
+                            );
                           },
                         );
-                        // chartId = await prompt(
-                        //   Global.scaffoldKey.currentContext as BuildContext,
-                        //   title: const Text('Please enter Chart Code:'),
-                        //   initialValue: '',
-                        //   isSelectedInitialValue: false,
-                        //   textOK: const Text('OK'),
-                        //   textCancel: const Text('Cancel'),
-                        //   hintText: '',
-                        //   validator: (String? value) {
-                        //     if (value == null ||
-                        //         value.isEmpty ||
-                        //         value.length != 8) {
-                        //       String errorString = 'Invalid Chart Code Entered';
-                        //       return errorString;
-                        //     }
-                        //     return null;
-                        //   },
-                        //   minLines: 1,
-                        //   maxLines: 1,
-                        //   autoFocus: true,
-                        //   barrierDismissible: true,
-                        //   textCapitalization: TextCapitalization.none,
-                        //   textAlign: TextAlign.left,
-                        // );
-                        // showGeneralDialog(
-                        //     context: context,
-                        //     barrierDismissible: true,
-                        //     barrierLabel: MaterialLocalizations.of(context)
-                        //         .modalBarrierDismissLabel,
-                        //     barrierColor: Colors.black45,
-                        //     transitionDuration:
-                        //         const Duration(milliseconds: 200),
-                        //     pageBuilder: (BuildContext buildContext,
-                        //         Animation animation,
-                        //         Animation secondaryAnimation) {
-                        //       return Center(
-                        //         child: Container(
-                        //           width: MediaQuery.of(context).size.width - 10,
-                        //           height:
-                        //               MediaQuery.of(context).size.height - 80,
-                        //           padding: EdgeInsets.all(20),
-                        //           color: Colors.white,
-                        //           child: Column(
-                        //             children: [
-                        //               ElevatedButton(
-                        //                 onPressed: () {
-                        //                   Navigator.of(context).pop();
-                        //                 },
-                        //                 child: Text(
-                        //                   "Save",
-                        //                   style: TextStyle(color: Colors.white),
-                        //                 ),
-                        //                 // color: const Color(0xFF1BC0C5),
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       );
-                        //     });
                       },
                       child: Padding(
                         padding: EdgeInsets.all(Provider.of<TextSizeProvider>(
