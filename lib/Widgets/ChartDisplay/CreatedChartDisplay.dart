@@ -49,15 +49,8 @@ class CreatedChartDisplay extends StatelessWidget {
     String currUserId = currUser.id;
     bool isStillPending = currChart.pendingIDs.contains(currUserId);
     bool isOnlyViewer = currChart.viewerIDs.contains(currUserId);
-    ChartDao chartDao = ChartDao();
     return Stack(
       children: [
-        ElevatedButton(
-          onPressed: () => {
-            chartDao.updateChartAngle(0, 3.1415, "0WKUXU4PW5662l2i2Tsd"),
-          },
-          child: const Text("Update angle of circle"),
-        ),
         if (isStillPending)
           Center(
             child: Column(
@@ -141,7 +134,7 @@ class CreatedChartDisplay extends StatelessWidget {
                   ),
                 ),
                 child: Card(
-                  color: Colors.white,
+                  color: Theme.of(context).chipTheme.selectedColor,
                   child: Center(
                     child: Text(
                       currChart.id.substring(0, 8),

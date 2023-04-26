@@ -19,6 +19,8 @@ class GlobalThemes {
       floatingActionButtonTheme: getFABThemeData(isDarkMode),
       iconTheme: getIconThemeData(isDarkMode),
       secondaryHeaderColor: getSecondaryColor(isDarkMode),
+      chipTheme: ChipThemeData(
+          selectedColor: (isDarkMode) ? Colors.white : Colors.grey[800]),
       listTileTheme: getListTileThemeData(isDarkMode),
       inputDecorationTheme: const InputDecorationTheme(
         enabledBorder: OutlineInputBorder(

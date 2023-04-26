@@ -3,6 +3,7 @@ import 'package:chore_app/Services/ListenService.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../Daos/ChartDao.dart';
+import '../Daos/ParentDao.dart';
 import '../Daos/UserDao.dart';
 import '../Models/frozen/Chart.dart';
 import '../Models/frozen/UserModel.dart';
@@ -18,6 +19,59 @@ class ChartService {
       }
     }
     return -1;
+  }
+
+  // Remove User from other lists
+  // add User to correct list
+  void setUserRoleForChart(
+      String newRole, String userID, Chart chart, bool isJoiningChart) {
+    String propertyToChange = "";
+    if (newRole == "Viewer") {
+      propertyToChange = "viewerIDs";
+      if (chart.editorIDs.contains(userID)) {
+        chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.ownerIDs.contains(userID)) {
+        chartDao.updateList("ownerIDs", userID, chart.id, ListAction.REMOVE);
+      }
+    } else if (newRole == "Editor") {
+      propertyToChange = "editorIDs";
+      if (chart.viewerIDs.contains(userID)) {
+        chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.ownerIDs.contains(userID)) {
+        chartDao.updateList("ownerIDs", userID, chart.id, ListAction.REMOVE);
+      }
+    } else if (newRole == "Owner") {
+      propertyToChange = "ownerIDs";
+      if (chart.viewerIDs.contains(userID)) {
+        chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+      } else if (chart.editorIDs.contains(userID)) {
+        chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+      }
+    } else {
+      debugPrint("ERROR");
+    }
+
+    if (isJoiningChart) {
+      if (chart.pendingIDs.contains(userID)) {
+        chartDao.updateList("pendingIDs", userID, chart.id, ListAction.REMOVE);
+      }
+    }
+    chartDao.updateList(propertyToChange, userID, chart.id, ListAction.ADD);
+  }
+
+  void removeUserFromRoleForChart(
+      String newRole, String userID, String chartID) {
+    String propertyToChange = "";
+    if (newRole == "Viewer") {
+      propertyToChange = "viewerIDs";
+    } else if (newRole == "Editor") {
+      propertyToChange = "editorIDs";
+    } else if (newRole == "Owner") {
+      propertyToChange = "ownerIDs";
+    } else {
+      debugPrint("ERROR");
+    }
+    chartDao.updateList(propertyToChange, userID, chartID, ListAction.REMOVE);
   }
 
   static List<TabSaveStatus> tabSaveStatuses =
