@@ -126,25 +126,31 @@ class _HomeScreen extends State<HomeScreen>
     return ValueListenableBuilder(
       valueListenable: ListenService.chartsNotifiers.elementAt(currTabNum),
       builder: (context, chartData, child) {
-        // debugPrint("HERE");
-        // debugPrint(ListenService.userNotifier.value.toString());
         // debugPrint(
-        //     (ListenService.userNotifier.value.chartIDs != null).toString());
-        // debugPrint(
-        //     (ListenService.userNotifier.value.chartIDs!.isNotEmpty).toString());
-        // if (ListenService.userNotifier.value.chartIDs == null ||
-        //     ListenService.userNotifier.value.chartIDs!.isEmpty ||
-        //     !ListenService.userNotifier.value.associatedTabNums!
-        //         .contains(currTabNum)) {
-        //   debugPrint("inside");
-        //   ListenService.chartsNotifiers[currTabNum].value = Chart.emptyChart;
-        // }
-        // ListenService.updateChartListenersIfUserHasNoCharts();
-        // Don't show Chart Edit Menu if chart is empty or settings screen
+        //     "IsEmptyChart: " + (chartData == Chart.emptyChart).toString());
+        // debugPrint("IsEmptyChart: " + (chartData).toString());
         bool isOwner = chartData.ownerIDs.contains(currUserId);
         bool isEditor = chartData.editorIDs.contains(currUserId);
         bool isPending = chartData.pendingIDs.contains(currUserId);
         bool isViewer = chartData.viewerIDs.contains(currUserId);
+
+        String role = "";
+        if (chartData.ownerIDs.contains(currUserId)) {
+          role = "Owner";
+        } else if (chartData.editorIDs.contains(currUserId)) {
+          role = "Editor";
+        } else if (chartData.viewerIDs.contains(currUserId)) {
+          role = "Viewer";
+        } else if (chartData.pendingIDs.contains(currUserId)) {
+          role = "Pending";
+        } else {
+          role = "Error";
+          Future.delayed(
+            const Duration(seconds: 0),
+            () => ListenService.chartsNotifiers.elementAt(currTabNum).value =
+                Chart.emptyChart,
+          );
+        }
 
         // Ensures lowest access level
         // is the only level seen
@@ -170,6 +176,7 @@ class _HomeScreen extends State<HomeScreen>
                     Provider.of<TextSizeProvider>(context, listen: false)
                         .fontSizeToAdd),
                 child: AppBar(
+                  automaticallyImplyLeading: false,
                   toolbarHeight: Global.toolbarHeight,
                   centerTitle: true,
                   actions: [
@@ -381,14 +388,8 @@ class _HomeScreen extends State<HomeScreen>
                                     ),
                                   ),
                                   onTap: () {
-                                    ChartDao.removeListener(ListenService
-                                        .userNotifier.value.chartIDs
-                                        ?.indexOf(chartData.id) as int);
-                                    UserDao().removeChartIDForUser(
-                                        chartData.id, currUserId);
-                                    ChartDao.deleteChart(chartData);
-                                    ListenService.chartsNotifiers[0].value =
-                                        Chart.emptyChart;
+                                    ChartService().showDeleteChartConfirmDialog(
+                                        context, chartData, currUserId);
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -494,16 +495,17 @@ class _HomeScreen extends State<HomeScreen>
                                   ),
                                 ),
                                 onTap: () {
-                                  ChartDao.removeListener(currTabNum);
-                                  ChartDao().removeUserIDFromChart(
+                                  ChartService().leaveChart(
+                                    context,
+                                    currTabNum,
                                     currUserId,
                                     chartData.id,
+                                    chartData,
                                   );
-                                  UserDao().removeChartIDForUser(
-                                      chartData.id, currUserId);
-                                  ListenService.chartsNotifiers[0].value =
-                                      Chart.emptyChart;
-                                  Navigator.pop(context);
+                                  ListenService.chartsNotifiers
+                                      .elementAt(currTabNum)
+                                      .value = Chart.emptyChart;
+                                  Navigator.pushNamed(context, 'home');
                                 },
                               ),
                             ),

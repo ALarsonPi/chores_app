@@ -1,15 +1,14 @@
 import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
-import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/JoinChartDialogPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../ColorControl/AppColors.dart';
 import '../../Models/frozen/Chart.dart';
-import '../../Models/frozen/UserModel.dart';
 import '../../Screens/ScreenArguments/newChartArguments.dart';
 
+// ignore: must_be_immutable
 class EmptyChartDisplay extends StatefulWidget {
   EmptyChartDisplay(this.currTabIndex, {super.key});
   int currTabIndex;
@@ -26,8 +25,6 @@ class EmptyChartDisplayState extends State<EmptyChartDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel currUser = ListenService.userNotifier.value;
-    int num;
     return Stack(
       alignment: Alignment.center,
       children: [

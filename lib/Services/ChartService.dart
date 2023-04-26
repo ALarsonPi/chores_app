@@ -1,6 +1,8 @@
 import 'package:chore_app/Global.dart';
 import 'package:chore_app/Services/ListenService.dart';
+import 'package:chore_app/Widgets/ChartDisplay/GiveOwnershipPopup.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../Daos/ChartDao.dart';
 import '../Daos/ParentDao.dart';
@@ -21,10 +23,227 @@ class ChartService {
     return -1;
   }
 
+  Future<void> showDeleteChartConfirmDialog(
+      BuildContext context, Chart chartData, String userID,
+      {String message = 'Are you sure you want to delete this chart?'}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Chart'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Delete',
+                  style: TextStyle(
+                    color: Colors.red,
+                  )),
+              onPressed: () {
+                Navigator.of(context).pop();
+                ChartDao.removeListener(ListenService
+                    .userNotifier.value.chartIDs
+                    ?.indexOf(chartData.id) as int);
+                UserDao().removeChartIDForUser(chartData.id, userID);
+                ChartDao.deleteChart(chartData);
+                ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showUserPromotionConfirmDialog(
+      BuildContext context,
+      int currTabNum,
+      List<String> ids,
+      String currChartID,
+      String currUserId,
+      Chart currChart,
+      {String message =
+          'You are the only owner of the chart. You will need to choose someone to own the chart.'}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Chart Ownership'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                showUserPromotionUserOptions(
+                  context,
+                  currTabNum,
+                  ids,
+                  currChartID,
+                  currUserId,
+                  currChart,
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool isOwner(Chart chart, String userID) {
+    return chart.ownerIDs.isNotEmpty && chart.ownerIDs.contains(userID);
+  }
+
+  bool isSoleOwner(Chart chart, String userID) {
+    return (isOwner(chart, userID) && chart.ownerIDs.length == 1);
+  }
+
+  bool isOnlyOneInChart(Chart chart, String userID) {
+    int numInChart = 0;
+    numInChart += chart.viewerIDs.length;
+    numInChart += chart.editorIDs.length;
+    numInChart += chart.ownerIDs.length;
+    return (numInChart == 1);
+  }
+
+  void processUserPromotionRequest(
+      UserModel userToPromote,
+      UserModel currLoggedInUser,
+      int tabIndex,
+      String chartID,
+      Chart chartData) async {
+    if (userToPromote == UserModel.emptyUser) {
+      Global.makeSnackbar("ERROR: Unable to promote user (blank user object)");
+      return;
+    }
+    debugPrint(userToPromote.toString());
+    debugPrint("Chart id recieved" + chartID);
+    setUserRoleForChart(
+      "Remove",
+      userToPromote.id,
+      chartData,
+      false,
+      tabIndex,
+      chartID,
+    );
+    setUserRoleForChart(
+      "Owner",
+      userToPromote.id,
+      ListenService.chartsNotifiers.elementAt(tabIndex).value,
+      false,
+      tabIndex,
+      chartID,
+    );
+  }
+
+  void showUserPromotionUserOptions(
+    BuildContext context,
+    int currTabNum,
+    List<String> userIDsToPotentiallyPromote,
+    String currChartID,
+    String currUserID,
+    Chart currChart,
+  ) async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return GiveOwnershipPopup(
+          userIDs: userIDsToPotentiallyPromote,
+          index: currTabNum,
+          currChartID: currChartID,
+          currChart: currChart,
+        );
+      },
+    );
+    ChartDao.removeListener(currTabNum);
+    ChartDao().removeUserIDFromChart(currUserID, currChartID);
+    UserDao().removeChartIDForUser(currChartID, currUserID);
+    UserDao().removeTabNumToUser(currTabNum, currUserID);
+    ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+  }
+
+  Future<void> leaveChart(
+    BuildContext context,
+    int currTabNum,
+    String userID,
+    String chartID,
+    Chart currChart,
+  ) async {
+    Chart currChart = ListenService.chartsNotifiers.elementAt(currTabNum).value;
+    if (isOnlyOneInChart(currChart, userID)) {
+      showDeleteChartConfirmDialog(context, currChart, userID,
+          message:
+              "Since you are the only one in this chart, leaving it will mean that it is deleted. Is that OK?");
+      return;
+    } else if (isSoleOwner(currChart, userID)) {
+      List<String> usersToPotentiallyPromote = List.empty(growable: true);
+      usersToPotentiallyPromote.addAll(currChart.editorIDs);
+      usersToPotentiallyPromote.addAll(currChart.viewerIDs);
+      await showUserPromotionConfirmDialog(
+        context,
+        currTabNum,
+        usersToPotentiallyPromote,
+        chartID,
+        userID,
+        currChart,
+      );
+      return;
+    }
+
+    debugPrint("Removing this user as owner");
+
+    ChartDao.removeListener(currTabNum);
+    ChartDao().removeUserIDFromChart(userID, chartID);
+    UserDao().removeChartIDForUser(chartID, userID);
+    UserDao().removeTabNumToUser(currTabNum, userID);
+    ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+  }
+
   // Remove User from other lists
   // add User to correct list
   void setUserRoleForChart(String newRole, String userID, Chart chart,
-      bool isJoiningChart, int index) {
+      bool isJoiningChart, int index, String chartID) {
+    if (chart == Chart.emptyChart) {
+      debugPrint("Chart is empty [not full of data from database");
+    }
+
     String propertyToChange = "";
     if (newRole == "Remove") {
       if (chart.pendingIDs.contains(userID)) {
@@ -74,7 +293,8 @@ class ChartService {
             .updateList("associatedTabNums", index, userID, ListAction.ADD);
       }
     }
-    chartDao.updateList(propertyToChange, userID, chart.id, ListAction.ADD);
+
+    chartDao.updateList(propertyToChange, userID, chartID, ListAction.ADD);
   }
 
   void removeUserFromRoleForChart(

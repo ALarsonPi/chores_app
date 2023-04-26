@@ -76,6 +76,10 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .value,
                             true,
                             args.index,
+                            ListenService.chartsNotifiers
+                                .elementAt(args.index)
+                                .value
+                                .id,
                           );
                         }
                         Navigator.of(context).pop();
@@ -97,6 +101,10 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .value,
                             true,
                             args.index,
+                            ListenService.chartsNotifiers
+                                .elementAt(args.index)
+                                .value
+                                .id,
                           );
                         }
                         Navigator.of(context).pop();
@@ -118,6 +126,10 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                                 .value,
                             true,
                             args.index,
+                            ListenService.chartsNotifiers
+                                .elementAt(args.index)
+                                .value
+                                .id,
                           );
                         }
                         Navigator.of(context).pop();
@@ -212,6 +224,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                   ListenService.chartsNotifiers.elementAt(args.index).value,
                   false,
                   args.index,
+                  ListenService.chartsNotifiers.elementAt(args.index).value.id,
                 );
                 Navigator.of(context).pop();
               },
