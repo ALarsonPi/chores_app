@@ -178,6 +178,8 @@ class CreatedChartDisplay extends StatelessWidget {
             circleThreeFontColor: Global.currentTheme.tertiaryTextColor,
 
             // Const Programmer Decisions
+            initialRotationDuration: 3,
+            updateRotationDuration: 1,
             width: screenWidth,
             spaceBetweenLines: Global.circleSettings.spaceBetweenLines,
             overflowLineLimit: Global.circleSettings.overflowLineLimit,

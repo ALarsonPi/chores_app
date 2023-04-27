@@ -16,6 +16,14 @@ class ConcentricChart extends StatefulWidget {
   /// Width of the chart, often the entire width of the screen for maximum radius
   double width;
 
+  /// When the chart opens, it will rotate into place. How long should
+  /// it take to rotate (in seconds)
+  int initialRotationDuration;
+
+  /// When someone presses save on a chart, it will rotate for everyone
+  /// else, how quickly should it rotate (in seconds)
+  int updateRotationDuration;
+
   /// Amount of space (pixels) between each line of text
   double spaceBetweenLines;
 
@@ -135,6 +143,8 @@ class ConcentricChart extends StatefulWidget {
     this.chunkOverflowLimitProportion = 0.15,
     this.shouldIgnoreTouch = false,
     this.shouldBold = false,
+    this.initialRotationDuration = 3,
+    this.updateRotationDuration = 1,
   }) {
     double pixelRatioCoefficient = (Device.devicePixelRatio > 2) ? 0.0 : 0.05;
     double textFontCoefficient =
@@ -232,6 +242,8 @@ class _ConcentricChartState extends State<ConcentricChart> {
           overflowLineLimit: widget.overflowLineLimit,
           chunkOverflowLimitProportion: widget.chunkOverflowLimitProportion,
           shouldIgnoreTouch: widget.shouldIgnoreTouch,
+          initialRotationDuration: widget.initialRotationDuration,
+          updateRotationDuration: widget.updateRotationDuration,
         ),
       ),
     );

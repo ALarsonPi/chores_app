@@ -56,8 +56,22 @@ class _HomeScreen extends State<HomeScreen>
       // the user anyway
       // ListenService.cancelListeningToUser();
       Global.dataTransferComplete = false;
-      return Center(
-        child: Image.asset("assets/images/dino_dark.png"),
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Image.asset("assets/images/dino_dark.png"),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(
+              "Please connect to Wi-fi to keep using the app!\n--Alps Creations",
+              textAlign: TextAlign.center,
+              softWrap: true,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+        ],
       );
     }
 

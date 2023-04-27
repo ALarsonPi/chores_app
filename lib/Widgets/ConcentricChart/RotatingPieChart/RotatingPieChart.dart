@@ -25,6 +25,8 @@ class RotatingPieChart extends StatefulWidget {
   final PieInfo pie;
   final Color linesColor;
   final bool shouldIgnoreTouch;
+  final int initialRotationDuration;
+  final int updateRotationDuration;
 
   RotatingPieChart({
     super.key,
@@ -37,6 +39,8 @@ class RotatingPieChart extends StatefulWidget {
     required this.chunkOverflowLimitProportion,
     required this.isOuterRing,
     required this.hasChangedPosition,
+    required this.initialRotationDuration,
+    required this.updateRotationDuration,
     this.shouldIgnoreTouch = false,
   }) {
     items = pie.items;
@@ -67,7 +71,7 @@ class RotatingPieChartState extends State<RotatingPieChart>
     _controller = AnimationController(vsync: this);
     _animation = Tween(begin: 0.0, end: 2.0 * pi).animate(_controller);
     _controller.animateTo(widget.pie.currAngle,
-        duration: const Duration(seconds: 5));
+        duration: Duration(seconds: widget.initialRotationDuration));
     flipStatusArray.clear();
     for (int i = 0; i < widget.pie.items.length; i++) {
       flipStatusArray.add(false);
@@ -112,13 +116,11 @@ class RotatingPieChartState extends State<RotatingPieChart>
   void startWheelRotation() {
     isNotBeingRotated = false;
     positionBeforeRotation = _controller.value;
-    // setState(() {});/
   }
 
   void stopWheelRotation() {
     isNotBeingRotated = true;
     positionAfterRotation = _controller.value;
-    // setState(() {});
   }
 
   void onRotationEnd() {
@@ -131,8 +133,7 @@ class RotatingPieChartState extends State<RotatingPieChart>
 
   handleChangesByOtherUsers() {
     if (textParsingService.numChunks != widget.pie.items.length) {
-      debugPrint("Num items changed");
-
+      // debugPrint("Num items changed");
       textParsingService.setNumChunks(widget.pie.items.length);
     }
     if (!(widget.pie.ringNum == 1)) {
@@ -142,14 +143,12 @@ class RotatingPieChartState extends State<RotatingPieChart>
       textParsingService.setItems(widget.pie.items);
     }
     if (widget.pie.currAngle != rotationService.getLastAngle()) {
-      debugPrint("Angle changed");
+      // debugPrint("Angle changed");
       rotationService.setLastAngle(widget.pie.currAngle);
 
       setState(() {
         _controller.animateTo(rotationService.getLastAngle(),
             duration: const Duration(seconds: 1));
-        // _controller.value = rotationService.getLastAngle();
-        // debugPrint(_controller.value.toString());
       });
     }
   }
