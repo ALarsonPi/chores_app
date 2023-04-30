@@ -92,7 +92,7 @@ class CreatedChartDisplay extends StatelessWidget {
               ),
               child: SizedBox(
                 height: 50,
-                width: 150,
+                width: MediaQuery.of(context).size.width * 0.25,
                 child: Center(
                   child: Text(
                     "VIEW ONLY",

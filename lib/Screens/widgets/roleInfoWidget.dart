@@ -9,19 +9,28 @@ class RoleInfoWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: const Icon(Icons.preview_rounded),
+          leading: const Icon(
+            Icons.preview_rounded,
+            color: Colors.deepPurple,
+          ),
           iconColor: Theme.of(context).colorScheme.primary,
           title: const Text("Viewer"),
           subtitle: const Text("Can see chart, but can't change chart"),
         ),
         ListTile(
-          leading: const Icon(Icons.edit_document),
+          leading: const Icon(
+            Icons.edit_document,
+            color: Colors.deepPurple,
+          ),
           iconColor: Theme.of(context).colorScheme.primary,
           title: const Text("Editor"),
           subtitle: const Text("Can edit chart, but can't add other users"),
         ),
         ListTile(
-          leading: const Icon(Icons.add_business_rounded),
+          leading: const Icon(
+            Icons.add_business_rounded,
+            color: Colors.deepPurple,
+          ),
           iconColor: Theme.of(context).colorScheme.primary,
           title: const Text("Owner"),
           subtitle:

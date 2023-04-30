@@ -152,8 +152,7 @@ class ChartService {
       Global.makeSnackbar("ERROR: Unable to promote user (blank user object)");
       return;
     }
-    debugPrint(userToPromote.toString());
-    debugPrint("Chart id recieved" + chartID);
+
     setUserRoleForChart(
       "Remove",
       userToPromote.id,
@@ -239,7 +238,7 @@ class ChartService {
   // Remove User from other lists
   // add User to correct list
   void setUserRoleForChart(String newRole, String userID, Chart chart,
-      bool isJoiningChart, int index, String chartID) {
+      bool isJoiningChart, int index, String chartID) async {
     if (chart == Chart.emptyChart) {
       debugPrint("Chart is empty [not full of data from database");
     }
@@ -260,26 +259,39 @@ class ChartService {
           .updateList("associatedTabNums", index, userID, ListAction.REMOVE);
       return;
     }
+
     if (newRole == "Viewer") {
       propertyToChange = "viewerIDs";
+      await chartDao.updateList(
+          propertyToChange, userID, chartID, ListAction.ADD);
       if (chart.editorIDs.contains(userID)) {
-        chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "editorIDs", userID, chart.id, ListAction.REMOVE);
       } else if (chart.ownerIDs.contains(userID)) {
-        chartDao.updateList("ownerIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "ownerIDs", userID, chart.id, ListAction.REMOVE);
       }
     } else if (newRole == "Editor") {
       propertyToChange = "editorIDs";
+      await chartDao.updateList(
+          propertyToChange, userID, chartID, ListAction.ADD);
       if (chart.viewerIDs.contains(userID)) {
-        chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "viewerIDs", userID, chart.id, ListAction.REMOVE);
       } else if (chart.ownerIDs.contains(userID)) {
-        chartDao.updateList("ownerIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "ownerIDs", userID, chart.id, ListAction.REMOVE);
       }
     } else if (newRole == "Owner") {
       propertyToChange = "ownerIDs";
+      await chartDao.updateList(
+          propertyToChange, userID, chartID, ListAction.ADD);
       if (chart.viewerIDs.contains(userID)) {
-        chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "viewerIDs", userID, chart.id, ListAction.REMOVE);
       } else if (chart.editorIDs.contains(userID)) {
-        chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+        await chartDao.updateList(
+            "editorIDs", userID, chart.id, ListAction.REMOVE);
       }
     } else {
       debugPrint("ERROR");
@@ -293,8 +305,6 @@ class ChartService {
             .updateList("associatedTabNums", index, userID, ListAction.ADD);
       }
     }
-
-    chartDao.updateList(propertyToChange, userID, chartID, ListAction.ADD);
   }
 
   void removeUserFromRoleForChart(

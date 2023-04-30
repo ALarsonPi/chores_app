@@ -27,8 +27,6 @@ abstract class ParentDao {
 
   updateList(
       String parameter, var value, String docID, ListAction action) async {
-    debugPrint("updating " + parameter);
-    var doc = getCollection().doc(docID);
     await getCollection().doc(docID).update({
       parameter: (action == ListAction.ADD)
           ? FieldValue.arrayUnion([value])
