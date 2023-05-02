@@ -4,6 +4,7 @@ import 'package:chore_app/Screens/widgets/customTileWidget.dart';
 import 'package:chore_app/Screens/widgets/roleInfoWidget.dart';
 import 'package:chore_app/Services/ChartService.dart';
 import 'package:chore_app/Services/ListenService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../Models/frozen/Chart.dart';
@@ -28,6 +29,12 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
     required UserModel userModel,
     required String title,
   }) async {
+    bool isChangingCurrUser = false;
+    if (userModel.id == FirebaseAuth.instance.currentUser?.uid as String) {
+      isChangingCurrUser = await _showChangeCurrUserConfirmDialog();
+      if (isChangingCurrUser == false) return;
+    }
+    // ignore: use_build_context_synchronously
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -38,13 +45,19 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
             child: ListBody(
               children: <Widget>[
                 Text('What role should ${userModel.name} have?'),
-                const RoleInfoWidget(),
+                RoleInfoWidget(
+                  isChangingCurrUser,
+                  pushUserToHomeScreen: pushUserToHomeScreen,
+                  index: args.index,
+                  userID: userModel.id,
+                  contextFromParent: context,
+                ),
               ],
             ),
           ),
           actions: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   child: Text(
@@ -56,86 +69,6 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      child: const Text('Viewer'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .viewerIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Viewer",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
-                            args.index,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value
-                                .id,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Editor'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .editorIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Editor",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
-                            args.index,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value
-                                .id,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Owner'),
-                      onPressed: () {
-                        if (!ListenService.chartsNotifiers
-                            .elementAt(args.index)
-                            .value
-                            .ownerIDs
-                            .contains(userModel.id)) {
-                          ChartService().setUserRoleForChart(
-                            "Owner",
-                            userModel.id,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value,
-                            true,
-                            args.index,
-                            ListenService.chartsNotifiers
-                                .elementAt(args.index)
-                                .value
-                                .id,
-                          );
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -186,6 +119,48 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
         );
       },
     );
+  }
+
+  Future<bool> _showChangeCurrUserConfirmDialog() async {
+    bool answerChosen = false;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Role on Chart'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                    'You are about to look at other role options for your own profile. Are you sure you want to change your role on the chart?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).chipTheme.selectedShadowColor,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Yes, I'm sure"),
+              onPressed: () {
+                answerChosen = true;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return answerChosen;
   }
 
   Future<void> _showDeleteUserDialog(UserModel userModel) async {
@@ -262,6 +237,10 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
 
   Future<List<UserModel>> getBatchOfUsers(List<String> ids) async {
     return await UserDao().getBatchOfUserModels(ids);
+  }
+
+  pushUserToHomeScreen() {
+    Navigator.pushNamed(context, 'home');
   }
 
   @override

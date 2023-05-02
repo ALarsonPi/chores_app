@@ -23,6 +23,36 @@ class ChartService {
     return -1;
   }
 
+  List<String> getListForRole(String role, int index) {
+    Chart chart = ListenService.chartsNotifiers.elementAt(index).value;
+    if (role == "Owner") {
+      return chart.ownerIDs;
+    } else if (role == "Editor") {
+      return chart.editorIDs;
+    } else if (role == "Viewer") {
+      return chart.viewerIDs;
+    } else if (role == "Pending") {
+      return chart.pendingIDs;
+    } else {
+      debugPrint("Error in getListforRole function");
+      return [];
+    }
+  }
+
+  void addUserToChartWithNewRole(int index, String userId, String newRole) {
+    List<String> idList = getListForRole(newRole, index);
+    if (!idList.contains(userId)) {
+      ChartService().setUserRoleForChart(
+        newRole,
+        userId,
+        ListenService.chartsNotifiers.elementAt(index).value,
+        true,
+        index,
+        ListenService.chartsNotifiers.elementAt(index).value.id,
+      );
+    }
+  }
+
   Future<void> showDeleteChartConfirmDialog(
       BuildContext context, Chart chartData, String userID,
       {String message = 'Are you sure you want to delete this chart?'}) async {
@@ -72,15 +102,19 @@ class ChartService {
     );
   }
 
+  getListOfUserIDsToPotentiallyPromote(Chart chart) {
+    List<String> usersToPotentiallyPromote = List.empty(growable: true);
+    usersToPotentiallyPromote.addAll(chart.editorIDs);
+    usersToPotentiallyPromote.addAll(chart.viewerIDs);
+    return usersToPotentiallyPromote;
+  }
+
   Future<void> showUserPromotionConfirmDialog(
-      BuildContext context,
-      int currTabNum,
-      List<String> ids,
-      String currChartID,
-      String currUserId,
-      Chart currChart,
+      BuildContext context, int currTabNum, String currUserId, Chart currChart,
       {String message =
           'You are the only owner of the chart. You will need to choose someone to own the chart.'}) async {
+    List<String> ids = getListOfUserIDsToPotentiallyPromote(currChart);
+    String currChartID = currChart.id;
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -139,6 +173,7 @@ class ChartService {
     numInChart += chart.viewerIDs.length;
     numInChart += chart.editorIDs.length;
     numInChart += chart.ownerIDs.length;
+    debugPrint(numInChart.toString());
     return (numInChart == 1);
   }
 
@@ -212,14 +247,9 @@ class ChartService {
               "Since you are the only one in this chart, leaving it will mean that it is deleted. Is that OK?");
       return;
     } else if (isSoleOwner(currChart, userID)) {
-      List<String> usersToPotentiallyPromote = List.empty(growable: true);
-      usersToPotentiallyPromote.addAll(currChart.editorIDs);
-      usersToPotentiallyPromote.addAll(currChart.viewerIDs);
       await showUserPromotionConfirmDialog(
         context,
         currTabNum,
-        usersToPotentiallyPromote,
-        chartID,
         userID,
         currChart,
       );
