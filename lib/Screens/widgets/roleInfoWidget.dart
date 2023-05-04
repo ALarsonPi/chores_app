@@ -17,7 +17,7 @@ class RoleInfoWidget extends StatelessWidget {
   bool isEditingCurrUser;
   Function pushUserToHomeScreen;
 
-  handleRoleChange(BuildContext context, String newRole) {
+  handleRoleChange(BuildContext context, String newRole) async {
     if (isEditingCurrUser &&
         ChartService().isOnlyOneInChart(
           ListenService.chartsNotifiers.elementAt(index).value,
@@ -31,12 +31,9 @@ class RoleInfoWidget extends StatelessWidget {
       userID,
     )) {
       Navigator.pop(contextFromParent);
-      ChartService().showUserPromotionConfirmDialog(
-        context,
-        index,
-        userID,
-        ListenService.chartsNotifiers.elementAt(index).value,
-      );
+      await ChartService().showUserPromotionConfirmDialog(context, index,
+          userID, ListenService.chartsNotifiers.elementAt(index).value, false);
+      ChartService().addUserToChartWithNewRole(index, userID, newRole);
     } else {
       ChartService().addUserToChartWithNewRole(index, userID, newRole);
       Navigator.pop(contextFromParent);

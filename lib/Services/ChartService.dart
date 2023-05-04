@@ -110,7 +110,11 @@ class ChartService {
   }
 
   Future<void> showUserPromotionConfirmDialog(
-      BuildContext context, int currTabNum, String currUserId, Chart currChart,
+      BuildContext context,
+      int currTabNum,
+      String currUserId,
+      Chart currChart,
+      bool shouldRemoveCurrUser,
       {String message =
           'You are the only owner of the chart. You will need to choose someone to own the chart.'}) async {
     List<String> ids = getListOfUserIDsToPotentiallyPromote(currChart);
@@ -142,9 +146,9 @@ class ChartService {
             ),
             TextButton(
               child: const Text('OK'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                showUserPromotionUserOptions(
+                await showUserPromotionUserOptions(
                   context,
                   currTabNum,
                   ids,
@@ -152,6 +156,13 @@ class ChartService {
                   currUserId,
                   currChart,
                 );
+                if (shouldRemoveCurrUser) {
+                  removeCurrUserFromChart(
+                    currTabNum,
+                    currUserId,
+                    currChartID,
+                  );
+                }
               },
             ),
           ],
@@ -187,26 +198,20 @@ class ChartService {
       Global.makeSnackbar("ERROR: Unable to promote user (blank user object)");
       return;
     }
-
-    setUserRoleForChart(
-      "Remove",
-      userToPromote.id,
-      chartData,
-      false,
-      tabIndex,
-      chartID,
-    );
-    setUserRoleForChart(
-      "Owner",
-      userToPromote.id,
-      ListenService.chartsNotifiers.elementAt(tabIndex).value,
-      false,
-      tabIndex,
-      chartID,
-    );
+    setUserAsOwner(userToPromote.id,
+        ListenService.chartsNotifiers.elementAt(tabIndex).value, chartID);
   }
 
-  void showUserPromotionUserOptions(
+  void removeCurrUserFromChart(
+      int currTabNum, String currUserId, String currChartID) {
+    ChartDao.removeListener(currTabNum);
+    ChartDao().removeUserIDFromChart(currUserId, currChartID);
+    UserDao().removeChartIDForUser(currChartID, currUserId);
+    UserDao().removeTabNumToUser(currTabNum, currUserId);
+    ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+  }
+
+  Future<void> showUserPromotionUserOptions(
     BuildContext context,
     int currTabNum,
     List<String> userIDsToPotentiallyPromote,
@@ -226,11 +231,6 @@ class ChartService {
         );
       },
     );
-    ChartDao.removeListener(currTabNum);
-    ChartDao().removeUserIDFromChart(currUserID, currChartID);
-    UserDao().removeChartIDForUser(currChartID, currUserID);
-    UserDao().removeTabNumToUser(currTabNum, currUserID);
-    ListenService.chartsNotifiers[0].value = Chart.emptyChart;
   }
 
   Future<void> leaveChart(
@@ -248,11 +248,7 @@ class ChartService {
       return;
     } else if (isSoleOwner(currChart, userID)) {
       await showUserPromotionConfirmDialog(
-        context,
-        currTabNum,
-        userID,
-        currChart,
-      );
+          context, currTabNum, userID, currChart, true);
       return;
     }
 
@@ -263,6 +259,23 @@ class ChartService {
     UserDao().removeChartIDForUser(chartID, userID);
     UserDao().removeTabNumToUser(currTabNum, userID);
     ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+  }
+
+  // Remove User from other lists
+  // add User to correct list
+  void setUserAsOwner(String userID, Chart chart, String chartID) async {
+    if (chart == Chart.emptyChart) {
+      debugPrint("Chart is empty [not full of data from database");
+    }
+    if (chart.pendingIDs.contains(userID)) {
+      chartDao.updateList("pendingIDs", userID, chart.id, ListAction.REMOVE);
+    } else if (chart.viewerIDs.contains(userID)) {
+      chartDao.updateList("viewerIDs", userID, chart.id, ListAction.REMOVE);
+    } else if (chart.editorIDs.contains(userID)) {
+      chartDao.updateList("editorIDs", userID, chart.id, ListAction.REMOVE);
+    }
+    chartDao.updateList("ownerIDs", userID, chart.id, ListAction.ADD);
+    return;
   }
 
   // Remove User from other lists
