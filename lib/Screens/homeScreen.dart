@@ -125,7 +125,6 @@ class _HomeScreen extends State<HomeScreen>
     // Initial Retrival of chart data happens only once
     // and listeners are also set here
     if (!Global.dataTransferComplete) {
-      debugPrint("Adding listeners for Chart and User");
       UserDao()
           .getUserByID(FirebaseAuth.instance.currentUser?.uid as String)
           .then((userRetrieved) => {
@@ -140,9 +139,6 @@ class _HomeScreen extends State<HomeScreen>
     return ValueListenableBuilder(
       valueListenable: ListenService.chartsNotifiers.elementAt(currTabNum),
       builder: (context, chartData, child) {
-        // debugPrint(
-        //     "IsEmptyChart: " + (chartData == Chart.emptyChart).toString());
-        // debugPrint("IsEmptyChart: " + (chartData).toString());
         bool isOwner = chartData.ownerIDs.contains(currUserId);
         bool isEditor = chartData.editorIDs.contains(currUserId);
         bool isPending = chartData.pendingIDs.contains(currUserId);

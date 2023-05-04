@@ -59,7 +59,6 @@ class ChartDao extends ParentDao {
   }
 
   static removeListener(int indexToRemove) {
-    // debugPrint("Removing listener for index:" + indexToRemove.toString());
     Global.streamMap[indexToRemove]?.cancel();
   }
 

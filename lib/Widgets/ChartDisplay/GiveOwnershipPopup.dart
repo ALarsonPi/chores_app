@@ -70,10 +70,6 @@ class _GiveOwnershipPopupState extends State<GiveOwnershipPopup> {
                       onPressed: (userToPromote == UserModel.emptyUser)
                           ? null
                           : () {
-                              debugPrint(
-                                  "user to promote" + userToPromote.toString());
-                              debugPrint("chart id passed in to process" +
-                                  widget.currChartID.toString());
                               ChartService().processUserPromotionRequest(
                                 userToPromote,
                                 ListenService.userNotifier.value,

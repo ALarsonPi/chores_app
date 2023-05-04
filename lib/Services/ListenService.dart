@@ -19,7 +19,6 @@ class ListenService {
 
   static void initializeListeners(UserModel currUser) {
     if (currUser != userNotifier.value) {
-      debugPrint("Initializing user listener");
       setUpUserListener(currUser);
     }
     setUpChartListeners(currUser);
@@ -33,7 +32,6 @@ class ListenService {
       // Fix that only works for one tab
       if (userNotifier.value.chartIDs != null &&
           userNotifier.value.chartIDs!.isEmpty) {
-        debugPrint("User found charts empty");
         for (var stream in Global.streamMap.entries) {
           stream.value.cancel();
         }
@@ -47,7 +45,6 @@ class ListenService {
 
   static void updateChartListenersIfUserHasNoCharts() {
     if (userNotifier.value.chartIDs!.isNotEmpty) {
-      debugPrint("Initializing chart listeners");
       debugPrint((userNotifier.value.chartIDs as List<String>).toString());
     } else {
       // If user has no charts to listen to
@@ -65,7 +62,6 @@ class ListenService {
       // updateChartListenersIfUserHasNoCharts();
       List<String> charts = (userNotifier.value.chartIDs as List<String>);
       for (int i = 0; i < charts.length; i++) {
-        debugPrint("Initializing Chart listener(${i}");
         chartsNotifiers[i].value = addChartListenerByFullID(i, charts[i]);
       }
     } else {
@@ -74,14 +70,6 @@ class ListenService {
   }
 
   static void onChanged(Chart chart, int index) {
-    debugPrint(
-      "There wwas a change for listener: " +
-          chart.chartTitle +
-          "(" +
-          chart.id +
-          ")",
-    );
-
     // If a change removes this user from the chart, set it as empty,
     // end listening to it, and remove from user object
     UserModel currUser = userNotifier.value;
@@ -108,7 +96,6 @@ class ListenService {
     Chart chart,
     UserModel user,
   ) {
-    debugPrint("Cancelling listener at index " + index.toString());
     Global.streamMap[index]?.cancel();
 
     // Update Notifier to point to emptyChart
@@ -161,18 +148,15 @@ class ListenService {
       Chart chart = Chart.fromSnapshot(event);
       updatedChart = chart;
       if (chart == chartsNotifiers.elementAt(indexToAdd).value) {
-        debugPrint("Already listening and no change");
         return;
       } else {
         if (chartsNotifiers[indexToAdd].value == Chart.emptyChart) {
-          debugPrint("Initializing Chart Data");
         } else {
           onChanged(chart, indexToAdd);
         }
         chartsNotifiers[indexToAdd].value = chart;
       }
     });
-    // debugPrint("Adding new listener");
     Global.streamMap.putIfAbsent(indexToAdd, () => subscription);
     return updatedChart;
   }

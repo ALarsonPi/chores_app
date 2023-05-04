@@ -184,7 +184,6 @@ class ChartService {
     numInChart += chart.viewerIDs.length;
     numInChart += chart.editorIDs.length;
     numInChart += chart.ownerIDs.length;
-    debugPrint(numInChart.toString());
     return (numInChart == 1);
   }
 
@@ -251,14 +250,7 @@ class ChartService {
           context, currTabNum, userID, currChart, true);
       return;
     }
-
-    debugPrint("Removing this user as owner");
-
-    ChartDao.removeListener(currTabNum);
-    ChartDao().removeUserIDFromChart(userID, chartID);
-    UserDao().removeChartIDForUser(chartID, userID);
-    UserDao().removeTabNumToUser(currTabNum, userID);
-    ListenService.chartsNotifiers[0].value = Chart.emptyChart;
+    removeCurrUserFromChart(currTabNum, userID, chartID);
   }
 
   // Remove User from other lists

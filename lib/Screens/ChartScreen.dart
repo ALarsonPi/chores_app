@@ -697,12 +697,8 @@ class _ChartScreenState extends State<ChartScreen> {
       circleTwoText: ring2Strings,
       circleThreeText: ring3Strings,
     );
-    // Global.getIt.get<ChartList>().userCharts.value[args.index] = editedChart;
     ChartDao.updateChart(editedChart);
-    // debugPrint("Edited");
-    // debugPrint(editedChart.toString());
     Navigator.pop(context, false);
-    // Navigator.pushNamed(context, 'home');
   }
 
   tryValidation(bool success, int sectionNum) {
