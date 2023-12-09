@@ -11,7 +11,6 @@ import 'package:chore_app/Services/ChartService.dart';
 import 'package:chore_app/Services/ListenService.dart';
 import 'package:chore_app/Widgets/ChartDisplay/ChangeChart/ChangeTitle.dart';
 import 'package:chore_app/Widgets/UserLoginLogout/LoginRegisterWidget.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -46,35 +45,6 @@ class _HomeScreen extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    // WIFI CHECKING
-    ConnectivityResult network =
-        Provider.of<ConnectivityResult>(context, listen: true);
-    if (network != ConnectivityResult.wifi) {
-      ListenService.cancelListeningToCharts();
-      // This isn't needed as firebase will just update user object
-      // when wifi resumes, or when it does resume, home screen will fetch
-      // the user anyway
-      // ListenService.cancelListeningToUser();
-      Global.dataTransferComplete = false;
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Image.asset("assets/images/dino_dark.png"),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              "Please connect to Wi-fi to keep using the app!\n--Alps Creations",
-              textAlign: TextAlign.center,
-              softWrap: true,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-        ],
-      );
-    }
-
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (c, snapshot) {
@@ -144,6 +114,7 @@ class _HomeScreen extends State<HomeScreen>
         bool isPending = chartData.pendingIDs.contains(currUserId);
         bool isViewer = chartData.viewerIDs.contains(currUserId);
 
+        // ignore: unused_local_variable
         String role = "";
         if (chartData.ownerIDs.contains(currUserId)) {
           role = "Owner";
@@ -188,6 +159,7 @@ class _HomeScreen extends State<HomeScreen>
                 child: AppBar(
                   automaticallyImplyLeading: false,
                   toolbarHeight: Global.toolbarHeight,
+                  backgroundColor: Theme.of(context).primaryColor,
                   centerTitle: true,
                   actions: [
                     if (tabsSaveStatus[currTabNum])
@@ -196,6 +168,10 @@ class _HomeScreen extends State<HomeScreen>
                         child: IconButton(
                           icon: Icon(
                             Icons.save,
+                            color: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.color as Color,
                             size: (Theme.of(context).iconTheme.size as double) +
                                 Provider.of<TextSizeProvider>(context,
                                         listen: false)
@@ -219,6 +195,8 @@ class _HomeScreen extends State<HomeScreen>
                       child: IconButton(
                         icon: Icon(
                           Icons.settings,
+                          color:
+                              Theme.of(context).textTheme.headlineMedium?.color,
                           size: (Theme.of(context).iconTheme.size as double) +
                               Provider.of<TextSizeProvider>(context,
                                       listen: false)
@@ -267,6 +245,10 @@ class _HomeScreen extends State<HomeScreen>
                                   badgeContent: const Text(''),
                                   child: Icon(
                                     Icons.menu,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.color,
                                     size: (Theme.of(context).iconTheme.size
                                             as double) +
                                         Provider.of<TextSizeProvider>(context,
@@ -276,6 +258,10 @@ class _HomeScreen extends State<HomeScreen>
                                 )
                               : Icon(
                                   Icons.menu,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.color as Color,
                                   size: (Theme.of(context).iconTheme.size
                                           as double) +
                                       Provider.of<TextSizeProvider>(context,

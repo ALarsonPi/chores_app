@@ -5,7 +5,6 @@ import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
 import 'package:chore_app/Screens/SettingsScreen.dart';
 import 'package:chore_app/Screens/homeScreen.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +39,6 @@ class _AppRouter extends State<AppRouter> {
     Global.dataTransferComplete = false;
     return MultiProvider(
       providers: [
-        StreamProvider(
-          create: (context) => Connectivity().onConnectivityChanged,
-          initialData: ConnectivityResult.wifi,
-        ),
         // Light / Dark Mode as well as Primary Color
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(),

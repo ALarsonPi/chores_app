@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'CheckEmail.dart';
 import 'UI_Helpers.dart';
 
+// ignore: must_be_immutable
 class ForgotPassword extends StatefulWidget {
   Function setStateBackToLoginScreen;
   ForgotPassword(this.setStateBackToLoginScreen, {super.key});
@@ -157,9 +158,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   didResetCorrectly =
                                       await FirebaseLogin.passwordReset(
                                           emailController.text.trim()),
-                                  setState(() => {
-                                        isEmailSent = didResetCorrectly,
-                                      }),
+                                  setState(
+                                    () => isEmailSent = didResetCorrectly,
+                                  ),
                                 },
                             },
                             style: ElevatedButton.styleFrom(

@@ -272,6 +272,7 @@ class _ConnectedUsersScreenState extends State<ConnectedUsersScreen> {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: true,
+            backgroundColor: Theme.of(context).primaryColor,
             title: Text(chart.chartTitle),
             centerTitle: true,
           ),

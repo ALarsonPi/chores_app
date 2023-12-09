@@ -79,7 +79,7 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                   GestureDetector(
                     onTap: () => {
                       setState(
-                        () => {isInLoginMode = true},
+                        () => isInLoginMode = true,
                       ),
                     },
                     child: Align(
@@ -170,9 +170,9 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () => {
-                            setState(() => {
-                                  isInForgotPasswordMode = true,
-                                }),
+                            setState(
+                              () => isInForgotPasswordMode = true,
+                            ),
                           },
                           child: Text(
                             'Forgot Password',
@@ -224,14 +224,12 @@ class _LoginRegisterWidget extends State<LoginRegisterWidget> {
                     ? GestureDetector(
                         onTap: () => {
                           setState(
-                            () => {
-                              isInLoginMode = false,
-                            },
+                            () => isInLoginMode = false,
                           ),
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
                               "Don't have an account?",
                               style: loginMediumGreyBodyTextStyle,

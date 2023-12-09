@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 import '../Daos/ChartDao.dart';
 import '../Global.dart';
 import '../Models/frozen/Chart.dart';
-import '../Models/frozen/UserModel.dart';
 import '../Providers/TextSizeProvider.dart';
 
 class ChartScreen extends StatefulWidget {
@@ -230,6 +229,7 @@ class _ChartScreenState extends State<ChartScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           (args.isInEditMode) ? "Edit Chart Text" : "Customize New Chart",
           style: TextStyle(
@@ -533,9 +533,9 @@ class _ChartScreenState extends State<ChartScreen> {
                             onPressed: (!hasValidatedText)
                                 ? null
                                 : () => {
-                                      setState(() => {
-                                            hasValidatedText = false,
-                                          }),
+                                      setState(
+                                        () => hasValidatedText = false,
+                                      ),
                                     },
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -584,9 +584,9 @@ class _ChartScreenState extends State<ChartScreen> {
                                     {
                                       if (formKey.currentState!.validate())
                                         {
-                                          setState(() => {
-                                                isLoading = true,
-                                              }),
+                                          setState(
+                                            () => isLoading = true,
+                                          ),
                                           newChart = Chart(
                                             id: "id",
                                             chartTitle:

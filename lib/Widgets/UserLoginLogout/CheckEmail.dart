@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'UI_Helpers.dart';
 
+// ignore: must_be_immutable
 class CheckEmail extends StatelessWidget {
   Function returnToLogin;
   Function returnToForgotPassword;
