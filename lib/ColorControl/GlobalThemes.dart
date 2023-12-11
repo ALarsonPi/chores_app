@@ -10,6 +10,7 @@ class GlobalThemes {
   static ThemeData getThemeData(bool isDarkMode, BuildContext context) {
     isDarkMode = !isDarkMode;
     return ThemeData(
+      useMaterial3: false,
       brightness: getBrightness(isDarkMode),
       primarySwatch: AppColors.getPrimaryColorSwatch(),
       primaryColor: getPrimaryColorForTheme(isDarkMode),
