@@ -9,6 +9,7 @@
    <application
         android:label="Chore Sync"
         android:name="${applicationName}"
+        android:allowBackup="false"
         android:icon="@mipmap/launcher_icon">
 
         <meta-data 

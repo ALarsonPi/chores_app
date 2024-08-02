@@ -1,0 +1,1 @@
+enum PushNotificationAction { actionA, actionB }
