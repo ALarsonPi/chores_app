@@ -3,8 +3,10 @@ import 'package:chore_app/Providers/TextSizeProvider.dart';
 import 'package:chore_app/Providers/ThemeProvider.dart';
 import 'package:chore_app/Screens/ChartScreen.dart';
 import 'package:chore_app/Screens/ConnectedUsersScreen.dart';
+import 'package:chore_app/Screens/NotificationRegistrationScreen.dart';
 import 'package:chore_app/Screens/SettingsScreen.dart';
 import 'package:chore_app/Screens/homeScreen.dart';
+import 'package:chore_app/Services/Notifications/NotificationActionService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +34,37 @@ class _AppRouter extends State<AppRouter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  final navigatorKey = GlobalKey<NavigatorState>();
+
+  final notificationActionService = NotificationActionService();
+
+  Future<void> showActionAlert({message = String}) async {
+    return showDialog<void>(
+      context: navigatorKey.currentState!.overlay!.context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Notification Demo'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -69,6 +102,7 @@ class _AppRouter extends State<AppRouter> {
             },
             child: MaterialApp(
               scaffoldMessengerKey: Global.rootScaffoldMessengerKey,
+              navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               themeMode: themeProvider.selectedThemeMode,
               theme:
@@ -92,7 +126,9 @@ class _AppRouter extends State<AppRouter> {
                     const ConnectedUsersScreen(),
                 ChartScreen.routeName: (context) => const ChartScreen(),
                 'home': (context) => HomeScreen(),
-                'settings': (context) => const SettingsScreen()
+                'settings': (context) => const SettingsScreen(),
+                'notification-registration': (context) =>
+                    const NotificationRegistrationScreen()
               },
             ),
           );

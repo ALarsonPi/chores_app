@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:chore_app/Models/Notifications/DeviceInstallation.dart';
 import 'package:chore_app/Services/Notifications/DeviceInstallationService.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -24,7 +25,7 @@ class NotificationRegistrationService {
         .setMethodCallHandler(handleNotificationRegistrationCall);
   }
 
-  String get installationsUrl => "$baseApiUrl$installationsEndpoint";
+  String get installationsUrl => "$baseApiUrl/$installationsEndpoint";
 
   Future<void> deregisterDevice() async {
     final cachedToken = await secureStorage.read(key: cachedDeviceTokenKey);
@@ -60,11 +61,22 @@ class NotificationRegistrationService {
       final deviceInstallation =
           DeviceInstallation(deviceId, platform, token, tags);
 
+      if (kDebugMode) {
+        print('device installation');
+        print(jsonEncode(deviceInstallation));
+      }
+
       final response = await http.put(getUriFromUrl(installationsUrl),
           body: jsonEncode(deviceInstallation),
           headers: {"Content-Type": "application/json"});
 
       if (response.statusCode != 200) {
+        if (kDebugMode) {
+          print('full reason');
+          print(response.body);
+          print(response.request);
+          print(response.statusCode);
+        }
         throw "Register request failed: ${response.reasonPhrase}";
       }
 
@@ -106,6 +118,6 @@ class NotificationRegistrationService {
   }
 
   Uri getUriFromUrl(String url) {
-    return Uri(path: url);
+    return Uri.parse(url);
   }
 }
